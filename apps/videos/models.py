@@ -14,7 +14,7 @@ class Video(models.Model):
         ('SUMAR', 'Sumar'),
         ('VOX', 'Vox'),
     ]
-    political_party = models.CharField(max_length=100, choices=PARTIES_CHOICES)
+    political_party = models.TextField(choices=PARTIES_CHOICES)
 
     def __str__(self):
-        return self.title + " " + self.date
+        return f"{self.title} - {self.date}"
