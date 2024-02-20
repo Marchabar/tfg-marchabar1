@@ -31,7 +31,11 @@ class Topic(models.Model):
         ("defensa", "Defensa"),
         ("legislacion", "Legislación"),
         ("presupuesto", "Presupuesto"),
-        ("justicia", "Justicia")
+        ("justicia", "Justicia"),
+        ("ETA", "ETA"),
+        ("historia_reciente_espana", "Historia reciente de España"),
+        ("terrorismo", "Terrorismo"),
+        ("acusaciones_políticas", "Acusaciones políticas"),
     ]
     topic_type = models.TextField(choices=TOPIC_CHOICES)
     video = models.ForeignKey("videos.Video", on_delete=models.CASCADE)

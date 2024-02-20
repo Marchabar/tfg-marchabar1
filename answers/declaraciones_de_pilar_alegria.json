@@ -1,0 +1,46 @@
+{
+    "politician_name": "Pilar Alegría",
+    "political_party": "PSOE",
+    "url": "https://youtu.be/o7eu7RrUaQI?si=gUkCGSAlAjewo61w",
+    "date": "19/11/2023",
+    "length": "03:11",
+    "main_topics": [
+      ["protestas", 4],
+      ["ultraderecha", 4],
+      ["partido_popular", 4],
+      ["democracia", 3],
+      ["derechos_civiles", 3],
+      ["igualdad", 3]
+    ],
+    "sentiment": [
+      "Indignación",
+      "Confianza"
+    ],
+    "lenguaje": [
+      "Lenguaje de confrontación",
+      "Lenguaje de crítica",
+      "Lenguaje de discurso público",
+      "Lenguaje de legislación"
+    ],
+    "used_words": [
+      "feijó",
+      "partido",
+      "popular",
+      "españa",
+      "ciudadanos",
+      "oposición",
+      "igualdad",
+      "democracia",
+      "gobierno",
+      "voto",
+      "protestas",
+      "ultraderecha",
+      "vox",
+      "confianza",
+      "recortes",
+      "censura",
+      "convivencia",
+      "derechos"
+    ]
+  }
+  
