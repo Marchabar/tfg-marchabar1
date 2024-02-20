@@ -31,8 +31,10 @@ jobs:
 
       - name: Run Django tests
         run: |
+          export SECRET_KEY=${{ secrets.SECRET_KEY }}
           python manage.py test
 
       - name: Start Django server
         run: |
+          export SECRET_KEY=${{ secrets.SECRET_KEY }}
           python manage.py runserver &
