@@ -1,0 +1,19 @@
+{
+    "politician_name": "Alberto Núñez Feijóo",
+    "political_party": "PP",
+    "url": "https://youtu.be/wGkZkeOShpw?si=IHmN20roNu8IDALT",
+    "date": "28/10/2023",
+    "length": "02:53",
+    "main_topics": [
+      ["igualdad_de_genero", 5],
+      ["economia", 15],
+      ["impuestos", 10],
+      ["bienestar_social", 8],
+      ["politica_exterior", 5],
+      ["pobreza", 6]
+    ],
+    "sentiment": ["Confianza", "Escepticismo"],
+    "lenguaje": ["Lenguaje formal", "Lenguaje de discurso público"],
+    "used_words": ["España", "igualdad", "pobres", "impuestos", "gobierno", "oposición", "libertad"]
+  }
+  

@@ -1,0 +1,21 @@
+{
+    "politican_name": "Alberto Núñez Feijóo",
+    "political_party": "PP",
+    "url": "https://youtu.be/CmwKPXmLLwY?si=O_2MmvobqvbnuzQ_",
+    "date": "28/10/2023",
+    "length": "01:22",
+    "main_topics": [
+      ["derechos_civiles", 35],
+      ["salud", 20],
+      ["educacion", 10],
+      ["igualdad_de_genero", 10],
+      ["medio_ambiente", 5],
+      ["politica_exterior", 5],
+      ["criminalidad", 5],
+      ["tecnologia", 5],
+      ["defensa", 5]
+    ],
+    "sentiment": ["Preocupación", "Escepticismo"],
+    "lenguaje": ["Lenguaje formal", "Lenguaje de crítica"],
+    "used_words": ["ley", "trans", "colectivo", "derechos", "médicos", "protocolos", "hormonas", "menor", "pacientes"]
+  }
