@@ -1,0 +1,20 @@
+{
+    "politician_name": "Pepa Millán",
+    "political_party": "VOX",
+    "url": "https://youtu.be/YtRKcB5l9uQ?si=juTPWXxMyF9_D-UF",
+    "date": "13/06/2023",
+    "length": "04:49",
+    "main_topics": {
+      "Economía": 5,
+      "Inmigración": 3,
+      "Criminalidad": 6,
+      "Bienestar social": 4,
+      "Libertad de prensa": 2,
+      "Diversidad y discriminación": 1,
+      "Terrorismo": 5,
+      "Acusaciones políticas": 5
+    },
+    "sentiment": ["Enojo", "Preocupación", "Optimismo"],
+    "lenguaje": ["Lenguaje de confrontación", "Lenguaje de crítica", "Lenguaje de promesas"],
+    "used_words": ["socialismo", "gobierno", "España", "Pedro Sánchez", "PSOE", "cambio", "oposición", "políticas", "libertad", "seguridad"]
+  }
