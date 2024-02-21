@@ -17,7 +17,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for filename in glob.glob("answers/*.json"):
-            with open(filename, "r") as file:
+            with open(filename, "r", encoding="utf-8") as file:
                 data = json.load(file)
                 valid_choices = [
                     choice[0]
@@ -41,15 +41,18 @@ class Command(BaseCommand):
                                     date = datetime.strptime(date_str, "%d/%m/%Y")
                                 else:
                                     date = None
-                                Video.objects.create(
-                                    title=title,
-                                    url=video_url,
-                                    thumbnail=thumbnail,
-                                    length=data.get("length"),
-                                    date=date,
-                                    politician_name=data.get("politician_name"),
-                                    political_party=data.get("political_party"),
-                                )
+                                if title not in [
+                                    video.title for video in Video.objects.all()
+                                ]:
+                                    Video.objects.create(
+                                        title=title,
+                                        url=video_url,
+                                        thumbnail=thumbnail,
+                                        length=data.get("length"),
+                                        date=date,
+                                        politician_name=data.get("politician_name"),
+                                        political_party=data.get("political_party"),
+                                    )
 
     def extract_video_id(self, video_url):
         match = re.search(
