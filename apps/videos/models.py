@@ -4,6 +4,7 @@ from django.db import models
 
 class Video(models.Model):
     title = models.CharField(max_length=100, unique=True)
+    url = models.URLField()
     thumbnail = models.ImageField(upload_to="thumbnails/")
     length = models.FloatField()
     date = models.DateField(auto_now_add=True)

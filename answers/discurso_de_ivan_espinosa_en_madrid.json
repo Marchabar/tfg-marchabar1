@@ -1,0 +1,18 @@
+{
+    "politician_name": "Iván Espinosa",
+    "political_party": "VOX",
+    "url": "https://youtu.be/f-xql-16Vpc?si=9CwCRZF7QbFlGE7X",
+    "date": "21/06/2023",
+    "length": "04:21",
+    "main_topics": {
+      "Campaña electoral": 45,
+      "España": 20,
+      "Votación": 15,
+      "Política": 10,
+      "Confianza": 5
+    },
+    "sentiment": ["Optimismo", "Confianza"],
+    "lenguaje": ["Lenguaje emocional", "Lenguaje de campaña", "Lenguaje de promesas", "Lenguaje de debate"],
+    "used_words": ["intensidad", "campaña", "España", "votar", "botones", "confianza", "resultado", "encuestas", "país", "adelante", "viva"]
+  }
+  

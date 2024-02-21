@@ -1,0 +1,17 @@
+{
+    "politician_name": "Yolanda Díaz",
+    "political_party": "SUMAR",
+    "url": "https://youtu.be/M7mbp5EMmFE?si=8CSGljnRFZjaai-r",
+    "date": "02/04/2023",
+    "length": "01:54",
+    "main_topics": {
+      "Igualdad de género": 24,
+      "Política exterior": 14,
+      "Campaña electoral": 10,
+      "Optimismo": 8,
+      "Participación ciudadana": 8
+    },
+    "sentiment": ["Entusiasmo", "Optimismo"],
+    "lenguaje": ["Lenguaje emocional", "Lenguaje de campaña"],
+    "used_words": ["presidenta", "país", "queremos", "sumar", "mujeres", "historia", "energía", "adelante", "gracias"]
+  }

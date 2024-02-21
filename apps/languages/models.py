@@ -24,7 +24,8 @@ class Language(models.Model):
         ("discurso_publico", "Lenguaje de discurso público"),
         ("campana", "Lenguaje de campaña"),
         ("legislacion", "Lenguaje de legislación"),
-        ("negociacion", "Lenguaje de negociación")
+        ("negociacion", "Lenguaje de negociación"),
+        ("patriótico", "Lenguaje patriótico"),
     ]
     language_type = models.TextField(choices=LANGUAGE_CHOICES)
     video = models.ForeignKey("videos.Video", on_delete=models.CASCADE)

@@ -1,0 +1,42 @@
+{
+    "politician_name": "Pedro Sánchez",
+    "political_party": "PSOE",
+    "url": "https://youtu.be/mJ1uFNpIGJU?si=--z36LOI5S5ur-WS",
+    "date": "16/05/2023",
+    "length": "04:57",
+    "main_topics": [
+      ["ETA", 9],
+      ["terrorismo", 7],
+      ["politica_exterior", 5],
+      ["corrupcion", 4],
+      ["derechos_de_las_minorias", 3],
+      ["paz_y_conflicto", 3],
+      ["elecciones", 3],
+      ["historia_reciente_espana", 3]
+    ],
+    "sentiment": [
+      "Enojo",
+      "Preocupación",
+      "Confianza"
+    ],
+    "lenguaje": [
+      "Lenguaje de confrontación",
+      "Lenguaje de crítica",
+      "Lenguaje de discurso público"
+    ],
+    "used_words": [
+      "verdad",
+      "ETA",
+      "gobierno",
+      "partido",
+      "socialista",
+      "PP",
+      "presidente",
+      "Zapatero",
+      "negociaron",
+      "muertos",
+      "víctimas",
+      "elecciones",
+      "mentira"
+    ]
+  }

@@ -1,0 +1,20 @@
+{
+    "politician_name": "Santiago Abascal",
+    "political_party": "VOX",
+    "url": "https://youtu.be/XHSkT9bmvR4?si=601G-aH5Td_cm64r",
+    "date": "29/10/2023",
+    "length": "06:02",
+    "main_topics": {
+      "Paz y conflicto": 7,
+      "Corrupción": 5,
+      "Derechos civiles": 8,
+      "Libertad de prensa": 4,
+      "Terrorismo": 5,
+      "Defensa": 4,
+      "Justicia": 5,
+      "Acusaciones políticas": 6
+    },
+    "sentiment": ["Preocupación", "Enojo", "Optimismo"],
+    "lenguaje": ["Lenguaje de confrontación", "Lenguaje de crítica", "Lenguaje patriótico"],
+    "used_words": ["España", "compatriotas", "leyes", "gobierno", "Sánchez", "político", "traición", "corrupción", "españoles", "Patria", "libertad"]
+  }
