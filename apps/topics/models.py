@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class Topic(models.Model):
     TOPIC_CHOICES = [
         ("economia", "Economía"),
@@ -40,6 +41,7 @@ class Topic(models.Model):
         ("patriotismo", "Patriotismo"),
     ]
     topic_type = models.TextField(choices=TOPIC_CHOICES)
+    percentage = models.FloatField()
     video = models.ForeignKey("videos.Video", on_delete=models.CASCADE)
 
     def __str__(self):
