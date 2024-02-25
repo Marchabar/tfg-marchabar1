@@ -11,7 +11,7 @@ from ...models import Topic
 
 
 class Command(BaseCommand):
-    help = "Load language json"
+    help = "Load topics json"
 
     def handle(self, *args, **options):
         for filename in glob.glob("answers/*.json"):
