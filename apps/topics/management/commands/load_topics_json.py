@@ -1,5 +1,6 @@
 import glob
 import json
+import unicodedata
 
 from django.core.management.base import BaseCommand
 from unidecode import unidecode
@@ -20,43 +21,55 @@ class Command(BaseCommand):
                     choice[0] for choice in Topic._meta.get_field("topic_type").choices
                 ]
                 main_topics = data.get("main_topics")
-                topics_dict = {}
+                topics_dict = dict()
                 total_percentage = 0
                 if isinstance(main_topics, dict):
                     for topic, percentage in main_topics.items():
+                        topic = self.camel_to_snake(topic)
+                        topic = topic.replace(" ", "_")
                         if topic not in valid_choices:
-                            break
+                            continue
                         elif Topic.objects.filter(
                             topic_type=topic,
                             video=Video.objects.get(url=data.get("url")),
                         ).exists():
-                            break
+                            continue
                         else:
                             topics_dict[topic] = percentage
                             total_percentage += percentage
-                    for topic, percentage in topics_dict.items():
-                        Topic.objects.create(
-                            topic_type=topic,
-                            percentage=percentage / total_percentage * 10,
-                            video=Video.objects.get(url=data.get("url")),
-                        )
                 elif isinstance(main_topics, list) and all(
                     isinstance(item, list) and len(item) == 2 for item in main_topics
                 ):
                     for topic, percentage in main_topics:
                         if topic not in valid_choices:
-                            break
+                            continue
                         elif Topic.objects.filter(
                             topic_type=topic,
                             video=Video.objects.get(url=data.get("url")),
                         ).exists():
-                            break
+                            continue
                         else:
                             topics_dict[topic] = percentage
                             total_percentage += percentage
-                    for topic, percentage in topics_dict.items():
-                        Topic.objects.create(
-                            topic_type=topic,
-                            percentage=percentage / total_percentage * 10,
-                            video=Video.objects.get(url=data.get("url")),
-                        )
+                else:
+                    print(f"Invalid main topics for {data.get('url')}")
+
+                for topic, percentage in topics_dict.items():
+                    Topic.objects.create(
+                        topic_type=topic,
+                        percentage=percentage / total_percentage * 100,
+                        video=Video.objects.get(url=data.get("url")),
+                    )
+
+    def camel_to_snake(self, name):
+        name_without_accents = "".join(
+            c
+            for c in unicodedata.normalize("NFD", name)
+            if unicodedata.category(c) != "Mn"
+        )
+        return "".join(
+            [
+                "_" + c.lower() if c.isupper() and i != 0 else c.lower()
+                for i, c in enumerate(name_without_accents)
+            ]
+        )
