@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'css/output.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col items-center justify-center">
+    <h1 class="text-4xl text-blue-900">Welcome to GraphPol</h1>
+</div>
+
+{% endblock %}
