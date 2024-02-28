@@ -16,3 +16,9 @@ __pycache__/
 # Django stuff:
 
 migrations/
+
+# node
+node_modules/
+
+# css
+output.css
