@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Dashboards{% endblock %}
 
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
@@ -10,7 +10,17 @@
 {% block content %}
 
 <div class="flex flex-col h-full">
-    <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
+    <div class="flex">
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
+        <div class="dropdown dropdown-right">
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Filtrar</div>
+            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+              <li><a class="text-gray-700 dark:text-gray-100">General</a></li>
+              <li><a class="text-gray-700 dark:text-gray-100">Partido</a></li>
+              <li><a class="text-gray-700 dark:text-gray-100">Político</a></li>
+            </ul>
+        </div>
+    </div>
     <div class="flex flex-wrap sm:h-full">
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white rounded-lg shadow-md h-full flex flex-col justify-center items-center">
