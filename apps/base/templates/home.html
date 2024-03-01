@@ -5,6 +5,7 @@
 
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
 {% endblock %}
 
 {% block content %}
@@ -13,35 +14,36 @@
     <div class="flex">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
         <div class="dropdown dropdown-right">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Filtrar</div>
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">PP</div>
             <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
-              <li><a class="text-gray-700 dark:text-gray-100">General</a></li>
-              <li><a class="text-gray-700 dark:text-gray-100">Partido</a></li>
-              <li><a class="text-gray-700 dark:text-gray-100">Político</a></li>
+                <li><a class="text-gray-700 dark:text-gray-100" data-party="PP">PP</a></li>
+                <li><a class="text-gray-700 dark:text-gray-100" data-party="PSOE">PSOE</a></li>
+                <li><a class="text-gray-700 dark:text-gray-100" data-party="VOX">VOX</a></li>
+                <li><a class="text-gray-700 dark:text-gray-100" data-party="SUMAR">SUMAR</a></li>
             </ul>
         </div>
-    </div>
+    </div>    
     <div class="flex flex-wrap sm:h-full">
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white rounded-lg shadow-md h-full flex flex-col justify-center items-center">
-                <h2 class="text-lg font-semibold">Card 1</h2>
-                <p>This is the content of card 1.</p>
+            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
+                <h2 class="text-lg font-semibold">Temática</h2>
+                <canvas id="partyChart" class="w-9/10 h-9/10"></canvas>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white rounded-lg shadow-md h-full flex flex-col justify-center items-center">
+            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
                 <h2 class="text-lg font-semibold">Card 2</h2>
                 <p>This is the content of card 2.</p>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white rounded-lg shadow-md h-full flex flex-col justify-center items-center">
+            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
                 <h2 class="text-lg font-semibold">Card 3</h2>
                 <p>This is the content of card 3.</p>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white rounded-lg shadow-md h-full flex flex-col justify-center items-center">
+            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
                 <h2 class="text-lg font-semibold">Card 4</h2>
                 <p>This is the content of card 4.</p>
             </div>
@@ -54,27 +56,91 @@
 {% block extrascript %}
 
 <!-- Chartjs -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
 <script>
-    let labels = ["January", "February", "March", "April", "May", "June", "July"];
-    let data = {
-    labels: labels,
-    datasets: [{
-        label: 'My First Dataset',
-        data: [65, 59, 80, 81, 56, 55, 40],
-    }]
-    };
-    var config = {
-    type: 'bar',
-    data : data,
-    options : {
-        responsive: true,
-    }
-    }
-    var ctx = document.getElementById('bar-chart').getContext('2d');
+    let dict_topics = '{{ dict_topics|escapejs }}'
+    let validJson = dict_topics.replace(/'/g, '"');
+    validJson = validJson.replace(/"{/g, '{').replace(/}"/g, '}');
+ 
+    let jsonData = JSON.parse(validJson);
     
-    // Instantiate the Chart.js object with the configuration
-    var myChart = new Chart(ctx, config);
+    var myChart; // Variable to store the current chart instance
+
+    function updateChart(party) {
+        var labels = Object.keys(jsonData[party]);
+        var values = Object.values(jsonData[party]);
+
+        var colors = [];
+        for (var i = 0; i < labels.length; i++) {
+            var randomColor = 'rgba(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', 0.5)';
+            colors.push(randomColor);
+        }
+
+        // Update the dropdown button text
+        document.querySelector('.dropdown .btn').textContent = party;
+
+        // Disable the currently selected option
+        document.querySelectorAll('.dropdown-content a').forEach(item => {
+            if (item.dataset.party === party) {
+                item.classList.add('disabled');
+            } else {
+                item.classList.remove('disabled');
+            }
+        });
+
+        // Destroy the previous chart instance if it exists
+        if (myChart) {
+            myChart.destroy();
+        }
+
+        var ctx = document.getElementById('partyChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Tematica ' + party,
+                    data: values,
+                    backgroundColor: colors,
+                    borderColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            display: false
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                legend: {
+                    display: false
+                },
+                responsive: true,
+            }
+        });
+
+        // Close the dropdown after updating the chart
+        document.querySelector('.dropdown-content').classList.remove('open');
+    }
+
+    // Initial chart with PP values
+    updateChart('PP');
+
+    // Event listener for dropdown items
+    document.querySelectorAll('.dropdown-content a').forEach(item => {
+        item.addEventListener('click', event => {
+            if (!event.target.classList.contains('disabled')) {
+                updateChart(event.target.dataset.party);
+            }
+        });
+    });        
+
 </script>
 
 {% endblock %}
