@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<div class="flex flex-col h-full">
+<div class="flex flex-col h-screen">
     <div class="flex">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
         <div class="dropdown dropdown-right">
@@ -27,7 +27,7 @@
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
                 <h2 class="text-lg font-semibold">Temática</h2>
-                <canvas id="partyChart" class="w-9/10 h-9/10"></canvas>
+                <canvas id="partyChart" class="w-full h-full"></canvas>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
@@ -38,8 +38,8 @@
         </div>
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
-                <h2 class="text-lg font-semibold">Card 3</h2>
-                <p>This is the content of card 3.</p>
+                <h2 class="text-lg font-semibold">Sentimiento</h2>
+                <canvas id="pieChart" class="w-full h-full"></canvas>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
@@ -57,13 +57,19 @@
 
 <!-- Chartjs -->
 <script>
-    let dict_topics = '{{ dict_topics|escapejs }}'
+    let dict_topics = '{{ dict_topics|escapejs }}';
     let validJson = dict_topics.replace(/'/g, '"');
     validJson = validJson.replace(/"{/g, '{').replace(/}"/g, '}');
- 
+
     let jsonData = JSON.parse(validJson);
-    
-    var myChart; // Variable to store the current chart instance
+
+    let dict_sentiments = '{{ dict_sentiments|escapejs }}';
+    let validJsonSentiments = dict_sentiments.replace(/'/g, '"').replace(/"(\[.*?\])"/g, '$1');
+    console.log(validJsonSentiments);
+    jsonDataSentiments = JSON.parse(validJsonSentiments);
+
+    var barChart; // Variable to store the current chart instance
+    var pieChart; // Variable to store the current chart instance
 
     function updateChart(party) {
         var labels = Object.keys(jsonData[party]);
@@ -87,13 +93,14 @@
             }
         });
 
-        // Destroy the previous chart instance if it exists
-        if (myChart) {
-            myChart.destroy();
+        // Destroy the previous bar chart instance if it exists
+        if (barChart) {
+            barChart.destroy();
         }
 
+        // Update bar chart
         var ctx = document.getElementById('partyChart').getContext('2d');
-        myChart = new Chart(ctx, {
+        barChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -122,11 +129,41 @@
                     display: false
                 },
                 responsive: true,
+                maintainAspectRatio: false // Add this line
             }
         });
 
-        // Close the dropdown after updating the chart
-        document.querySelector('.dropdown-content').classList.remove('open');
+        var labelsPie = jsonDataSentiments[party];
+        var valuesPie = labelsPie.map(sentiment => labelsPie.filter(s => s === sentiment).length);
+
+        if (pieChart) {
+            pieChart.destroy();
+        }
+
+        // Update pie chart
+        var ctxPie = document.getElementById('pieChart').getContext('2d');
+        pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: labelsPie,
+                datasets: [{
+                    label: 'Sentiments of ' + party,
+                    data: valuesPie,
+                    backgroundColor: colors,
+                    borderColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    align: 'center'
+                },
+                responsive: true,
+                maintainAspectRatio: false // Add this line
+            }
+        });
     }
 
     // Initial chart with PP values
@@ -139,8 +176,7 @@
                 updateChart(event.target.dataset.party);
             }
         });
-    });        
-
+    });
 </script>
 
 {% endblock %}

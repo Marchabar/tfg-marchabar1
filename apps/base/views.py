@@ -8,9 +8,10 @@ from ..videos.models import Video
 from ..words.models import Word
 
 
-def load_graphs(request):
+def load_charts(request):
     videos = Video.objects.all()
     topics = Topic.objects.all()
+    sentiments = Sentiment.objects.all()
     dict_topics = {}
 
     for video in videos:
@@ -33,12 +34,30 @@ def load_graphs(request):
 
     for party in dict_topics:
         dict_topics[party] = str(dict_topics[party]).replace("'", '"')
-    print(dict_topics)
+
+    dict_sentiments = {}
+    for video in videos:
+        if video.political_party not in dict_sentiments:
+            dict_sentiments[video.political_party] = []
+        for sentiment in sentiments:
+            if sentiment.video.id != video.id:
+                continue
+            else:
+                if (
+                    sentiment.sentiment_type
+                    not in dict_sentiments[video.political_party]
+                ):
+                    dict_sentiments[video.political_party].append(
+                        sentiment.sentiment_type
+                    )
+    for party in dict_sentiments:
+        dict_sentiments[party] = str(dict_sentiments[party]).replace("'", '"')
 
     return render(
         request,
         "home.html",
         {
             "dict_topics": dict_topics,
+            "dict_sentiments": dict_sentiments,
         },
     )
