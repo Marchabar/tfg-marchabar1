@@ -27,13 +27,13 @@
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
                 <h2 class="text-lg font-semibold">Temática</h2>
-                <canvas id="partyChart" class="w-full h-full"></canvas>
+                <canvas id="partyChart"></canvas>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
+            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center">
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
-                <div class="flex flex-col gap-1 w-full h-full justify-center items-center">
+                <div class="flex flex-col gap-1 w-full justify-center items-center">
                     {% for video in videos %}
                     <a href="/" class="flex w-5/6 bg-white dark:bg-gray-200 hover:bg-gray-300 shadow-s rounded-lg p-2">
                         <div>
@@ -55,13 +55,13 @@
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>
-                <canvas id="pieChart" class="w-full h-full"></canvas>
+                <canvas id="pieChart"></canvas>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
-                <h2 class="text-lg font-semibold">Card 4</h2>
-                <p>This is the content of card 4.</p>
+                <h2 class="text-lg font-semibold">Tipo de lenguaje</h2>
+                <canvas id="polarChart"></canvas>
             </div>
         </div>
     </div>
@@ -81,11 +81,16 @@
 
     let dict_sentiments = '{{ dict_sentiments|escapejs }}';
     let validJsonSentiments = dict_sentiments.replace(/'/g, '"').replace(/"(\[.*?\])"/g, '$1');
-    console.log(validJsonSentiments);
     jsonDataSentiments = JSON.parse(validJsonSentiments);
+
+    let dict_languages = '{{ dict_languages|escapejs }}';
+    let validJsonLanguages = dict_languages.replace(/'/g, '"');
+    validJsonLanguages = validJsonLanguages.replace(/"{/g, '{').replace(/}"/g, '}')
+    jsonDataLanguages = JSON.parse(validJsonLanguages);
 
     var barChart; // Variable to store the current chart instance
     var pieChart; // Variable to store the current chart instance
+    var polarChart;
 
     function updateChart(party) {
         var labels = Object.keys(jsonData[party]);
@@ -93,9 +98,11 @@
 
         var colors = [];
         for (var i = 0; i < labels.length; i++) {
-            var randomColor = 'rgba(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', 0.5)';
-            colors.push(randomColor);
+            var vibrantColor = 'rgb(' + Math.floor(50 + Math.random() * 156) + ', ' + Math.floor(50 + Math.random() * 156) + ', ' + Math.floor(50 + Math.random() * 156) + ')';
+            colors.push(vibrantColor);
         }
+
+
 
         // Update the dropdown button text
         document.querySelector('.dropdown .btn').textContent = party;
@@ -180,6 +187,39 @@
                 maintainAspectRatio: false // Add this line
             }
         });
+
+        var labelsPolar = Object.keys(jsonDataLanguages[party]);
+        var valuesPolar = Object.values(jsonDataLanguages[party]);
+
+        if (polarChart) {
+            polarChart.destroy();
+        }
+
+        // Update doughnut chart
+        var ctxDoughnut = document.getElementById('polarChart').getContext('2d');
+        polarChart = new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: labelsPolar,
+                datasets: [{
+                    label: 'Language of ' + party,
+                    data: valuesPolar,
+                    backgroundColor: colors,
+                    borderColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    align: 'center'
+                },
+                responsive: true,
+                maintainAspectRatio: false // Add this line
+            }
+        });
+
     }
 
     // Initial chart with PP values

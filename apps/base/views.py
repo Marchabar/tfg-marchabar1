@@ -12,6 +12,7 @@ def load_charts(request):
     videos = Video.objects.all()
     topics = Topic.objects.all()
     sentiments = Sentiment.objects.all()
+    languages = Language.objects.all()
     dict_topics = {}
 
     for video in videos:
@@ -53,7 +54,21 @@ def load_charts(request):
     for party in dict_sentiments:
         dict_sentiments[party] = str(dict_sentiments[party]).replace("'", '"')
 
-    # I want to order videos by date
+    dict_languages = {}
+    for video in videos:
+        if video.political_party not in dict_languages:
+            dict_languages[video.political_party] = {}
+        for language in languages:
+            if language.video.id != video.id:
+                continue
+            else:
+                if language.language_type not in dict_languages[video.political_party]:
+                    dict_languages[video.political_party][language.language_type] = 0
+                dict_languages[video.political_party][language.language_type] += 1
+    for party in dict_languages:
+        dict_languages[party] = str(dict_languages[party]).replace("'", '"')
+    print(dict_languages)
+
     videos = Video.objects.all().order_by("date")[:3]
 
     return render(
@@ -62,6 +77,7 @@ def load_charts(request):
         {
             "dict_topics": dict_topics,
             "dict_sentiments": dict_sentiments,
+            "dict_languages": dict_languages,
             "videos": videos,
         },
     )
