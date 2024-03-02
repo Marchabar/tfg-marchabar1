@@ -67,7 +67,6 @@ def load_charts(request):
                 dict_languages[video.political_party][language.language_type] += 1
     for party in dict_languages:
         dict_languages[party] = str(dict_languages[party]).replace("'", '"')
-    print(dict_languages)
 
     videos = Video.objects.all().order_by("date")[:3]
 
