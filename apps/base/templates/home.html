@@ -32,12 +32,26 @@
         </div>
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
-                <h2 class="text-lg font-semibold">Videos recientes</h2>
-                <div class="flex w-full h-full justify-center items-center">
-                    <p>This is the content of card 2.</p>
+                <h2 class="text-lg font-semibold">Vídeos recientes</h2>
+                <div class="flex flex-col gap-3 w-full h-full justify-center items-center">
+                    {% for video in videos %}
+                    <div class="flex w-5/6 bg-white dark:bg-gray-200 hover:bg-gray-300 shadow-s rounded-lg p-2">
+                        <div>
+                            <figure>
+                                <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg"/>
+                            </figure>
+                        </div>
+                        <div class="flex flex-col justify-center ml-4 text-gray-700">
+                            <p class="font-semibold overflow-hidden overflow-ellipsis max-w-xs">
+                                <span style="white-space: nowrap; flex: 2;">{{video.title}}</span>
+                            </p>
+                            <p>{{video.political_party}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
-        </div>
+        </div>                                                    
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md h-full flex flex-col justify-center items-center">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>

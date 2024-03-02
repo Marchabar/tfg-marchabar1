@@ -53,11 +53,15 @@ def load_charts(request):
     for party in dict_sentiments:
         dict_sentiments[party] = str(dict_sentiments[party]).replace("'", '"')
 
+    # I want to order videos by date
+    videos = Video.objects.all().order_by("date")[:3]
+
     return render(
         request,
         "home.html",
         {
             "dict_topics": dict_topics,
             "dict_sentiments": dict_sentiments,
+            "videos": videos,
         },
     )
