@@ -92,14 +92,25 @@
     var pieChart; // Variable to store the current chart instance
     var polarChart;
 
+
     function updateChart(party) {
         var labels = Object.keys(jsonData[party]);
         var values = Object.values(jsonData[party]);
 
-        var colors = [];
-        for (var i = 0; i < labels.length; i++) {
-            var vibrantColor = 'rgb(' + Math.floor(50 + Math.random() * 156) + ', ' + Math.floor(50 + Math.random() * 156) + ', ' + Math.floor(50 + Math.random() * 156) + ')';
-            colors.push(vibrantColor);
+        
+        function getNextColor(index) {
+            // Array of default Chart.js colors
+            const defaultColors = [
+                '#36a2eb', // Blue
+                '#4bc0c0', // Green
+                '#ffcd56', // Yellow
+                '#ff9f40', // Orange
+                '#c9cbcf', // Gray
+                '#9966ff', // Purple
+                '#ff6384'  // Indigo
+            ];
+
+            return defaultColors[index % defaultColors.length];
         }
 
 
@@ -130,8 +141,8 @@
                 datasets: [{
                     label: 'Tematica ' + party,
                     data: values,
-                    backgroundColor: colors,
-                    borderColor: colors,
+                    backgroundColor: labels.map((_, i) => getNextColor(i)),
+                    borderColor: labels.map((_, i) => getNextColor(i)),
                     borderWidth: 1
                 }]
             },
@@ -172,8 +183,8 @@
                 datasets: [{
                     label: 'Sentiments of ' + party,
                     data: valuesPie,
-                    backgroundColor: colors,
-                    borderColor: colors,
+                    backgroundColor: labels.map((_, i) => getNextColor(i)),
+                    borderColor: labels.map((_, i) => getNextColor(i)),
                     borderWidth: 1
                 }]
             },
@@ -204,8 +215,8 @@
                 datasets: [{
                     label: 'Language of ' + party,
                     data: valuesPolar,
-                    backgroundColor: colors,
-                    borderColor: colors,
+                    backgroundColor: labels.map((_, i) => getNextColor(i)),
+                    borderColor: labels.map((_, i) => getNextColor(i)),
                     borderWidth: 1
                 }]
             },
