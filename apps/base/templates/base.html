@@ -63,12 +63,68 @@
                     </a>
                 </nav>
             </div>
-
-            <div class="flex flex-col items-center mt-6 -mx-2">
-                <img class="object-cover w-24 h-24 mx-2 rounded-full" src="{% static 'images/user-icon.jpg' %}" alt="avatar">
-                <h4 class="mx-2 mt-2 font-medium text-gray-800 dark:text-gray-200">User Name</h4>
-                <p class="mx-2 mt-1 text-sm font-medium text-gray-600 dark:text-gray-400">username@example.com</p>
-            </div>
+            {% if user.is_authenticated %}
+                <div class="flex flex-col items-center mt-6 -mx-2">
+                    <img class="object-cover w-24 h-24 mx-2 rounded-full" src="{% static 'images/user-icon.jpg' %}" alt="avatar">
+                    <h4 class="mx-2 mt-2 font-medium text-gray-800 dark:text-gray-200">{{user.username}}</h4>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn w-32 px-4 py-2 mt-2 font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-500">Logout</button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="flex flex-col items-center mt-6 -mx-2">
+                    <button class="btn w-32 px-4 py-2 mx-2 font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500" onclick="my_modal_3.showModal()">Iniciar Sesión</button>
+                    <dialog id="my_modal_3" class="modal">
+                        <div class="modal-box w-11/12 max-w-5xl">
+                            <form method="post" action="{% url 'login' %}">
+                                {% csrf_token %}
+                                <button class="btn btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal()">✕</button>
+                                <div class="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
+                                    <div class="hidden bg-cover lg:block lg:w-1/2" style="background-image: url('https://images.unsplash.com/photo-1606660265514-358ebbadc80d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1575&q=80');"></div>
+                                
+                                    <div class="w-full px-6 py-8 md:px-8 lg:w-1/2">
+                                        <div class="flex justify-center mx-auto">
+                                            <img class="w-auto h-7 sm:h-8" src="https://merakiui.com/images/logo.svg" alt="">
+                                        </div>
+                                
+                                        <p class="mt-3 text-xl text-center text-gray-600 dark:text-gray-200">
+                                            Bienvenido/a de nuevo!
+                                        </p>
+                                
+                                        <div class="mt-4">
+                                            <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="loggingUsername">Nombre de usuario</label>
+                                            <input id="loggingUsername" name="username" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="username" />
+                                        </div>
+                                
+                                        <div class="mt-4">
+                                            <div class="flex justify-between">
+                                                <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="loggingPassword">Contraseña</label>
+                                            </div>
+                                
+                                            <input id="loggingPassword" name="password" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="password" />
+                                        </div>
+                                
+                                        <div class="mt-6">
+                                            <button type="submit" class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
+                                                Iniciar Sesión
+                                            </button>
+                                        </div>
+                                
+                                        <div class="flex items-center justify-between mt-4">
+                                            <span class="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
+                                
+                                            <a href="#" class="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline">o Registrarse</a>
+                                
+                                            <span class="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </dialog>
+                </div>    
+            {% endif %}                    
         </aside>
         <section class="flex-grow p-8 bg-gradient-to-b from-gray-100 to-gray-300 dark:from-gray-700 dark:to-gray-900 ml-64">
             {% block content %}
@@ -79,6 +135,11 @@
     </div>
 
     <script>
+        function closeModal() {
+            event.preventDefault();
+            var modal = document.getElementById("my_modal_3");
+            modal.close();
+        }
         // Function to set the theme based on user selection
         function setTheme(theme) {
             const html = document.getElementById('html');

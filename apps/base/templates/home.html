@@ -73,6 +73,15 @@
 
 <!-- Chartjs -->
 <script>
+    setTimeout(function() {
+        document.getElementById('success-notification').style.display = 'none';
+    }, 2000);
+
+    // Function to hide error notification after 3 seconds
+    setTimeout(function() {
+        document.getElementById('warning-notification').style.display = 'none';
+    }, 2000);
+
     let dict_topics = '{{ dict_topics|escapejs }}';
     let validJson = dict_topics.replace(/'/g, '"');
     validJson = validJson.replace(/"{/g, '{').replace(/}"/g, '}');
