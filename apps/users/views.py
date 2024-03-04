@@ -31,7 +31,10 @@ class LoginView(View):
             )  # Replace 'dashboard' with the URL name of your dashboard page
         else:
             return JsonResponse(
-                {"success": False, "message": "Invalid username or password."}
+                {
+                    "success": False,
+                    "message": "Nombre de usuario o contraseña son inválidos.",
+                }
             )
 
 
