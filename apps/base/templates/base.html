@@ -76,8 +76,8 @@
                 <div class="flex flex-col items-center mt-6 -mx-2">
                     <button class="btn w-32 px-4 py-2 mx-2 font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500" onclick="my_modal_3.showModal()">Iniciar Sesión</button>
                     <dialog id="my_modal_3" class="modal">
-                        <div class="modal-box w-11/12 max-w-5xl">
-                            <form method="post" action="{% url 'login' %}">
+                        <div class="modal-box w-11/12 max-w-5xl bg-white dark:bg-gray-800">
+                            <form id="myForm" method="post" action="{% url 'login' %}">
                                 {% csrf_token %}
                                 <button class="btn btn-circle btn-ghost absolute right-2 top-2" onclick="closeModal()">✕</button>
                                 <div class="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
@@ -93,16 +93,16 @@
                                         </p>
                                 
                                         <div class="mt-4">
-                                            <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="loggingUsername">Nombre de usuario</label>
-                                            <input id="loggingUsername" name="username" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="username" />
+                                            <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="username">Nombre de usuario</label>
+                                            <input id="username" name="username" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="username" required/>
                                         </div>
                                 
                                         <div class="mt-4">
                                             <div class="flex justify-between">
-                                                <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="loggingPassword">Contraseña</label>
+                                                <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" for="password">Contraseña</label>
                                             </div>
                                 
-                                            <input id="loggingPassword" name="password" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="password" />
+                                            <input id="password" name="password" class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300" type="password" required/>
                                         </div>
                                 
                                         <div class="mt-6">
@@ -121,6 +121,7 @@
                                     </div>
                                 </div>
                             </form>
+                            <div id="errorMessage" class="text-red-500 text-center"></div>
                         </div>
                     </dialog>
                 </div>    
@@ -135,6 +136,27 @@
     </div>
 
     <script>
+        document.getElementById('myForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var form = document.getElementById('myForm');
+            var formData = new FormData(form);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data['success']) {
+                    window.location.href = '/';
+                } else {
+                    document.getElementById('errorMessage').innerHTML = data['message'];
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
         function closeModal() {
             event.preventDefault();
             var modal = document.getElementById("my_modal_3");
@@ -172,6 +194,7 @@
                 setTheme('light');
             }
         });
+
     
     </script>
     

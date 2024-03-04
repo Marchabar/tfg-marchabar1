@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views import View
 
@@ -25,13 +26,13 @@ class LoginView(View):
         if user is not None:
             # User is authenticated, log in the user
             login(request, user)
-            # Redirect to a success page or dashboard
-            return redirect(
-                "/"
+            return JsonResponse(
+                {"success": True}
             )  # Replace 'dashboard' with the URL name of your dashboard page
         else:
-            # Authentication failed, render login form with error message
-            return redirect("/")
+            return JsonResponse(
+                {"success": False, "message": "Invalid username or password."}
+            )
 
 
 class LogoutView(View):

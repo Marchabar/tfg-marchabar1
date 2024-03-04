@@ -30,12 +30,12 @@
                 <canvas id="partyChart"></canvas>
             </div>
         </div>
-        <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center">
+        <div class="w-full sm:w-1/2">
+            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center py-4">
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
                 <div class="flex flex-col gap-1 w-full justify-center items-center p-2">
                     {% for video in videos %}
-                    <a href="/" class="flex w-1/2 bg-white dark:bg-gray-200 hover:bg-gray-300 shadow-s rounded-lg p-2">
+                    <a href="/" class="flex w-4/5 bg-white dark:bg-gray-200 hover:bg-gray-300 shadow-s rounded-lg p-2">
                         <div>
                             <figure>
                                 <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg"/>
@@ -73,15 +73,6 @@
 
 <!-- Chartjs -->
 <script>
-    setTimeout(function() {
-        document.getElementById('success-notification').style.display = 'none';
-    }, 2000);
-
-    // Function to hide error notification after 3 seconds
-    setTimeout(function() {
-        document.getElementById('warning-notification').style.display = 'none';
-    }, 2000);
-
     let dict_topics = '{{ dict_topics|escapejs }}';
     let validJson = dict_topics.replace(/'/g, '"');
     validJson = validJson.replace(/"{/g, '{').replace(/}"/g, '}');
