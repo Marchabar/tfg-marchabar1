@@ -8,7 +8,7 @@ class Video(models.Model):
     url = models.URLField()
     thumbnail = models.ImageField(upload_to="thumbnails/")
     length = models.TextField()
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
     politician_name = models.CharField(max_length=100)
     PARTIES_CHOICES = [
         ("PP", "Partido Popular"),

@@ -36,11 +36,8 @@ class Command(BaseCommand):
                             if data.get("political_party") not in valid_choices:
                                 break
                             else:
-                                date_str = data.get("date")
-                                if date_str:
-                                    date = datetime.strptime(date_str, "%d/%m/%Y")
-                                else:
-                                    date = None
+                                date = datetime.strptime(data.get("date"), "%d/%m/%Y")
+
                                 if title not in [
                                     video.title for video in Video.objects.all()
                                 ]:
