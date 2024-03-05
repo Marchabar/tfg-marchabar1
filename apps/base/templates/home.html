@@ -25,13 +25,13 @@
     </div>    
     <div class="flex flex-wrap sm:h-full">
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Temática</h2>
                 <canvas id="partyChart"></canvas>
             </div>
         </div>
         <div class="w-full sm:w-1/2">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center py-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center py-4">
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
                 <div class="flex flex-col gap-1 w-full justify-center items-center p-2">
                     {% for video in videos %}
@@ -53,13 +53,13 @@
             </div>
         </div>                                                    
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>
                 <canvas id="pieChart"></canvas>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Tipo de lenguaje</h2>
                 <canvas id="polarChart"></canvas>
             </div>
@@ -232,7 +232,6 @@
         });
 
     }
-
     // Initial chart with PP values
     updateChart('PP');
 
