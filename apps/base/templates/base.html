@@ -206,7 +206,8 @@
     </div>
 
     <script>
-        document.getElementById('myForm').addEventListener('submit', function(event) {
+        // Function to handle form submission
+        function handleFormSubmission(event) {
             event.preventDefault();
             var form = document.getElementById('myForm');
             var formData = new FormData(form);
@@ -225,9 +226,16 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var myForm = document.getElementById('myForm');
+            if (myForm) {
+                myForm.addEventListener('submit', handleFormSubmission);
+            }
         });
 
-        document.getElementById('signUpForm').addEventListener('submit', function(event) {
+        function handleSignUpFormSubmission(event) {
             event.preventDefault();
             var form = document.getElementById('signUpForm');
             var formData = new FormData(form);
@@ -255,14 +263,22 @@
             .catch(error => {
                 console.error('Error:', error);
             });
-        });
+        }
 
+        // Function to update file name
         function updateFileName() {
             var input = document.getElementById('dropzone-file');
             var fileName = input.files[0].name;
             document.getElementById('file-name').textContent = fileName;
         }
 
+        // Add event listener to the sign-up form
+        document.addEventListener('DOMContentLoaded', function() {
+            var signUpForm = document.getElementById('signUpForm');
+            if (signUpForm) {
+                signUpForm.addEventListener('submit', handleSignUpFormSubmission);
+            }
+        });
 
         function closeModal() {
             event.preventDefault();
