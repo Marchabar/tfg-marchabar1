@@ -65,7 +65,7 @@
             </div>
             {% if user.is_authenticated %}
                 <div class="flex flex-col items-center mt-6 -mx-2">
-                    <img class="object-cover w-24 h-24 mx-2 rounded-full" src="{% static 'images/user-icon.jpg' %}" alt="avatar">
+                    <img class="object-cover w-24 h-24 mx-2 rounded-full" src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'images/user-icon.jpg' %}{% endif %}" alt="avatar">
                     <h4 class="mx-2 mt-2 font-medium text-gray-800 dark:text-gray-200">{{user.username}}</h4>
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
@@ -127,7 +127,7 @@
                     <dialog id="my_modal_4" class="modal">
                         <div class="modal-box w-11/12 max-w-5xl bg-white dark:bg-gray-800">
                             <!-- Sign Up Form -->
-                            <form id="signUpForm" method="post" action="{% url 'signup' %}">
+                            <form id="signUpForm" method="post" action="{% url 'signup' %}" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <button class="btn btn-circle btn-ghost absolute right-2 top-2" onclick="closeSignUpModal()">✕</button>
 
@@ -154,9 +154,9 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                     </svg>
                     
-                                    <h2 class="mx-3 text-gray-400">Foto de perfil</h2>
+                                    <h2 id="file-name" class="mx-3 text-gray-400">Foto de perfil</h2>
                     
-                                    <input id="dropzone-file" type="file" class="hidden" />
+                                    <input name="avatar" id="dropzone-file" type="file" class="hidden" onchange="updateFileName()"/>
                                 </label>
                     
                                 <div class="relative flex items-center mt-4">
@@ -206,7 +206,8 @@
     </div>
 
     <script>
-        document.getElementById('myForm').addEventListener('submit', function(event) {
+        // Function to handle form submission
+        function handleFormSubmission(event) {
             event.preventDefault();
             var form = document.getElementById('myForm');
             var formData = new FormData(form);
@@ -225,9 +226,16 @@
             .catch(error => {
                 console.error('Error:', error);
             });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var myForm = document.getElementById('myForm');
+            if (myForm) {
+                myForm.addEventListener('submit', handleFormSubmission);
+            }
         });
 
-        document.getElementById('signUpForm').addEventListener('submit', function(event) {
+        function handleSignUpFormSubmission(event) {
             event.preventDefault();
             var form = document.getElementById('signUpForm');
             var formData = new FormData(form);
@@ -255,8 +263,22 @@
             .catch(error => {
                 console.error('Error:', error);
             });
-        });
+        }
 
+        // Function to update file name
+        function updateFileName() {
+            var input = document.getElementById('dropzone-file');
+            var fileName = input.files[0].name;
+            document.getElementById('file-name').textContent = fileName;
+        }
+
+        // Add event listener to the sign-up form
+        document.addEventListener('DOMContentLoaded', function() {
+            var signUpForm = document.getElementById('signUpForm');
+            if (signUpForm) {
+                signUpForm.addEventListener('submit', handleSignUpFormSubmission);
+            }
+        });
 
         function closeModal() {
             event.preventDefault();

@@ -25,23 +25,23 @@
     </div>    
     <div class="flex flex-wrap sm:h-full">
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Temática</h2>
                 <canvas id="partyChart"></canvas>
             </div>
         </div>
-        <div class="w-full sm:w-1/2">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center py-4">
+        <div class="w-full sm:w-1/2 p-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
                 <div class="flex flex-col gap-1 w-full justify-center items-center p-2">
                     {% for video in videos %}
-                    <a href="/" class="flex w-4/5 bg-white dark:bg-gray-200 hover:bg-gray-300 shadow-s rounded-lg p-2">
+                    <a href="/" class="flex w-4/5 bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
                         <div>
                             <figure>
                                 <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg"/>
                             </figure>
                         </div>
-                        <div class="flex flex-col justify-center ml-4 text-gray-700">
+                        <div class="flex flex-col justify-center ml-4 text-gray-700 dark:text-gray-200">
                             <p class="font-semibold overflow-hidden overflow-ellipsis max-w-xs">
                                 <span class="line-clamp-2">{{video.title}}</span>
                             </p>
@@ -53,13 +53,13 @@
             </div>
         </div>                                                    
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>
                 <canvas id="pieChart"></canvas>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-200 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Tipo de lenguaje</h2>
                 <canvas id="polarChart"></canvas>
             </div>
@@ -155,7 +155,8 @@
                     }],
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            fontColor: 'rgb(167 174 188)'
                         }
                     }]
                 },
@@ -192,7 +193,10 @@
                 legend: {
                     display: true,
                     position: 'right',
-                    align: 'center'
+                    align: 'center',
+                    labels: {
+                        fontColor: 'rgb(167 174 188)'
+                    }
                 },
                 responsive: true,
                 maintainAspectRatio: false // Add this line
@@ -224,15 +228,18 @@
                 legend: {
                     display: true,
                     position: 'right',
-                    align: 'center'
+                    align: 'center',
+                    labels: {
+                        fontColor: 'rgb(167 174 188)'
+                    }
                 },
                 responsive: true,
                 maintainAspectRatio: false // Add this line
             }
         });
+        
 
     }
-
     // Initial chart with PP values
     updateChart('PP');
 
