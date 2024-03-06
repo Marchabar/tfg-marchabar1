@@ -1,9 +1,9 @@
 name: Create release
 
 on:
-  push:
-    branches:
-      - master
+    push:
+        tags:
+        - "v*"
 
 jobs:
   release:
