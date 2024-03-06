@@ -44,6 +44,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Apply database migrations
+        run: python manage.py migrate
+
       - name: Run Django tests with coverage
         run: |
           coverage run manage.py test apps
