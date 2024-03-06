@@ -153,3 +153,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Media files
 MEDIA_URL = "/avatars/"
 MEDIA_ROOT = BASE_DIR
+
+TEST_RUNNER = "django.test.runner.DiscoverRunner"

@@ -14,9 +14,6 @@ def index(request):
 
 
 class LoginView(View):
-    def get(self, request):
-        # Render the login form
-        return render(request, "login.html")
 
     def post(self, request):
         # Get username and password from the POST data
@@ -48,8 +45,6 @@ class LogoutView(View):
 
 
 class SignUpView(View):
-    def get(self, request):
-        return render(request, "signup.html")
 
     def post(self, request):
         # Get the POST data
