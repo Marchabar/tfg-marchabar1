@@ -2,8 +2,8 @@ name: Create release
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - "v*"
 
 jobs:
   release:
@@ -11,41 +11,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Set up Git
-        run: |
-          git config --global user.name "Marchabar"
-          git config --global user.email "marchabar1@alum.us.es"
-
-      - name: Determine next version
-        id: determine_version
-        run: |
-          # Get the latest tag
-          latest_tag=$(git describe --tags --abbrev=0)
-          # Split the version number into major, minor, and patch parts
-          IFS='.' read -r -a parts <<< "$latest_tag"
-          major="${parts[0]}"
-          minor="${parts[1]}"
-          patch="${parts[2]}"
-          # Increment the major version and reset minor and patch to 0
-          major=$((major + 1))
-          minor=0
-          patch=0
-          # Set the new version
-          new_version="$major.$minor.$patch"
-          echo "::set-output name=version::$new_version"
-
-      - name: Create tag and release
+    
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Get the new version
-          new_version="${{ steps.determine_version.outputs.version }}"
-          # Create tag
-          git tag -a "v$new_version" -m "Release $new_version"
-          # Push tag
-          git push origin "v$new_version"
-          # Create release
-          echo "{\"tag_name\": \"v$new_version\", \"name\": \"Release $new_version\", \"body\": \"\", \"draft\": false}" > release.json
-          curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3+json" -d @release.json https://api.github.com/repos/${GITHUB_REPOSITORY}/releases
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
