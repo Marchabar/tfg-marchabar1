@@ -1,0 +1,40 @@
+{
+    "politician_name": "Pedro Sánchez",
+    "political_party": "PSOE",
+    "url": "https://youtu.be/4HFPPL9_Now?si=7PycXPJkiO7WVn7w",
+    "date": "31/05/2023",
+    "length": "01:28",
+    "main_topics": [
+      ["elecciones", 5],
+      ["pucherazo", 4],
+      ["crispación", 4],
+      ["democracia", 3],
+      ["derechos_civiles", 3],
+      ["medios_de_comunicacion", 3]
+    ],
+    "sentiment": [
+      "Preocupación",
+      "Confianza"
+    ],
+    "lenguaje": [
+      "Lenguaje de confrontación",
+      "Lenguaje de crítica",
+      "Lenguaje de debate",
+      "Lenguaje de discurso público"
+    ],
+    "used_words": [
+      "elecciones",
+      "españoles",
+      "pucherazo",
+      "crispar",
+      "argumentos",
+      "desmovilicemos",
+      "inventar",
+      "voto",
+      "socialista",
+      "corriente",
+      "reaccionaria",
+      "ganar"
+    ]
+  }
+  

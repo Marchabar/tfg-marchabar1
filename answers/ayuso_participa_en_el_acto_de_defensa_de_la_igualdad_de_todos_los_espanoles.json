@@ -1,0 +1,36 @@
+{
+    "politician_name": "Isabel Díaz Ayuso",
+    "political_party": "PP",
+    "url": "https://youtu.be/y1oglTY3S3k?si=EBRKyIHwq-CpfkNR",
+    "date": "25/10/2023",
+    "length": "08:39",
+    "main_topics": [
+      ["politica_exterior", 5],
+      ["derechos_civiles", 10],
+      ["corrupcion", 5],
+      ["economia", 15],
+      ["derechos_de_las_minorias", 10],
+      ["inmigracion", 5],
+      ["seguridad_nacional", 10],
+      ["defensa", 5],
+      ["historia_reciente_espana", 10],
+      ["justicia", 5],
+      ["igualdad_de_genero", 5],
+      ["terrorismo", 5]
+    ],
+    "sentiment": [
+      "Enojo",
+      "Preocupación",
+      "Escepticismo",
+      "Optimismo",
+      "Empatía"
+    ],
+    "lenguaje": [
+      "Lenguaje partidista",
+      "Lenguaje de confrontación",
+      "Lenguaje de crítica",
+      "Lenguaje de promesas",
+      "Lenguaje de estadísticas"
+    ],
+    "used_words": ["España", "Sánchez", "Madrid", "amnistía", "ninguna", "presidente", "decimos", "gobierno", "corrupción", "dignidad"]
+  }

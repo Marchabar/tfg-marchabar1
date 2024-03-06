@@ -1,0 +1,24 @@
+{
+    "politician_name": "Pablo Bustinduy",
+    "political_party": "SUMAR",
+    "url": "https://youtu.be/tRtioYJYOFc?si=Iu7OswNT-RDt-a8j",
+    "date": "15/01/2024",
+    "length": "07:04",
+    "main_topics": {
+      "Medio ambiente": 5,
+      "Derechos civiles": 10,
+      "Inmigración": 5,
+      "Seguridad nacional": 5,
+      "Política exterior": 10,
+      "Criminalidad": 5,
+      "Paz y conflicto": 15,
+      "Defensa": 5,
+      "Legislación": 10,
+      "Justicia": 10,
+      "Derechos de las minorías": 10
+    },
+    "sentiment": ["Escepticismo", "Optimismo", "Entusiasmo"],
+    "lenguaje": ["Lenguaje formal", "Lenguaje de discurso público", "Lenguaje de legislación", "Lenguaje de compromiso"],
+    "used_words": ["democrática", "sociedad", "derechos", "España", "justicia", "política", "vida", "mundo", "pueblo", "compromiso"]
+  }
+  

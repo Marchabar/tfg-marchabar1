@@ -1,0 +1,22 @@
+{
+    "politician_name": "Yolanda Díaz",
+    "political_party": "SUMAR",
+    "url": "https://youtu.be/95Mxjv-Qx0U?si=cwAUPYe0gUYuiXeI",
+    "date": "16/07/2023",
+    "length": "24:25",
+    "main_topics": {
+      "Economía": 10,
+      "Medio ambiente": 15,
+      "Empleo": 10,
+      "Educación": 10,
+      "Derechos civiles": 15,
+      "Vivienda": 10,
+      "Corrupción": 5,
+      "Salud": 5,
+      "Igualdad de género": 10
+    },
+    "sentiment": ["Escepticismo", "Optimismo", "Empatía"],
+    "lenguaje": ["Lenguaje partidista", "Lenguaje de campaña", "Lenguaje de confrontación"],
+    "used_words": ["votar", "país", "gente", "mejor", "derechos", "España", "salir", "votar", "vamos", "elecciones", "gobierno", "Mirad", "jóvenes", "trabajadores", "votar", "vida", "mujeres", "sumar", "libremente", "futuro", "Esperanza"]
+  }
+  
