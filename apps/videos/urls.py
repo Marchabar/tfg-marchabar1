@@ -4,5 +4,5 @@ from django.urls.conf import include
 from apps.videos import views
 
 urlpatterns = [
-    path("analysis", views.index, name="analysis"),
+    path("analysis", views.analizar_video_usuario, name="analysis"),
 ]
