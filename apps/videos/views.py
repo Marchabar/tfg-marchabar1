@@ -7,16 +7,25 @@ from apps.topics.models import Topic
 # Create your views here.
 
 
+def get_my_videos(request):
+    if not request.user.is_authenticated:
+        return redirect("/?login_required=true")
+
+    return render(request, "user-videos.html")
+
+
 def analyze_video_user(request):
     if not request.user.is_authenticated:
         return redirect("/?login_required=true")
-    # I need to get the 8 topics that appear in more videos taking into account a Topic has a video, a percentage and a topic_type
     top_topics = (
         Topic.objects.values("topic_type")
         .annotate(video_count=Count("video"))
         .order_by("-video_count")[:12]
     )
     top_topics = list(top_topics)
+
+    search = request.GET.get("video-url")
+    print(search)
 
     return render(request, "analysis.html", {"top_topics": top_topics})
 
