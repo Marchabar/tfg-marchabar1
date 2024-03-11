@@ -5,6 +5,7 @@ import requests
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import redirect, render
+from youtube_transcript_api import YouTubeTranscriptApi
 
 from apps.topics.models import Topic
 from apps.videos.models import Video
@@ -39,14 +40,26 @@ def analyze_video_user(request):
         "UCRvpumrJs0qY1xLzeU0Ss1Q",
         "UCEg-oyYjgbOL0NG5qjtuRFA",
     ]
+    videos = Video.objects.all()
 
     if search:
+        for video in videos:
+            if video.url == search:
+                return render(
+                    request,
+                    "analysis.html",
+                    {
+                        "top_topics": top_topics,
+                        "message": "Este vídeo ya ha sido analizado.",
+                    },
+                )
         video_id = extract_video_id(search)
         video_details = get_video_details(video_id)
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["es"])
+        transcription = " ".join(item["text"] for item in transcript)
         if video_details.get("channel_id") in allowed_channels_ids:
             if video_details:
                 title = video_details.get("title")
-                print(title)
                 thumbnail = video_details.get("thumbnail")
                 return render(
                     request,
@@ -60,15 +73,19 @@ def analyze_video_user(request):
                 )
             else:
                 return render(
-                    request, "analysis.html", {"message": "La url no es válida."}
+                    request,
+                    "analysis.html",
+                    {"top_topics": top_topics, "message": "La url no es válida."},
                 )
         else:
             return render(
                 request,
                 "analysis.html",
-                {"message": "La url no es de un canal permitido."},
+                {
+                    "top_topics": top_topics,
+                    "message": "La url no es de un canal permitido.",
+                },
             )
-
     return render(request, "analysis.html", {"top_topics": top_topics})
 
 
