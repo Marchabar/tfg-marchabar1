@@ -20,8 +20,17 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>
         </label>    
     </div>
-    <div class="flex sm:h-full justify-center items-center">
-        <p>Contenido para motrar tematica de videos</p>
+    <div class="flex flex-wrap justify-center">
+        {% for topic in top_topics %}
+            <div class="w-1/4 p-4">
+                <div class="flex items-center justify-center bg-white dark:bg-gray-400 shadow-md rounded-lg p-4 h-40">
+                    <h2 class="font-semibold dark:text-gray-300">{{ topic.topic_type }}</h2>
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                </div><div class="flex flex-wrap justify-center">
+            {% endif %}
+        {% endfor %}
     </div>
 </div>
 
