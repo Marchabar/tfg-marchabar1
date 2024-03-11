@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analizar{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'css/output.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col h-screen">
+    <div class="flex">
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Vídeos de {{ topic_type }}</h1>
+    </div>
+    <div class="flex flex-wrap justify-center">
+        {% for video in videos %}
+            <div class="w-1/4 p-4">
+                <div class="flex items-center justify-center bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-lg p-4 h-40">
+                    <h2 class="font-semibold dark:text-gray-300">{{ video.title }}</h2>
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                </div><div class="flex flex-wrap justify-center">
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
