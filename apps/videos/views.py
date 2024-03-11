@@ -30,6 +30,4 @@ def get_videos_by_topic(request, topic_type):
     for topic in topics:
         videos.append(topic.video)
 
-    print(videos)
-
     return render(request, "videos.html", {"videos": videos, "topic_type": topic_type})
