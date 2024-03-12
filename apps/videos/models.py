@@ -17,6 +17,7 @@ class Video(models.Model):
         ("VOX", "Vox"),
     ]
     political_party = models.TextField(choices=PARTIES_CHOICES)
+    published = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.title} - {self.date}"
