@@ -1,18 +1,23 @@
+import json
+import os
 import re
 from datetime import datetime
 
 import environ
+import openai
 import requests
+import tiktoken
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import redirect, render
+from unidecode import unidecode
 from youtube_transcript_api import YouTubeTranscriptApi
 
 from apps.topics.models import Topic
 from apps.videos.models import Video
 
 env = environ.Env()
-
+encoding = tiktoken.encoding_for_model("gpt-4")
 # Create your views here.
 
 
@@ -44,63 +49,132 @@ def analyze_video_user(request):
     videos = Video.objects.all()
 
     if search:
-        for video in videos:
-            if video.url == search:
-                return render(
-                    request,
-                    "analysis.html",
-                    {
-                        "top_topics": top_topics,
-                        "message": "Este vídeo ya ha sido analizado.",
-                    },
+        if "youtube.com" not in search and "youtu.be" not in search:
+            return render(
+                request,
+                "analysis.html",
+                {"top_topics": top_topics, "message": "La url no es válida."},
+            )
+        else:
+            for video in videos:
+                if video.url == search:
+                    return render(
+                        request,
+                        "analysis.html",
+                        {
+                            "top_topics": top_topics,
+                            "message": "Este vídeo ya ha sido analizado.",
+                        },
+                    )
+            video_id = extract_video_id(search)
+            video_details = get_video_details(video_id)
+            channel_id = video_details.get("channel_id")
+            if channel_id in allowed_channels_ids:
+                political_party = allowed_channels_ids[channel_id]
+                transcript = YouTubeTranscriptApi.get_transcript(
+                    video_id, languages=["es"]
                 )
-        video_id = extract_video_id(search)
-        video_details = get_video_details(video_id)
-        channel_id = video_details.get("channel_id")
-        if channel_id in allowed_channels_ids:
-            political_party = allowed_channels_ids[channel_id]
-            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=["es"])
-            transcription = " ".join(item["text"] for item in transcript)
-            length = video_details.get("length")
-            length = convert_duration(length)
-            date = video_details.get("date")
-            date = format_date(date)
-            transcription = f"""
-            politician_name = 
-            political_party = {political_party}
-            url = {search}
-            date = {date}
-            length = {length}
-            {transcription}"""
-            print(transcription)
-            if video_details:
-                title = video_details.get("title")
-                thumbnail = video_details.get("thumbnail")
-                return render(
-                    request,
-                    "analysis.html",
-                    {
-                        "top_topics": top_topics,
-                        "video_id": video_id,
-                        "title": title,
-                        "thumbnail": thumbnail,
-                    },
-                )
+                transcription = " ".join(item["text"] for item in transcript)
+                length = video_details.get("length")
+                length = convert_duration(length)
+                date = video_details.get("date")
+                date = format_date(date)
+                transcription = f"""
+                politician_name = ,
+                political_party = {political_party},
+                url = {search},
+                date = {date},
+                length = {length},
+                {transcription}"""
+                prompt = general_statement(transcription)
+                number_tokens = num_tokens_from_string(prompt, "gpt-4")
+                if number_tokens > 2500:
+                    return render(
+                        request,
+                        "analysis.html",
+                        {
+                            "top_topics": top_topics,
+                            "message": "La transcripción es demasiado larga.",
+                        },
+                    )
+                if video_details:
+                    response = generate_response(prompt)
+                    print(response)
+                    # response = {
+                    #     "politician_name": "Político no reconocido",
+                    #     "political_party": "PP",
+                    #     "url": "https://www.youtube.com/watch?v=mdbopOhxYUw",
+                    #     "date": "13/02/2024",
+                    #     "length": "01:15",
+                    #     "summary": "El político habla sobre la importancia de cuidar el medio ambiente y de apoyar a los agricultores y ganaderos. También critica al gobierno de Sánchez y su posible amnistía a ciertos grupos.",
+                    #     "main_topics": [
+                    #         "Medio ambiente",
+                    #         "Agricultura",
+                    #         "Ganadería",
+                    #         "Política nacional",
+                    #     ],
+                    #     "sentiment": ["Preocupación", "Desdén"],
+                    #     "lenguaje": [
+                    #         "Lenguaje formal",
+                    #         "Lenguaje de confrontación",
+                    #         "Lenguaje de crítica",
+                    #     ],
+                    #     "used_words": [
+                    #         "medioambiental",
+                    #         "rural",
+                    #         "agricultores",
+                    #         "ganaderos",
+                    #         "política",
+                    #         "gobierno",
+                    #         "Sánchez",
+                    #         "mayoría",
+                    #         "ley",
+                    #         "amnistía",
+                    #         "España",
+                    #         "extorsionada",
+                    #         "socios",
+                    #         "Galicia",
+                    #     ],
+                    # }
+                    title = video_details.get("title")
+
+                    title = sanitize_filename(video_details.get("title"))
+
+                    root_directory = os.path.abspath(
+                        os.path.join(os.path.dirname(__file__), "../..")
+                    )
+
+                    # Create the folder named "answers" in the root directory if it doesn't exist
+                    answers_folder = os.path.join(root_directory, "answers")
+                    if not os.path.exists(answers_folder):
+                        os.makedirs(answers_folder)
+                    try:
+                        # Save the response to a JSON file named after the video title in the "answers" folder
+                        with open(
+                            os.path.join(answers_folder, f"{title}.json"),
+                            "w",
+                            encoding="utf-8",
+                        ) as file:
+                            json.dump(response, file, ensure_ascii=False)
+                    except Exception as e:
+                        print(f"Error creating file: {e}")
+
+                    return redirect("/my-videos")
+                else:
+                    return render(
+                        request,
+                        "analysis.html",
+                        {"top_topics": top_topics, "message": "La url no es válida."},
+                    )
             else:
                 return render(
                     request,
                     "analysis.html",
-                    {"top_topics": top_topics, "message": "La url no es válida."},
+                    {
+                        "top_topics": top_topics,
+                        "message": "La url no es de un canal permitido.",
+                    },
                 )
-        else:
-            return render(
-                request,
-                "analysis.html",
-                {
-                    "top_topics": top_topics,
-                    "message": "La url no es de un canal permitido.",
-                },
-            )
     return render(request, "analysis.html", {"top_topics": top_topics})
 
 
@@ -166,6 +240,120 @@ def format_date(date_str):
     formatted_date = date.strftime("%d/%m/%Y")
 
     return formatted_date
+
+
+def general_statement(transcription):
+
+    main_topics = [
+        "Economía",
+        "Salud",
+        "Educación",
+        "Medio ambiente",
+        "Derechos civiles",
+        "Inmigración",
+        "Seguridad nacional",
+        "Política exterior",
+        "Empleo",
+        "Criminalidad",
+        "Impuestos",
+        "Bienestar social",
+        "Tecnología",
+        "Energía",
+        "Vivienda",
+        "Corrupción",
+        "Libertad de prensa",
+        "Igualdad de género",
+        "Diversidad y discriminación",
+        "Pobreza",
+        "Infraestructura",
+        "Religión",
+        "Derechos de las minorías",
+        "Paz y conflicto",
+        "Defensa",
+        "Legislación",
+        "Presupuesto",
+        "Justicia",
+        "ETA",
+        "Historia reciente de España",
+        "Terrorismo",
+        "Acusaciones políticas",
+        "Campaña electoral",
+    ]
+
+    sentiment = [
+        "Enojo",
+        "Frustración",
+        "Pasión",
+        "Entusiasmo",
+        "Preocupación",
+        "Confianza",
+        "Desesperación",
+        "Optimismo",
+        "Satisfacción",
+        "Escepticismo",
+        "Desdén",
+        "Empatía",
+    ]
+
+    lenguaje = [
+        "Lenguaje formal",
+        "Lenguaje técnico",
+        "Lenguaje emocional",
+        "Lenguaje persuasivo",
+        "Lenguaje retórico",
+        "Lenguaje bipartidista",
+        "Lenguaje partidista",
+        "Lenguaje populista",
+        "Lenguaje de consenso",
+        "Lenguaje de confrontación",
+        "Lenguaje de compromiso",
+        "Lenguaje de promesas",
+        "Lenguaje de crítica",
+        "Lenguaje de estadísticas",
+        "Lenguaje de datos",
+        "Lenguaje de debate",
+        "Lenguaje de discurso público",
+        "Lenguaje de campaña",
+        "Lenguaje de legislación",
+        "Lenguaje de negociación",
+    ]
+
+    prompt = f"""Analiza las siguientes transcripciones de textos de políticos, y respóndeme a las preguntas que te propongo en formato json. Las claves del formato json son politican_name, political_party, date, length, summary, main_topics, sentiment, lenguaje y used_words. Para sus valores es muy importante que tengas en cuenta las siguientes condiciones : 
+    Para la key main_topics solo y solo si, pueden ser valores que se encuentren en el siguiente array. Esto significa que aunque encuentres otros main_topics, solo debes coger los que esten en este array y sean mas similares a los que has encontrado {main_topics}
+    Recuerda que los valores ademas tienen que tener un porcentaje que corresponda al tiempo que se habla de ellos en la transcripción. Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
+    Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
+    Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. Las transcripción es la siguiente, y ya tiene el nombre del politico (Si no tiene pon Político no reconocido), el partido al que pertenece, la url, la fecha, y la duracion. Esto tambien tienes que incluirlo en el json que me das como respuesta. Además tienes que incluir un resumen corto de la transcripcion para la key summary. Recuerda tener en cuenta las limitaciones y solo coger valores de los arrays para las keys que lo necesitan: {transcription}
+    """
+    return prompt
+
+
+def num_tokens_from_string(string: str, encoding_name: str) -> int:
+    """Returns the number of tokens in a text string."""
+    encoding = tiktoken.encoding_for_model(encoding_name)
+    num_tokens = len(encoding.encode(string))
+    return num_tokens
+
+
+def generate_response(
+    prompt,
+    temperature=0.2,
+    max_tokens=1500,
+):
+    openai.api_key = env("OPENAI_API_KEY")
+    response = openai.Completion.create(
+        engine="gpt-3.5-turbo-instruct",
+        prompt=prompt,
+        temperature=temperature,
+        max_tokens=max_tokens,
+    )
+    return response.choices[0].text.strip()
+
+
+def sanitize_filename(filename):
+    filename = unidecode(filename)  # Remove accents
+    filename = filename.lower()  # Convert to lowercase
+    filename = filename.replace(" ", "_")  # Replace spaces with underscores
+    return re.sub(r'[\\/*?:"<>|]', "", filename)  # Remove invalid characters
 
 
 def get_videos_by_topic(request, topic_type):
