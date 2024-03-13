@@ -3,10 +3,10 @@ name: Django CI
 on:
   push:
     branches:
-      - develop
+      - master
   pull_request:
     branches:
-      - develop
+      - master
 
 jobs:
   build:
@@ -48,6 +48,7 @@ jobs:
       - name: Apply database migrations
         run: python manage.py migrate
 
-      - name: Run Django tests 
+      - name: Run Django tests with coverage
         run: |
-          python manage.py test apps
+          coverage run manage.py test apps
+          coverage report --fail-under=80
