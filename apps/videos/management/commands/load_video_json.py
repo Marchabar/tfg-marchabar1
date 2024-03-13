@@ -50,7 +50,6 @@ class Command(BaseCommand):
                                         date=date,
                                         politician_name=data.get("politician_name"),
                                         political_party=data.get("political_party"),
-                                        published=True,
                                     )
 
     def extract_video_id(self, video_url):

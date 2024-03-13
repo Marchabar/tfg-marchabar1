@@ -13,8 +13,14 @@ from django.shortcuts import redirect, render
 from unidecode import unidecode
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from apps.languages.management.commands import load_language_json
+from apps.sentiments.management.commands import load_sentiment_json
+from apps.topics.management.commands import load_topics_json
 from apps.topics.models import Topic
 from apps.videos.models import Video
+from apps.words.management.commands import load_words_json
+
+from .management.commands import load_video_json
 
 env = environ.Env()
 encoding = tiktoken.encoding_for_model("gpt-4")
@@ -79,12 +85,14 @@ def analyze_video_user(request):
                 length = convert_duration(length)
                 date = video_details.get("date")
                 date = format_date(date)
+                description = video_details.get("description")
                 transcription = f"""
                 politician_name = ,
                 political_party = {political_party},
                 url = {search},
                 date = {date},
                 length = {length},
+                description = {description},
                 {transcription}"""
                 prompt = general_statement(transcription)
                 number_tokens = num_tokens_from_string(prompt, "gpt-4")
@@ -101,39 +109,35 @@ def analyze_video_user(request):
                     response = generate_response(prompt)
                     print(response)
                     # response = {
-                    #     "politician_name": "Político no reconocido",
+                    #     "politician_name": "Alberto Núñez Feijóo",
                     #     "political_party": "PP",
-                    #     "url": "https://www.youtube.com/watch?v=mdbopOhxYUw",
+                    #     "url": "https://www.youtube.com/watch?v=n57eQqB5NEM",
                     #     "date": "13/02/2024",
-                    #     "length": "01:15",
-                    #     "summary": "El político habla sobre la importancia de cuidar el medio ambiente y de apoyar a los agricultores y ganaderos. También critica al gobierno de Sánchez y su posible amnistía a ciertos grupos.",
-                    #     "main_topics": [
-                    #         "Medio ambiente",
-                    #         "Agricultura",
-                    #         "Ganadería",
-                    #         "Política nacional",
-                    #     ],
-                    #     "sentiment": ["Preocupación", "Desdén"],
-                    #     "lenguaje": [
-                    #         "Lenguaje formal",
-                    #         "Lenguaje de confrontación",
-                    #         "Lenguaje de crítica",
-                    #     ],
+                    #     "length": "01:06",
+                    #     "summary": "Durante la campaña de las elecciones al parlamento gallego, Alberto Núñez Feijóo, del Partido Popular, defiende la postura a favor del Estado de Derecho y la Igualdad de todos los españoles desde Galicia.",
+                    #     "main_topics": {
+                    #         "Derechos civiles": 10,
+                    #         "Política exterior": 5,
+                    #         "Inmigración": 5,
+                    #         "Campaña electoral": 10,
+                    #     },
+                    #     "sentiment": ["Escepticismo", "Desdén"],
+                    #     "lenguaje": ["Lenguaje formal", "Lenguaje de campaña"],
                     #     "used_words": [
-                    #         "medioambiental",
-                    #         "rural",
-                    #         "agricultores",
-                    #         "ganaderos",
-                    #         "política",
-                    #         "gobierno",
-                    #         "Sánchez",
-                    #         "mayoría",
-                    #         "ley",
                     #         "amnistía",
-                    #         "España",
-                    #         "extorsionada",
-                    #         "socios",
-                    #         "Galicia",
+                    #         "ilegal",
+                    #         "inconstitucional",
+                    #         "igualdad",
+                    #         "indulto",
+                    #         "independentismo",
+                    #         "Sánchez",
+                    #         "mal gobierno",
+                    #         "buen gobierno",
+                    #         "desgobierno",
+                    #         "experiencia",
+                    #         "gobernar",
+                    #         "papeleta",
+                    #         "partido popular",
                     #     ],
                     # }
                     title = video_details.get("title")
@@ -156,6 +160,13 @@ def analyze_video_user(request):
                             encoding="utf-8",
                         ) as file:
                             json.dump(response, file, ensure_ascii=False)
+
+                        # After the file is successfully created, call the load_* functions
+                        load_video_json.Command().handle()
+                        load_sentiment_json.Command().handle()
+                        load_language_json.Command().handle()
+                        load_words_json.Command().handle()
+                        load_topics_json.Command().handle()
                     except Exception as e:
                         print(f"Error creating file: {e}")
 
@@ -202,12 +213,14 @@ def get_video_details(video_id):
             channel_id = snippet.get("channelId")
             length = content_details.get("duration")
             date = snippet.get("publishedAt")
+            description = snippet.get("description")
             return {
                 "title": title,
                 "thumbnail": thumbnail,
                 "channel_id": channel_id,
                 "length": length,
                 "date": date,
+                "description": description,
             }
     return None
 
@@ -318,11 +331,13 @@ def general_statement(transcription):
         "Lenguaje de negociación",
     ]
 
-    prompt = f"""Analiza las siguientes transcripciones de textos de políticos, y respóndeme a las preguntas que te propongo en formato json. Las claves del formato json son politican_name, political_party, date, length, summary, main_topics, sentiment, lenguaje y used_words. Para sus valores es muy importante que tengas en cuenta las siguientes condiciones : 
-    Para la key main_topics solo y solo si, pueden ser valores que se encuentren en el siguiente array. Esto significa que aunque encuentres otros main_topics, solo debes coger los que esten en este array y sean mas similares a los que has encontrado {main_topics}
-    Recuerda que los valores ademas tienen que tener un porcentaje que corresponda al tiempo que se habla de ellos en la transcripción. Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
+    prompt = f"""Analiza las siguientes transcripciones de textos de políticos, y respóndeme a las preguntas que te propongo en formato json. Las claves del formato json son politician_name, political_party, date, length, summary, main_topics, sentiment, lenguaje y used_words. Para sus valores es muy importante que tengas en cuenta las siguientes condiciones : 
+    Para la key main_topics solo y solo si, pueden ser valores que se encuentren en el siguiente array. Esto significa que aunque encuentres otros main_topics, solo debes coger los que esten en este array y sean mas similares a los que has encontrado.     Recuerda que los valores ademas tienen que tener un porcentaje que corresponda al tiempo que se habla de ellos en la transcripción {main_topics}
+    Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
     Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
-    Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. Las transcripción es la siguiente, y ya tiene el nombre del politico (Si no tiene pon Político no reconocido), el partido al que pertenece, la url, la fecha, y la duracion. Esto tambien tienes que incluirlo en el json que me das como respuesta. Además tienes que incluir un resumen corto de la transcripcion para la key summary. Recuerda tener en cuenta las limitaciones y solo coger valores de los arrays para las keys que lo necesitan: {transcription}
+    Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. 
+    Para la key politician_name (nombre del político) tienes que intentar sacarlo del title o description (sino sacas el politican_name pon Político no reconocido)
+    La transcripción es la siguiente, y ya contiene el partido al que pertenece, la url, la fecha, y la duracion. Esto tambien tienes que incluirlo en el json que me das como respuesta. Además tienes que incluir un resumen corto en un párrafo de la transcripcion para la key summary. Recuerda tener en cuenta las limitaciones y solo coger valores de los arrays para las keys que lo necesitan: {transcription}
     """
     return prompt
 
