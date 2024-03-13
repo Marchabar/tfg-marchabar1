@@ -17,7 +17,7 @@
     <div class="grid grid-cols-3 gap-2 p-4">
         {% for video in user_videos %}
             {% if video.published %}
-                <div class="card bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400">
+                <a href="{% url 'video' video.id %}" class="card bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400">
                     <figure class="px-10 pt-10">
                         <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="rounded-lg" />
                     </figure>
@@ -26,7 +26,7 @@
                         <p>{{video.title}}</p>
                         <p class="text-green-400"><strong>Published</strong></p>
                     </div>
-                </div>
+                </a>
             {% else %}
                 <div class="card bg-gray-400 dark:bg-gray-900 hover:bg-gray-600 dark:hover:bg-gray-800 shadow-xl text-gray-800 dark:text-gray-600">
                     <figure class="px-10 pt-10">

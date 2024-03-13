@@ -16,7 +16,7 @@
     </div>
     <div class="grid grid-cols-3 gap-2 p-4">
         {% for video in videos %}
-            <a href="{% url 'video_info' video.id %}" class="card bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400">
+            <a href="{% url 'video' video.id %}" class="card bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400">
                 <figure class="px-10 pt-10">
                   <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="rounded-lg" />
                 </figure>

@@ -10,22 +10,48 @@ import requests
 import tiktoken
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from unidecode import unidecode
 from youtube_transcript_api import YouTubeTranscriptApi
 
 from apps.languages.management.commands import load_language_json
+from apps.languages.models import Language
 from apps.sentiments.management.commands import load_sentiment_json
+from apps.sentiments.models import Sentiment
 from apps.topics.management.commands import load_topics_json
 from apps.topics.models import Topic
 from apps.videos.models import Video
 from apps.words.management.commands import load_words_json
+from apps.words.models import Word
 
 from .management.commands import load_video_json
 
 env = environ.Env()
 encoding = tiktoken.encoding_for_model("gpt-4")
 # Create your views here.
+
+
+def get_video_information(request, video_id):
+    if not request.user.is_authenticated:
+        return redirect("/?login_required=true")
+
+    video = get_object_or_404(Video, id=video_id)
+    print(video)
+    topics = Topic.objects.filter(video=video)
+    sentiments = Sentiment.objects.filter(video=video)
+    languages = Language.objects.filter(video=video)
+    words = Word.objects.filter(video=video)
+    return render(
+        request,
+        "video-info.html",
+        {
+            "video": video,
+            "topics": topics,
+            "sentiments": sentiments,
+            "languages": languages,
+            "words": words,
+        },
+    )
 
 
 def analyze_video_user(request):
@@ -440,25 +466,3 @@ def get_videos_by_user(request):
     print(user_videos)
 
     return render(request, "user-videos.html", {"user_videos": user_videos})
-
-
-def get_video_information(request, video_id):
-    if not request.user.is_authenticated:
-        return redirect("/?login_required=true")
-
-    video = Video.objects.get(id=video_id)
-    topics = Topic.objects.filter(video=video)
-    sentiments = Sentiment.objects.filter(video=video)
-    languages = Language.objects.filter(video=video)
-    words = Word.objects.filter(video=video)
-    return render(
-        request,
-        "video-information.html",
-        {
-            "video": video,
-            "topics": topics,
-            "sentiments": sentiments,
-            "languages": languages,
-            "words": words,
-        },
-    )
