@@ -28,14 +28,14 @@
                     </div>
                 </div>
             {% else %}
-                <div class="card bg-gray-700 dark:bg-gray-900 hover:bg-gray-600 dark:hover:bg-gray-800 shadow-xl text-gray-400 dark:text-gray-600">
+                <div class="card bg-gray-400 dark:bg-gray-900 hover:bg-gray-600 dark:hover:bg-gray-800 shadow-xl text-gray-800 dark:text-gray-600">
                     <figure class="px-10 pt-10">
                         <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="rounded-lg" />
                     </figure>
                     <div class="card-body items-center text-center">
                         <h2 class="card-title">{{video.political_party}}</h2>
                         <p>{{video.title}}</p>
-                        <p class="text-red-400"><strong>Not published</strong></p>
+                        <p class="text-red-600 dark:text-red-400"><strong>Not published</strong></p>
                     </div>
                 </div>
             {% endif %}

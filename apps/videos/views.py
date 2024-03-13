@@ -426,7 +426,9 @@ def get_videos_by_topic(request, topic_type):
         if topic.video.published:
             videos.append(topic.video)
 
-    return render(request, "videos.html", {"videos": videos, "topic_type": topic_type})
+    return render(
+        request, "videos-topic.html", {"videos": videos, "topic_type": topic_type}
+    )
 
 
 def get_videos_by_user(request):
@@ -438,3 +440,25 @@ def get_videos_by_user(request):
     print(user_videos)
 
     return render(request, "user-videos.html", {"user_videos": user_videos})
+
+
+def get_video_information(request, video_id):
+    if not request.user.is_authenticated:
+        return redirect("/?login_required=true")
+
+    video = Video.objects.get(id=video_id)
+    topics = Topic.objects.filter(video=video)
+    sentiments = Sentiment.objects.filter(video=video)
+    languages = Language.objects.filter(video=video)
+    words = Word.objects.filter(video=video)
+    return render(
+        request,
+        "video-information.html",
+        {
+            "video": video,
+            "topics": topics,
+            "sentiments": sentiments,
+            "languages": languages,
+            "words": words,
+        },
+    )
