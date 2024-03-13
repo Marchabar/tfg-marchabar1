@@ -19,6 +19,9 @@ class Command(BaseCommand):
         for filename in glob.glob("answers/*.json"):
             with open(filename, "r", encoding="utf-8") as file:
                 data = json.load(file)
+                if isinstance(data, str):
+                    data = json.loads(data)
+
                 valid_choices = [
                     choice[0]
                     for choice in Video._meta.get_field("political_party").choices

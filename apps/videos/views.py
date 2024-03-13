@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import traceback
 from datetime import datetime
 
 import environ
@@ -25,13 +26,6 @@ from .management.commands import load_video_json
 env = environ.Env()
 encoding = tiktoken.encoding_for_model("gpt-4")
 # Create your views here.
-
-
-def get_my_videos(request):
-    if not request.user.is_authenticated:
-        return redirect("/?login_required=true")
-
-    return render(request, "user-videos.html")
 
 
 def analyze_video_user(request):
@@ -109,35 +103,81 @@ def analyze_video_user(request):
                     response = generate_response(prompt)
                     print(response)
                     # response = {
-                    #     "politician_name": "Alberto Núñez Feijóo",
-                    #     "political_party": "PP",
-                    #     "url": "https://www.youtube.com/watch?v=n57eQqB5NEM",
-                    #     "date": "13/02/2024",
-                    #     "length": "01:06",
-                    #     "summary": "Durante la campaña de las elecciones al parlamento gallego, Alberto Núñez Feijóo, del Partido Popular, defiende la postura a favor del Estado de Derecho y la Igualdad de todos los españoles desde Galicia.",
-                    #     "main_topics": {
-                    #         "Derechos civiles": 10,
-                    #         "Política exterior": 5,
-                    #         "Inmigración": 5,
-                    #         "Campaña electoral": 10,
-                    #     },
-                    #     "sentiment": ["Escepticismo", "Desdén"],
-                    #     "lenguaje": ["Lenguaje formal", "Lenguaje de campaña"],
+                    #     "politician_name": "Pedro Sánchez",
+                    #     "political_party": "PSOE",
+                    #     "url": "https://youtu.be/TK8-s7LnX9s?si=X2vDPQbhpMd6AFHc",
+                    #     "date": "13/03/2024",
+                    #     "length": "02:04",
+                    #     "summary": "Pedro Sánchez le pregunta a Feijóo en el Congreso por qué no pide la dimisión de Ayuso, y señala que la respuesta es porque le costaría su puesto en el PP al igual que Casado. También critica la amistad de Feijóo con un capo del narcotráfico en Galicia y señala que en su partido político, Feijóo no hubiera llegado ni a concejal de pueblo.",
+                    #     "main_topics": [
+                    #         {"Economía": 10},
+                    #         {"Salud": 5},
+                    #         {"Educación": 5},
+                    #         {"Medio ambiente": 0},
+                    #         {"Derechos civiles": 0},
+                    #         {"Inmigración": 0},
+                    #         {"Seguridad nacional": 0},
+                    #         {"Política exterior": 0},
+                    #         {"Empleo": 5},
+                    #         {"Criminalidad": 5},
+                    #         {"Impuestos": 0},
+                    #         {"Bienestar social": 0},
+                    #         {"Tecnología": 0},
+                    #         {"Energía": 0},
+                    #         {"Vivienda": 0},
+                    #         {"Corrupción": 10},
+                    #         {"Libertad de prensa": 0},
+                    #         {"Igualdad de género": 0},
+                    #         {"Diversidad y discriminación": 0},
+                    #         {"Pobreza": 0},
+                    #         {"Infraestructura": 0},
+                    #         {"Religión": 0},
+                    #         {"Derechos de las minorías": 0},
+                    #         {"Paz y conflicto": 0},
+                    #         {"Defensa": 0},
+                    #         {"Legislación": 5},
+                    #         {"Presupuesto": 0},
+                    #         {"Justicia": 5},
+                    #         {"ETA": 0},
+                    #         {"Historia reciente de España": 0},
+                    #         {"Terrorismo": 0},
+                    #         {"Acusaciones políticas": 5},
+                    #         {"Campaña electoral": 5},
+                    #     ],
+                    #     "sentiment": ["Enojo", "Frustración", "Desdén", "Empatía"],
+                    #     "lenguaje": [
+                    #         "Lenguaje formal",
+                    #         "Lenguaje retórico",
+                    #         "Lenguaje de confrontación",
+                    #         "Lenguaje de crítica",
+                    #         "Lenguaje de debate",
+                    #         "Lenguaje de discurso público",
+                    #         "Lenguaje de campaña",
+                    #     ],
                     #     "used_words": [
-                    #         "amnistía",
-                    #         "ilegal",
-                    #         "inconstitucional",
-                    #         "igualdad",
-                    #         "indulto",
-                    #         "independentismo",
-                    #         "Sánchez",
-                    #         "mal gobierno",
-                    #         "buen gobierno",
-                    #         "desgobierno",
-                    #         "experiencia",
-                    #         "gobernar",
-                    #         "papeleta",
-                    #         "partido popular",
+                    #         "dimisión",
+                    #         "presidenta",
+                    #         "comunidad de Madrid",
+                    #         "responsabilidades políticas",
+                    #         "ejemplaridad",
+                    #         "lucha contra la corrupción",
+                    #         "terceras personas",
+                    #         "ejercicio",
+                    #         "amistad",
+                    #         "capo del narcotráfico",
+                    #         "Galicia",
+                    #         "Canarias",
+                    #         "Portugal",
+                    #         "Andorra",
+                    #         "narcotraficante",
+                    #         "blanqueo",
+                    #         "21 millones",
+                    #         "Francia",
+                    #         "diferencia",
+                    #         "historial",
+                    #         "escalar",
+                    #         "partido político",
+                    #         "concejal de pueblo",
                     #     ],
                     # }
                     title = video_details.get("title")
@@ -167,8 +207,13 @@ def analyze_video_user(request):
                         load_language_json.Command().handle()
                         load_words_json.Command().handle()
                         load_topics_json.Command().handle()
+                        # I need to update this video putting the user that is logged in
+                        video = Video.objects.get(url=search)
+                        video.user = request.user
+                        video.save()
                     except Exception as e:
                         print(f"Error creating file: {e}")
+                        traceback.print_exc()
 
                     return redirect("/my-videos")
                 else:
@@ -332,7 +377,7 @@ def general_statement(transcription):
     ]
 
     prompt = f"""Analiza las siguientes transcripciones de textos de políticos, y respóndeme a las preguntas que te propongo en formato json. Las claves del formato json son politician_name, political_party, date, length, summary, main_topics, sentiment, lenguaje y used_words. Para sus valores es muy importante que tengas en cuenta las siguientes condiciones : 
-    Para la key main_topics solo y solo si, pueden ser valores que se encuentren en el siguiente array. Esto significa que aunque encuentres otros main_topics, solo debes coger los que esten en este array y sean mas similares a los que has encontrado.     Recuerda que los valores ademas tienen que tener un porcentaje que corresponda al tiempo que se habla de ellos en la transcripción {main_topics}
+    Para la key main_topics solo pueden ser valores que se encuentren en el siguiente array. Esto significa que aunque encuentres otros main_topics, solo debes coger los que esten en este array y sean mas similares a los que has encontrado. Recuerda que los valores ademas tienen que tener un porcentaje que corresponda al tiempo y cantidad que se habla de ellos en la transcripción {main_topics}
     Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
     Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
     Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. 
@@ -382,3 +427,14 @@ def get_videos_by_topic(request, topic_type):
             videos.append(topic.video)
 
     return render(request, "videos.html", {"videos": videos, "topic_type": topic_type})
+
+
+def get_videos_by_user(request):
+    if not request.user.is_authenticated:
+        return redirect("/?login_required=true")
+
+    # I need to get the videos which user is the one that is logged in
+    user_videos = Video.objects.filter(user=request.user)
+    print(user_videos)
+
+    return render(request, "user-videos.html", {"user_videos": user_videos})
