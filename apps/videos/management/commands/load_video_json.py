@@ -46,9 +46,11 @@ class Command(BaseCommand):
                                         url=video_url,
                                         thumbnail=thumbnail,
                                         length=data.get("length"),
+                                        summary=data.get("summary"),
                                         date=date,
                                         politician_name=data.get("politician_name"),
                                         political_party=data.get("political_party"),
+                                        published=True,
                                     )
 
     def extract_video_id(self, video_url):
