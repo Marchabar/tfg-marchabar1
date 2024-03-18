@@ -31,12 +31,23 @@ encoding = tiktoken.encoding_for_model("gpt-4")
 # Create your views here.
 
 
+def all_videos(request):
+    # user has to be superuser to access this view
+    if not request.user.is_authenticated:
+        return redirect("/?login_required=true")
+    videos = Video.objects.all().order_by("published")
+
+    if request.user.is_superuser:
+        return render(request, "all-videos.html", {"videos": videos})
+    else:
+        return redirect("/")
+
+
 def get_video_information(request, video_id):
     if not request.user.is_authenticated:
         return redirect("/?login_required=true")
 
     video = get_object_or_404(Video, id=video_id)
-    print(video)
     topics = Topic.objects.filter(video=video)
     sentiments = Sentiment.objects.filter(video=video)
     languages = Language.objects.filter(video=video)
