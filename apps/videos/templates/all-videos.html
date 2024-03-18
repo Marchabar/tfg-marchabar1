@@ -40,11 +40,13 @@
                 </div>
 
                 <dialog id="publish_modal" class="modal">
-                    <div class="modal-box">
+                    <div class="modal-box bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200">
                         <form onsubmit="return publishVideo()">
                             <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closePublishModal()">✕</button>
                             <h3 class="font-bold text-lg">¿Quieres publicar este vídeo?</h3>
-                            <button type="submit" class="btn btn-primary">Publicar</button>
+                            <div class="flex justify-end py-2">
+                                <button type="submit" class="btn btn-primary">Publicar</button>
+                            </div>
                         </form>
                     </div>
                 </dialog>
