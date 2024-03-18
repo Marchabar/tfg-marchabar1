@@ -14,12 +14,11 @@
     <div class="flex">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
         <div class="dropdown dropdown-right">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">PP</div>
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Alberto Nuñez Feijóo</div>
             <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
-                <li><a class="text-gray-700 dark:text-gray-100" data-party="PP">PP</a></li>
-                <li><a class="text-gray-700 dark:text-gray-100" data-party="PSOE">PSOE</a></li>
-                <li><a class="text-gray-700 dark:text-gray-100" data-party="VOX">VOX</a></li>
-                <li><a class="text-gray-700 dark:text-gray-100" data-party="SUMAR">SUMAR</a></li>
+                {% for politician in dict_politicians %}
+                    <li><a class="text-gray-700 dark:text-gray-100" data-politician="{{politician}}">{{politician}}</a></li>
+                {% endfor %}
             </ul>
         </div>
         <div class="dropdown dropdown-right">
@@ -80,6 +79,20 @@
 
 <!-- Chartjs -->
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the current URL path
+        const currentPath = window.location.pathname;
+
+        // Get the second dropdown button
+        const dropdownButton = document.querySelector('.dropdown:nth-of-type(2) .btn');
+
+        // Check if the current path is '/by-politician'
+        if (currentPath === '/by-politician') {
+            // Change the dropdown button text to 'Por Político'
+            dropdownButton.textContent = 'Por Político';
+        }
+    });
+
     let dict_topics = '{{ dict_topics|escapejs }}';
     let validJson = dict_topics.replace(/'/g, '"');
     validJson = validJson.replace(/"{/g, '{').replace(/}"/g, '}');
@@ -100,9 +113,9 @@
     var polarChart;
 
 
-    function updateChart(party) {
-        var labels = Object.keys(jsonData[party]);
-        var values = Object.values(jsonData[party]);
+    function updateChart(politician) {
+        var labels = Object.keys(jsonData[politician]);
+        var values = Object.values(jsonData[politician]);
 
         
         function getNextColor(index) {
@@ -123,11 +136,11 @@
 
 
         // Update the dropdown button text
-        document.querySelector('.dropdown .btn').textContent = party;
+        document.querySelector('.dropdown .btn').textContent = politician;
 
         // Disable the currently selected option
         document.querySelectorAll('.dropdown-content a').forEach(item => {
-            if (item.dataset.party === party) {
+            if (item.dataset.politician === politician) {
                 item.classList.add('disabled');
             } else {
                 item.classList.remove('disabled');
@@ -146,7 +159,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Tematica ' + party,
+                    label: 'Tematica ' + politician,
                     data: values,
                     backgroundColor: labels.map((_, i) => getNextColor(i)),
                     borderColor: labels.map((_, i) => getNextColor(i)),
@@ -175,7 +188,7 @@
             }
         });
 
-        var labelsPie = jsonDataSentiments[party];
+        var labelsPie = jsonDataSentiments[politician];
         var valuesPie = labelsPie.map(sentiment => labelsPie.filter(s => s === sentiment).length);
 
         if (pieChart) {
@@ -189,7 +202,7 @@
             data: {
                 labels: labelsPie,
                 datasets: [{
-                    label: 'Sentiments of ' + party,
+                    label: 'Sentiments of ' + politician,
                     data: valuesPie,
                     backgroundColor: labels.map((_, i) => getNextColor(i)),
                     borderColor: labels.map((_, i) => getNextColor(i)),
@@ -210,8 +223,8 @@
             }
         });
 
-        var labelsPolar = Object.keys(jsonDataLanguages[party]);
-        var valuesPolar = Object.values(jsonDataLanguages[party]);
+        var labelsPolar = Object.keys(jsonDataLanguages[politician]);
+        var valuesPolar = Object.values(jsonDataLanguages[politician]);
 
         if (polarChart) {
             polarChart.destroy();
@@ -224,7 +237,7 @@
             data: {
                 labels: labelsPolar,
                 datasets: [{
-                    label: 'Language of ' + party,
+                    label: 'Language of ' + politician,
                     data: valuesPolar,
                     backgroundColor: labels.map((_, i) => getNextColor(i)),
                     borderColor: labels.map((_, i) => getNextColor(i)),
@@ -248,13 +261,13 @@
 
     }
     // Initial chart with PP values
-    updateChart('PP');
+    updateChart('Alberto Núñez Feijóo');
 
     // Event listener for dropdown items
     document.querySelectorAll('.dropdown-content a').forEach(item => {
         item.addEventListener('click', event => {
             if (!event.target.classList.contains('disabled')) {
-                updateChart(event.target.dataset.party);
+                updateChart(event.target.dataset.politician);
             }
         });
     });
