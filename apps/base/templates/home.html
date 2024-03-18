@@ -22,6 +22,13 @@
                 <li><a class="text-gray-700 dark:text-gray-100" data-party="SUMAR">SUMAR</a></li>
             </ul>
         </div>
+        <div class="dropdown dropdown-right">
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Por partido</div>
+            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+                <li><a href="/" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
+                <li><a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por político</a></li>
+            </ul>
+        </div>
     </div>    
     <div class="flex flex-wrap sm:h-full">
         <div class="w-full sm:w-1/2 p-4">
@@ -35,7 +42,7 @@
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
                 <div class="flex flex-col gap-1 w-full justify-center items-center p-2">
                     {% for video in videos %}
-                    <a href="/" class="flex w-4/5 bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
+                    <a href="/videos/{{video.id}}" class="flex w-4/5 bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
                         <div>
                             <figure>
                                 <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg"/>
