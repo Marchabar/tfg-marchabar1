@@ -79,6 +79,7 @@ def load_politician(request):
 
     politicians = Video.objects.values_list("politician_name", flat=True).distinct()
     videos = Video.objects.all().order_by("date")[:3]
+    print(dict_sentiments)
     return render(
         request,
         "politician.html",

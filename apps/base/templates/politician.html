@@ -34,6 +34,7 @@
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Temática</h2>
                 <canvas id="partyChart"></canvas>
+                <div id="barContainer"></div>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
@@ -62,12 +63,14 @@
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>
                 <canvas id="pieChart"></canvas>
+                <div id="pieContainer"></div>
             </div>
         </div>
         <div class="w-full sm:w-1/2 p-4">
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Tipo de lenguaje</h2>
                 <canvas id="polarChart"></canvas>
+                <div id="polarContainer"></div>
             </div>
         </div>
     </div>
@@ -114,8 +117,7 @@
 
 
     function updateChart(politician) {
-        var labels = Object.keys(jsonData[politician]);
-        var values = Object.values(jsonData[politician]);
+        
 
         
         function getNextColor(index) {
@@ -147,118 +149,155 @@
             }
         });
 
-        // Destroy the previous bar chart instance if it exists
-        if (barChart) {
-            barChart.destroy();
-        }
+        var labels = Object.keys(jsonData[politician]);
+        var values = Object.values(jsonData[politician]);
 
-        // Update bar chart
-        var ctx = document.getElementById('partyChart').getContext('2d');
-        barChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Tematica ' + politician,
-                    data: values,
-                    backgroundColor: labels.map((_, i) => getNextColor(i)),
-                    borderColor: labels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    xAxes: [{
-                        ticks: {
-                            display: false
-                        }
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            fontColor: 'rgb(167 174 188)'
-                        }
+        if (values.length === 0) {
+            document.getElementById('partyChart').style.display = 'none';
+            var noDataDiv = document.createElement('div');
+            noDataDiv.textContent = 'No se han encontrado sentimientos';
+            document.getElementById('barContainer').appendChild(noDataDiv);
+        } else {
+            document.getElementById('partyChart').style.display = 'block';
+            if (barChart) {
+                barChart.destroy();
+            }
+
+            // Update bar chart
+            var ctx = document.getElementById('partyChart').getContext('2d');
+            barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tematica ' + politician,
+                        data: values,
+                        backgroundColor: labels.map((_, i) => getNextColor(i)),
+                        borderColor: labels.map((_, i) => getNextColor(i)),
+                        borderWidth: 1
                     }]
                 },
-                legend: {
-                    display: false
-                },
-                responsive: true,
-                maintainAspectRatio: false // Add this line
-            }
-        });
+                options: {
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                display: false
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: 'rgb(167 174 188)'
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false // Add this line
+                }
+            });
+        }
 
         var labelsPie = jsonDataSentiments[politician];
         var valuesPie = labelsPie.map(sentiment => labelsPie.filter(s => s === sentiment).length);
 
-        if (pieChart) {
-            pieChart.destroy();
-        }
-
-        // Update pie chart
-        var ctxPie = document.getElementById('pieChart').getContext('2d');
-        pieChart = new Chart(ctxPie, {
-            type: 'pie',
-            data: {
-                labels: labelsPie,
-                datasets: [{
-                    label: 'Sentiments of ' + politician,
-                    data: valuesPie,
-                    backgroundColor: labels.map((_, i) => getNextColor(i)),
-                    borderColor: labels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                legend: {
-                    display: true,
-                    position: 'right',
-                    align: 'center',
-                    labels: {
-                        fontColor: 'rgb(167 174 188)'
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false // Add this line
+        if (valuesPie.length === 0) {
+            document.getElementById('pieChart').style.display = 'none';
+            if (!document.getElementById('noDataDivPie')){
+                var noDataDiv = document.createElement('div');
+                noDataDiv.textContent = 'No se han encontrado sentimientos';
+                document.getElementById('pieContainer').appendChild(noDataDiv);
             }
-        });
+            
+        } else {
+            document.getElementById('pieChart').style.display = 'block';
+            if (document.getElementById('noDataDivPie')) {
+                document.getElementById('pieContainer').removeChild(document.getElementById('noDataDivPie'));
+            }
+            if (pieChart) {
+                pieChart.destroy();
+            }
+
+            // Update pie chart
+            var ctxPie = document.getElementById('pieChart').getContext('2d');
+            pieChart = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: labelsPie,
+                    datasets: [{
+                        label: 'Sentiments of ' + politician,
+                        data: valuesPie,
+                        backgroundColor: labels.map((_, i) => getNextColor(i)),
+                        borderColor: labels.map((_, i) => getNextColor(i)),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center',
+                        labels: {
+                            fontColor: 'rgb(167 174 188)'
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false // Add this line
+                }
+            });
+        }
 
         var labelsPolar = Object.keys(jsonDataLanguages[politician]);
         var valuesPolar = Object.values(jsonDataLanguages[politician]);
 
-        if (polarChart) {
-            polarChart.destroy();
-        }
-
-        // Update doughnut chart
-        var ctxDoughnut = document.getElementById('polarChart').getContext('2d');
-        polarChart = new Chart(ctxDoughnut, {
-            type: 'doughnut',
-            data: {
-                labels: labelsPolar,
-                datasets: [{
-                    label: 'Language of ' + politician,
-                    data: valuesPolar,
-                    backgroundColor: labels.map((_, i) => getNextColor(i)),
-                    borderColor: labels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                legend: {
-                    display: true,
-                    position: 'right',
-                    align: 'center',
-                    labels: {
-                        fontColor: 'rgb(167 174 188)'
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false // Add this line
+        if (valuesPolar.length === 0) {
+            document.getElementById('polarChart').style.display = 'none';
+            if (!document.getElementById('noDataDivPolar')) {
+                var noDataDiv = document.createElement('div');
+                noDataDiv.id = 'noDataDivPolar';
+                noDataDiv.textContent = 'No se han encontrado sentimientos';
+                document.getElementById('polarContainer').appendChild(noDataDiv);
             }
-        });
-        
+        } else {
+            document.getElementById('polarChart').style.display = 'block';
+            if (document.getElementById('noDataDivPolar')) {
+                document.getElementById('polarContainer').removeChild(document.getElementById('noDataDivPolar'));
+            }
+            if (polarChart) {
+                polarChart.destroy();
+            }
 
+            // Update doughnut chart
+            var ctxDoughnut = document.getElementById('polarChart').getContext('2d');
+            polarChart = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: labelsPolar,
+                    datasets: [{
+                        label: 'Language of ' + politician,
+                        data: valuesPolar,
+                        backgroundColor: labels.map((_, i) => getNextColor(i)),
+                        borderColor: labels.map((_, i) => getNextColor(i)),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center',
+                        labels: {
+                            fontColor: 'rgb(167 174 188)'
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false // Add this line
+                }
+            });
+        }
+        
     }
     // Initial chart with PP values
     updateChart('Alberto Núñez Feijóo');
