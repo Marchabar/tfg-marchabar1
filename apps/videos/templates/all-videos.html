@@ -28,7 +28,7 @@
                     </div>
                 </a>
             {% else %}
-                <div class="card bg-gray-400 dark:bg-gray-900 hover:bg-gray-600 dark:hover:bg-gray-800 shadow-xl text-gray-800 dark:text-gray-600">
+                <div class="card bg-gray-400 dark:bg-gray-900 hover:bg-gray-600 dark:hover:bg-gray-800 shadow-xl text-gray-800 dark:text-gray-600" onclick="showPublishModal('{{ video.id }}')">
                     <figure class="px-10 pt-10">
                         <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="rounded-lg" />
                     </figure>
@@ -38,9 +38,67 @@
                         <p class="text-red-600 dark:text-red-400"><strong>Not published</strong></p>
                     </div>
                 </div>
+
+                <dialog id="publish_modal" class="modal">
+                    <div class="modal-box">
+                        <form onsubmit="return publishVideo()">
+                            <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closePublishModal()">✕</button>
+                            <h3 class="font-bold text-lg">¿Quieres publicar este vídeo?</h3>
+                            <button type="submit" class="btn btn-primary">Publicar</button>
+                        </form>
+                    </div>
+                </dialog>
             {% endif %}
         {% endfor %}
     </div>
 </div>
+
+{% endblock %}
+
+{% block extrascript %}
+
+<script>
+
+function showPublishModal(videoId) {
+    const modal = document.getElementById('publish_modal');
+    modal.showModal();
+    modal.dataset.videoId = videoId;
+}
+
+function closePublishModal() {
+    const modal = document.getElementById('publish_modal');
+    modal.close();
+}
+
+function publishVideo() {
+    const modal = document.getElementById('publish_modal');
+    const videoId = modal.dataset.videoId;
+
+    // Create a new XMLHttpRequest
+    var xhr = new XMLHttpRequest();
+
+    // Configure it: POST-request for the URL /publish-video/ + videoId
+    xhr.open('POST', '/publish-video/' + videoId, true);
+
+    // Send the request over the network
+    xhr.send();
+
+    // This will be called after the response is received
+    xhr.onload = function() {
+        if (xhr.status != 200) { // analyze HTTP response
+            alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        } else { // show the result
+            closePublishModal();
+            location.reload();
+        }
+    };
+
+    xhr.onerror = function() {
+        alert("Request failed");
+    };
+
+    return false; // Prevents form submission
+}
+</script>
 
 {% endblock %}

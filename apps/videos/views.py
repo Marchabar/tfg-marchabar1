@@ -10,7 +10,9 @@ import requests
 import tiktoken
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import csrf_exempt
 from unidecode import unidecode
 from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -29,6 +31,14 @@ from .management.commands import load_video_json
 env = environ.Env()
 encoding = tiktoken.encoding_for_model("gpt-4")
 # Create your views here.
+
+
+@csrf_exempt
+def publish_video(request, video_id):
+    video = Video.objects.get(id=video_id)
+    video.published = True
+    video.save()
+    return JsonResponse({"status": "success"})
 
 
 def all_videos(request):
