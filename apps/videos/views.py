@@ -10,7 +10,9 @@ import requests
 import tiktoken
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import csrf_exempt
 from unidecode import unidecode
 from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -31,12 +33,31 @@ encoding = tiktoken.encoding_for_model("gpt-4")
 # Create your views here.
 
 
+@csrf_exempt
+def publish_video(request, video_id):
+    video = Video.objects.get(id=video_id)
+    video.published = True
+    video.save()
+    return JsonResponse({"status": "success"})
+
+
+def all_videos(request):
+    # user has to be superuser to access this view
+    if not request.user.is_authenticated:
+        return redirect("/?login_required=true")
+    videos = Video.objects.all().order_by("published")
+
+    if request.user.is_superuser:
+        return render(request, "all-videos.html", {"videos": videos})
+    else:
+        return redirect("/")
+
+
 def get_video_information(request, video_id):
     if not request.user.is_authenticated:
         return redirect("/?login_required=true")
 
     video = get_object_or_404(Video, id=video_id)
-    print(video)
     topics = Topic.objects.filter(video=video)
     sentiments = Sentiment.objects.filter(video=video)
     languages = Language.objects.filter(video=video)

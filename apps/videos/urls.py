@@ -12,4 +12,6 @@ urlpatterns = [
         views.get_video_information,
         name="video",
     ),
+    path("all-videos", views.all_videos, name="all-videos"),
+    path("publish-video/<int:video_id>", views.publish_video, name="publish_video"),
 ]
