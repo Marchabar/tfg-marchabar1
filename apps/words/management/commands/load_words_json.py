@@ -17,6 +17,8 @@ class Command(BaseCommand):
         for filename in glob.glob("answers/*.json"):
             with open(filename, "r", encoding="utf-8") as file:
                 data = json.load(file)
+                if isinstance(data, str):
+                    data = json.loads(data)
                 words = data.get("used_words")
                 for word in words:
                     word = self.first_upper(word)

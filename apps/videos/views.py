@@ -10,22 +10,50 @@ import requests
 import tiktoken
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from unidecode import unidecode
 from youtube_transcript_api import YouTubeTranscriptApi
 
 from apps.languages.management.commands import load_language_json
+from apps.languages.models import Language
 from apps.sentiments.management.commands import load_sentiment_json
+from apps.sentiments.models import Sentiment
 from apps.topics.management.commands import load_topics_json
 from apps.topics.models import Topic
 from apps.videos.models import Video
 from apps.words.management.commands import load_words_json
+from apps.words.models import Word
 
 from .management.commands import load_video_json
 
 env = environ.Env()
 encoding = tiktoken.encoding_for_model("gpt-4")
 # Create your views here.
+
+
+def get_video_information(request, video_id):
+    if not request.user.is_authenticated:
+        return redirect("/?login_required=true")
+
+    video = get_object_or_404(Video, id=video_id)
+    print(video)
+    topics = Topic.objects.filter(video=video)
+    sentiments = Sentiment.objects.filter(video=video)
+    languages = Language.objects.filter(video=video)
+    words = Word.objects.filter(video=video)
+    video_id = extract_video_id(video.url)
+    return render(
+        request,
+        "video-info.html",
+        {
+            "video": video,
+            "video_id": video_id,
+            "topics": topics,
+            "sentiments": sentiments,
+            "languages": languages,
+            "words": words,
+        },
+    )
 
 
 def analyze_video_user(request):
@@ -377,7 +405,7 @@ def general_statement(transcription):
     ]
 
     prompt = f"""Analiza las siguientes transcripciones de textos de políticos, y respóndeme a las preguntas que te propongo en formato json. Las claves del formato json son politician_name, political_party, date, length, summary, main_topics, sentiment, lenguaje y used_words. Para sus valores es muy importante que tengas en cuenta las siguientes condiciones : 
-    Para la key main_topics solo pueden ser valores que se encuentren en el siguiente array. Esto significa que aunque encuentres otros main_topics, solo debes coger los que esten en este array y sean mas similares a los que has encontrado. Recuerda que los valores ademas tienen que tener un porcentaje que corresponda al tiempo y cantidad que se habla de ellos en la transcripción {main_topics}
+    Para la key main_topics solo pueden ser valores que se encuentren en el siguiente array. Para esta key,necesito un diccionario que contenga el main_topic y el porcentaje del que se habla de el. {main_topics}
     Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
     Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
     Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. 
@@ -426,7 +454,9 @@ def get_videos_by_topic(request, topic_type):
         if topic.video.published:
             videos.append(topic.video)
 
-    return render(request, "videos.html", {"videos": videos, "topic_type": topic_type})
+    return render(
+        request, "videos-topic.html", {"videos": videos, "topic_type": topic_type}
+    )
 
 
 def get_videos_by_user(request):
