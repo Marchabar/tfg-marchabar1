@@ -41,11 +41,13 @@ def get_video_information(request, video_id):
     sentiments = Sentiment.objects.filter(video=video)
     languages = Language.objects.filter(video=video)
     words = Word.objects.filter(video=video)
+    video_id = extract_video_id(video.url)
     return render(
         request,
         "video-info.html",
         {
             "video": video,
+            "video_id": video_id,
             "topics": topics,
             "sentiments": sentiments,
             "languages": languages,
