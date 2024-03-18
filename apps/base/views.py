@@ -18,6 +18,10 @@ def load_politician(request):
             dict_politicians[video.politician_name].append(video)
     # I want to order dict_politicians by the key in alphabetic order
     dict_politicians = dict(sorted(dict_politicians.items()))
+    # I want to delete the key that says "Politico no reconocido"
+    if "Político no reconocido" in dict_politicians:
+        dict_politicians.pop("Político no reconocido")
+    print(dict_politicians)
 
     sentiments = Sentiment.objects.all()
     languages = Language.objects.all()
@@ -78,8 +82,7 @@ def load_politician(request):
         dict_languages[politician] = str(dict_languages[politician]).replace("'", '"')
 
     politicians = Video.objects.values_list("politician_name", flat=True).distinct()
-    videos = Video.objects.all().order_by("date")[:3]
-    print(dict_sentiments)
+    videos = Video.objects.all().order_by("-date")[:3]
     return render(
         request,
         "politician.html",
@@ -154,7 +157,7 @@ def load_charts(request):
     for party in dict_languages:
         dict_languages[party] = str(dict_languages[party]).replace("'", '"')
 
-    videos = Video.objects.all().order_by("date")[:3]
+    videos = Video.objects.all().order_by("-date")[:3]
 
     return render(
         request,

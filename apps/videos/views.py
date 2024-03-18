@@ -430,7 +430,7 @@ def general_statement(transcription):
     Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
     Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
     Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. 
-    Para la key politician_name (nombre del político) tienes que intentar sacarlo del title o description (sino sacas el politican_name pon Político no reconocido)
+    Para la key politician_name (nombre del político) tienes que sacarlo del title o description del video (sino sacas el politican_name pon Político no reconocido)
     La transcripción es la siguiente, y ya contiene el partido al que pertenece, la url, la fecha, y la duracion. Esto tambien tienes que incluirlo en el json que me das como respuesta. Además tienes que incluir un resumen corto en un párrafo de la transcripcion para la key summary. Recuerda tener en cuenta las limitaciones y solo coger valores de los arrays para las keys que lo necesitan: {transcription}
     """
     return prompt
