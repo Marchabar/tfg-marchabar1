@@ -152,40 +152,92 @@
         var labels = Object.keys(jsonData[politician]);
         var values = Object.values(jsonData[politician]);
         var labelDescriptionsBar = {
-            "economia": "Asuntos financieros y comerciales de un país",
-            "salud": "Temas relacionados con la atención médica y el bienestar físico y mental.",
-            "educacion": "Asuntos relacionados con el sistema educativo y la enseñanza.",
-            "medio_ambiente": "Problemas ambientales y conservación de recursos naturales.",
-            "derechos_civiles": "Derechos y libertades básicas de los ciudadanos frente al Estado.",
-            "inmigracion": "Movimiento de personas de un país a otro para establecerse o trabajar.",
-            "seguridad_nacional": "Protección del Estado contra amenazas internas y externas.",
-            "politica_exterior": "Relaciones con otros países y organizaciones internacionales.",
-            "empleo": "Asuntos relacionados con el trabajo y la contratación laboral.",
-            "criminalidad": "Delitos y actividades criminales dentro de la sociedad.",
-            "impuestos": "Cargas financieras impuestas por el gobierno a los contribuyentes.",
-            "bienestar_social": "Programas y políticas para el bienestar general de la sociedad.",
-            "tecnologia": "Desarrollo y aplicación de conocimientos técnicos y científicos.",
-            "energia": "Producción y consumo de recursos energéticos.",
-            "vivienda": "Acceso a viviendas y políticas relacionadas con la vivienda.",
-            "corrupcion": "Uso indebido de poder para obtener beneficios",
-            "libertad_de_prensa": "Derecho a la libertad de expresión y prensa sin censura.",
-            "igualdad_de_genero": "Trato igualitario entre hombres y mujeres en la sociedad.",
-            "diversidad_y_discriminacion": "Respeto de la diversidad cultural y la eliminación de la discriminación.",
-            "pobreza": "Escasez de recursos económicos y condiciones de vida precarias.",
-            "infraestructura": "Estructuras y servicios básicos necesarios para el funcionamiento de una sociedad.",
-            "religion": "Creencias y prácticas espirituales y religiosas.",
-            "derechos_de_las_minorias": "Protección de los derechos de grupos minoritarios dentro de la sociedad.",
-            "paz_y_conflicto": "Resolución de conflictos y promoción de la paz en el ámbito nacional e internacional.",
-            "defensa": "Protección y seguridad militar del país.",
-            "legislacion": "Elaboración y aplicación de leyes y regulaciones.",
-            "presupuesto": "Asignación de recursos financieros para programas y actividades gubernamentales.",
-            "justicia": "Sistema legal y administración de la ley.",
-            "eta": "Grupo separatista vasco y sus actividades políticas y violentas.",
-            "historia_reciente_de_espana": "Eventos y desarrollos significativos en la historia contemporánea de España.",
-            "terrorismo": "Uso de la violencia y el terror con fines políticos.",
-            "acusaciones_politicas": "Alegaciones y acusaciones contra figuras políticas.",
-            "campana_electoral": "Actividades y estrategias durante los períodos electorales.",
+            "Economía": "Asuntos financieros y comerciales de un país",
+            "Salud": "Temas relacionados con la atención médica y el bienestar físico y mental.",
+            "Educación": "Asuntos relacionados con el sistema educativo y la enseñanza.",
+            "Medio ambiente": "Problemas ambientales y conservación de recursos naturales.",
+            "Derechos civiles": "Derechos y libertades básicas de los ciudadanos frente al Estado.",
+            "Inmigración": "Movimiento de personas de un país a otro para establecerse o trabajar.",
+            "Seguridad nacional": "Protección del Estado contra amenazas internas y externas.",
+            "Política exterior": "Relaciones con otros países y organizaciones internacionales.",
+            "Empleo": "Asuntos relacionados con el trabajo y la contratación laboral.",
+            "Criminalidad": "Delitos y actividades criminales dentro de la sociedad.",
+            "Impuestos": "Cargas financieras impuestas por el gobierno a los contribuyentes.",
+            "Bienestar social": "Programas y políticas para el bienestar general de la sociedad.",
+            "Tecnología": "Desarrollo y aplicación de conocimientos técnicos y científicos.",
+            "Energía": "Producción y consumo de recursos energéticos.",
+            "Vivienda": "Acceso a viviendas y políticas relacionadas con la vivienda.",
+            "Corrupción": "Uso indebido de poder para obtener beneficios",
+            "Libertad de prensa": "Derecho a la libertad de expresión y prensa sin censura.",
+            "Igualdad de género": "Trato igualitario entre hombres y mujeres en la sociedad.",
+            "Diversidad y discriminación": "Respeto de la diversidad cultural y la eliminación de la discriminación.",
+            "Pobreza": "Escasez de recursos económicos y condiciones de vida precarias.",
+            "Infraestructura": "Estructuras y servicios básicos necesarios para el funcionamiento de una sociedad.",
+            "Religión": "Creencias y prácticas espirituales y religiosas.",
+            "Derechos de las minorías": "Protección de los derechos de grupos minoritarios dentro de la sociedad.",
+            "Paz y conflicto": "Resolución de conflictos y promoción de la paz en el ámbito nacional e internacional.",
+            "Defensa": "Protección y seguridad militar del país.",
+            "Legislación": "Elaboración y aplicación de leyes y regulaciones.",
+            "Presupuesto": "Asignación de recursos financieros para programas y actividades gubernamentales.",
+            "Justicia": "Sistema legal y administración de la ley.",
+            "ETA": "Grupo separatista vasco y sus actividades políticas y violentas.",
+            "Historia reciente de españa": "Eventos y desarrollos significativos en la historia contemporánea de España.",
+            "Terrorismo": "Uso de la violencia y el terror con fines políticos.",
+            "Acusaciones políticas": "Alegaciones y acusaciones contra figuras políticas.",
+            "Campaña electoral": "Actividades y estrategias durante los períodos electorales."
         };
+
+        var TOPIC_CHOICES = [
+            ["economia", "Economía"],
+            ["salud", "Salud"],
+            ["educacion", "Educación"],
+            ["medio_ambiente", "Medio ambiente"],
+            ["derechos_civiles", "Derechos civiles"],
+            ["inmigracion", "Inmigración"],
+            ["seguridad_nacional", "Seguridad nacional"],
+            ["politica_exterior", "Política exterior"],
+            ["empleo", "Empleo"],
+            ["criminalidad", "Criminalidad"],
+            ["impuestos", "Impuestos"],
+            ["bienestar_social", "Bienestar social"],
+            ["tecnologia", "Tecnología"],
+            ["energia", "Energía"],
+            ["vivienda", "Vivienda"],
+            ["corrupcion", "Corrupción"],
+            ["libertad_de_prensa", "Libertad de prensa"],
+            ["igualdad_de_genero", "Igualdad de género"],
+            ["diversidad_y_discriminacion", "Diversidad y discriminación"],
+            ["pobreza", "Pobreza"],
+            ["infraestructura", "Infraestructura"],
+            ["religion", "Religión"],
+            ["derechos_de_las_minorias", "Derechos de las minorías"],
+            ["paz_y_conflicto", "Paz y conflicto"],
+            ["defensa", "Defensa"],
+            ["legislacion", "Legislación"],
+            ["presupuesto", "Presupuesto"],
+            ["justicia", "Justicia"],
+            ["ETA", "ETA"],
+            ["historia_reciente_espana", "Historia reciente de España"],
+            ["terrorismo", "Terrorismo"],
+            ["acusaciones_políticas", "Acusaciones políticas"],
+            ["campana_electoral", "Campaña electoral"],
+            ["patriotismo", "Patriotismo"]
+        ];
+
+        // Function to convert snake_case to Title Case using the topic choices array
+        function snakeToTitleCase(str, choices) {
+            for (var i = 0; i < choices.length; i++) {
+                if (choices[i][0] === str) {
+                    return choices[i][1];
+                }
+            }
+            // If no match found, return original string
+            return str.replace(/_/g, ' ')
+                    .replace(/\b\w/g, function(char) {
+                        return char.toUpperCase();
+                    });
+        }
+
 
         if (values.length === 0) {
             document.getElementById('partyChart').style.display = 'none';
@@ -203,7 +255,7 @@
             barChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: labels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
                     datasets: [{
                         label: 'Tematica ' + politician,
                         data: values,
@@ -261,19 +313,34 @@
         var labelsPie = jsonDataSentiments[politician];
         var valuesPie = labelsPie.map(sentiment => labelsPie.filter(s => s === sentiment).length);
         var labelDescriptionsPie = {
-            "enojo": "Emoción intensa de ira o irritación.",
-            "frustracion": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
-            "pasion": "Fuerte emoción o entusiasmo por algo.",
-            "entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
-            "preocupacion": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
-            "confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
-            "desesperacion": "Sentimiento de angustia o falta de esperanza.",
-            "optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
-            "satisfaccion": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
-            "escepticismo": "Actitud de duda o incredulidad hacia algo.",
-            "desden": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
-            "empatia": "Capacidad de comprender y compartir los sentimientos de otra persona.",
-        };
+                "Enojo": "Emoción intensa de ira o irritación.",
+                "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
+                "Pasión": "Fuerte emoción o entusiasmo por algo.",
+                "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
+                "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
+                "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
+                "Desesperación": "Sentimiento de angustia o falta de esperanza.",
+                "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
+                "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
+                "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
+                "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
+                "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
+            };
+
+            SENTIMENT_CHOICES = [
+                ["enojo", "Enojo"],
+                ["frustracion", "Frustración"],
+                ["pasion", "Pasión"],
+                ["entusiasmo", "Entusiasmo"],
+                ["preocupacion", "Preocupación"],
+                ["confianza", "Confianza"],
+                ["desesperacion", "Desesperación"],
+                ["optimismo", "Optimismo"],
+                ["satisfaccion", "Satisfacción"],
+                ["escepticismo", "Escepticismo"],
+                ["desden", "Desdén"],
+                ["empatia", "Empatía"]
+            ]
 
         if (valuesPie.length === 0) {
             document.getElementById('pieChart').style.display = 'none';
@@ -297,7 +364,7 @@
             pieChart = new Chart(ctxPie, {
                 type: 'pie',
                 data: {
-                    labels: labelsPie,
+                    labels: labelsPie.map(label => snakeToTitleCase(label, SENTIMENT_CHOICES)),
                     datasets: [{
                         label: 'Sentiments of ' + politician,
                         data: valuesPie,
@@ -337,27 +404,52 @@
         var labelsPolar = Object.keys(jsonDataLanguages[politician]);
         var valuesPolar = Object.values(jsonDataLanguages[politician]);
         var labelDescriptionsPolar = {
-            "formal": "Utilizado en contextos serios o profesionales.",
-            "tecnico": "Especializado en un área específica del conocimiento.",
-            "emocional": "Dirigido a evocar sentimientos y emociones.",
-            "persuasivo": "Diseñado para influir en las opiniones o acciones.",
-            "retorico": "Se enfoca en la persuasión y la elocuencia.",
-            "bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
-            "partidista": "Centrado en los intereses y objetivos de un partido político específico.",
-            "populista": "Dirigido a las preocupaciones y deseos del público general.",
-            "consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
-            "confrontacion": "Utilizado para enfrentar directamente opiniones opuestas.",
-            "compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
-            "promesas": "Incluye compromisos o garantías de acciones futuras.",
-            "critica": "Se centra en señalar defectos o problemas en políticas o acciones.",
-            "estadisticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
-            "datos": "Enfocado en la presentación objetiva de información.",
-            "debate": "Utilizado en discusiones estructuradas para argumentar.",
-            "discurso_publico": "Dirigido a un público amplio en eventos públicos.",
-            "campana": "Utilizado durante las campañas electorales para promover candidatos.",
-            "legislacion": "Relacionado con la redacción de leyes y regulaciones.",
-            "negociacion": "Utilizado en procesos de negociación para llegar a acuerdos."
+            "Formal": "Utilizado en contextos serios o profesionales.",
+            "Técnico": "Especializado en un área específica del conocimiento.",
+            "Emocional": "Dirigido a evocar sentimientos y emociones.",
+            "Persuasivo": "Diseñado para influir en las opiniones o acciones.",
+            "Retórico": "Se enfoca en la persuasión y la elocuencia.",
+            "Bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
+            "Partidista": "Centrado en los intereses y objetivos de un partido político específico.",
+            "Populista": "Dirigido a las preocupaciones y deseos del público general.",
+            "Consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
+            "Confrontación": "Utilizado para enfrentar directamente opiniones opuestas.",
+            "Compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
+            "Promesas": "Incluye compromisos o garantías de acciones futuras.",
+            "Crítica": "Se centra en señalar defectos o problemas en políticas o acciones.",
+            "Estadísticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
+            "Datos": "Enfocado en la presentación objetiva de información.",
+            "Debate": "Utilizado en discusiones estructuradas para argumentar.",
+            "Discurso Público": "Dirigido a un público amplio en eventos públicos.",
+            "Campaña": "Utilizado durante las campañas electorales para promover candidatos.",
+            "Legislación": "Relacionado con la redacción de leyes y regulaciones.",
+            "Negociación": "Utilizado en procesos de negociación para llegar a acuerdos."
         };
+
+
+        LANGUAGE_CHOICES = [
+            ["formal", "Formal"],
+            ["tecnico", "Técnico"],
+            ["emocional", "Emocional"],
+            ["persuasivo", "Persuasivo"],
+            ["retorico", "Retórico"],
+            ["bipartidista", "Bipartidista"],
+            ["partidista", "Partidista"],
+            ["populista", "Populista"],
+            ["consenso", "Consenso"],
+            ["confrontacion", "Confrontación"],
+            ["compromiso", "Compromiso"],
+            ["promesas", "Promesas"],
+            ["critica", "Crítica"],
+            ["estadisticas", "Estadísticas"],
+            ["datos", "Datos"],
+            ["debate", "Debate"],
+            ["discurso_publico", "Discurso Público"],
+            ["campana", "Campaña"],
+            ["legislacion", "Legislación"],
+            ["negociacion", "Negociación"],
+            ["patriotico", "Patriótico"]
+        ]
 
         if (valuesPolar.length === 0) {
             document.getElementById('polarChart').style.display = 'none';
@@ -381,7 +473,7 @@
             polarChart = new Chart(ctxDoughnut, {
                 type: 'doughnut',
                 data: {
-                    labels: labelsPolar,
+                    labels: labelsPolar.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
                     datasets: [{
                         label: 'Language of ' + politician,
                         data: valuesPolar,
