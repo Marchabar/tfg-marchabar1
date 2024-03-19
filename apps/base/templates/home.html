@@ -243,7 +243,7 @@
         }
 
         // Update bar chart
-        var ctx = document.getElementById('partyChart').getContext('2d');
+        var ctx = document.getElementById('partyChart').getContext('2d', {willReadFrequently: true});
         barChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -339,7 +339,7 @@
             }
 
             // Update pie chart
-            var ctxPie = document.getElementById('pieChart').getContext('2d');
+            var ctxPie = document.getElementById('pieChart').getContext('2d', {willReadFrequently: true});
             pieChart = new Chart(ctxPie, {
                 type: 'pie',
                 data: {
@@ -438,7 +438,7 @@
     
 
         // Update doughnut chart
-        var ctxDoughnut = document.getElementById('polarChart').getContext('2d');
+        var ctxDoughnut = document.getElementById('polarChart').getContext('2d', {willReadFrequently: true});
         polarChart = new Chart(ctxDoughnut, {
             type: 'doughnut',
             data: {
@@ -515,7 +515,7 @@
             if (!event.target.classList.contains('disabled')) {
                 updateChart(event.target.dataset.party);
             }
-        });
+        }, { passive: true }); 
     });
 </script>
 
