@@ -486,6 +486,5 @@ def get_videos_by_user(request):
 
     # I need to get the videos which user is the one that is logged in
     user_videos = Video.objects.filter(user=request.user)
-    print(user_videos)
 
     return render(request, "user-videos.html", {"user_videos": user_videos})

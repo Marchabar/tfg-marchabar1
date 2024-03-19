@@ -21,7 +21,6 @@ def load_politician(request):
     # I want to delete the key that says "Politico no reconocido"
     if "Político no reconocido" in dict_politicians:
         dict_politicians.pop("Político no reconocido")
-    print(dict_politicians)
 
     sentiments = Sentiment.objects.all()
     languages = Language.objects.all()
