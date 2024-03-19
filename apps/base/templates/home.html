@@ -103,6 +103,42 @@
     function updateChart(party) {
         var labels = Object.keys(jsonData[party]);
         var values = Object.values(jsonData[party]);
+        var labelDescriptionsBar = {
+            "economia": "Asuntos financieros y comerciales de un país",
+            "salud": "Temas relacionados con la atención médica y el bienestar físico y mental.",
+            "educacion": "Asuntos relacionados con el sistema educativo y la enseñanza.",
+            "medio_ambiente": "Problemas ambientales y conservación de recursos naturales.",
+            "derechos_civiles": "Derechos y libertades básicas de los ciudadanos frente al Estado.",
+            "inmigracion": "Movimiento de personas de un país a otro para establecerse o trabajar.",
+            "seguridad_nacional": "Protección del Estado contra amenazas internas y externas.",
+            "politica_exterior": "Relaciones con otros países y organizaciones internacionales.",
+            "empleo": "Asuntos relacionados con el trabajo y la contratación laboral.",
+            "criminalidad": "Delitos y actividades criminales dentro de la sociedad.",
+            "impuestos": "Cargas financieras impuestas por el gobierno a los contribuyentes.",
+            "bienestar_social": "Programas y políticas para el bienestar general de la sociedad.",
+            "tecnologia": "Desarrollo y aplicación de conocimientos técnicos y científicos.",
+            "energia": "Producción y consumo de recursos energéticos.",
+            "vivienda": "Acceso a viviendas y políticas relacionadas con la vivienda.",
+            "corrupcion": "Uso indebido de poder para obtener beneficios",
+            "libertad_de_prensa": "Derecho a la libertad de expresión y prensa sin censura.",
+            "igualdad_de_genero": "Trato igualitario entre hombres y mujeres en la sociedad.",
+            "diversidad_y_discriminacion": "Respeto de la diversidad cultural y la eliminación de la discriminación.",
+            "pobreza": "Escasez de recursos económicos y condiciones de vida precarias.",
+            "infraestructura": "Estructuras y servicios básicos necesarios para el funcionamiento de una sociedad.",
+            "religion": "Creencias y prácticas espirituales y religiosas.",
+            "derechos_de_las_minorias": "Protección de los derechos de grupos minoritarios dentro de la sociedad.",
+            "paz_y_conflicto": "Resolución de conflictos y promoción de la paz en el ámbito nacional e internacional.",
+            "defensa": "Protección y seguridad militar del país.",
+            "legislacion": "Elaboración y aplicación de leyes y regulaciones.",
+            "presupuesto": "Asignación de recursos financieros para programas y actividades gubernamentales.",
+            "justicia": "Sistema legal y administración de la ley.",
+            "eta": "Grupo separatista vasco y sus actividades políticas y violentas.",
+            "historia_reciente_de_espana": "Eventos y desarrollos significativos en la historia contemporánea de España.",
+            "terrorismo": "Uso de la violencia y el terror con fines políticos.",
+            "acusaciones_politicas": "Alegaciones y acusaciones contra figuras políticas.",
+            "campana_electoral": "Actividades y estrategias durante los períodos electorales.",
+        };
+
 
         
         function getNextColor(index) {
@@ -156,11 +192,21 @@
             options: {
                 scales: {
                     xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Temáticas',
+                            fontColor: 'rgb(167 174 188)'
+                        },
                         ticks: {
                             display: false
                         }
                     }],
                     yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Porcentaje (%)',
+                            fontColor: 'rgb(167 174 188)'
+                        },
                         ticks: {
                             beginAtZero: true,
                             fontColor: 'rgb(167 174 188)'
@@ -169,6 +215,19 @@
                 },
                 legend: {
                     display: false
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index];
+                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            var description = labelDescriptionsBar[label] || '';
+                            return value + " " + description ;
+                        }
+                    }
                 },
                 responsive: true,
                 maintainAspectRatio: false // Add this line
@@ -228,7 +287,7 @@
                             var label = data.labels[tooltipItem.index];
                             var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
                             var description = labelDescriptionsPie[label] || '';
-                            return description ;
+                            return value + " " + description ;
                         }
                     }
                 },
@@ -299,7 +358,7 @@
                             var label = data.labels[tooltipItem.index];
                             var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
                             var description = labelDescriptionsPolar[label] || '';
-                            return description ;
+                            return value + " " + description ;
                         }
                     }
                 },
