@@ -6,6 +6,8 @@
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-tag-cloud.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -72,6 +74,14 @@
             </div>
         </div>
     </div>
+    <div class="p-4 h-full relative">
+        <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <h2 class="text-lg font-semibold">Nube de palabras</h2>
+            <div id="myWordCloudChart" class="h-full w-full">
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-700 text-white dark:text-gray-700 w-30 z-10 absolute bottom-[30px] right-[20px]">betisbetisbetisbetis</div>
+    </div>
 </div>
 
 {% endblock %}
@@ -95,10 +105,15 @@
     validJsonLanguages = validJsonLanguages.replace(/"{/g, '{').replace(/}"/g, '}')
     jsonDataLanguages = JSON.parse(validJsonLanguages);
 
-    var barChart; // Variable to store the current chart instance
-    var pieChart; // Variable to store the current chart instance
-    var polarChart;
+    let dict_words = '{{ dict_words|escapejs }}';
+    let validJsonWords = dict_words.replace(/'/g, '"');
+    validJsonWords = validJsonWords.replace(/"{/g, '{').replace(/}"/g, '}')
+    jsonDataWords = JSON.parse(validJsonWords);
 
+    var barChart; 
+    var pieChart; 
+    var polarChart;
+    var wordChart;
 
     function updateChart(party) {
         var labels = Object.keys(jsonData[party]);
@@ -420,6 +435,8 @@
             polarChart.destroy();
         }
 
+    
+
         // Update doughnut chart
         var ctxDoughnut = document.getElementById('polarChart').getContext('2d');
         polarChart = new Chart(ctxDoughnut, {
@@ -460,11 +477,37 @@
                 maintainAspectRatio: false // Add this line
             }
         });
-        
+
+        document.getElementById("myWordCloudChart").innerHTML = "";
+
+        var data = [];
+
+        // Check if the selected party exists in the JSON data
+        if (jsonDataWords.hasOwnProperty(party)) {
+            // Iterate over each word in the selected party's word cloud data
+            for (var word in jsonDataWords[party]) {
+                // Add the word and its frequency to the data array
+                data.push({x: word, value: jsonDataWords[party][word]});
+            }
+        }
+
+        // Create a chart and set the data
+        var wordChart = anychart.tagCloud(data);
+
+        // Set the container id
+        wordChart.container("myWordCloudChart");
+
+        // Set background properties
+        wordChart.background().enabled(true);
+        wordChart.background().fill("transparent");
+
+        // Initiate drawing the chart
+        wordChart.draw();
 
     }
     // Initial chart with PP values
     updateChart('PP');
+
 
     // Event listener for dropdown items
     document.querySelectorAll('.dropdown-content a').forEach(item => {

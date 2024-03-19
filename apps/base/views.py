@@ -1,3 +1,6 @@
+import json
+from collections import defaultdict
+
 from django.shortcuts import render
 
 from ..languages.models import Language
@@ -157,6 +160,23 @@ def load_charts(request):
         dict_languages[party] = str(dict_languages[party]).replace("'", '"')
 
     videos = Video.objects.all().order_by("-date")[:3]
+    PARTIES = ["PP", "PSOE", "VOX", "SUMAR"]
+
+    words = Word.objects.select_related("video").filter(
+        video__political_party__in=PARTIES
+    )
+
+    # Initialize the dictionary
+    dict_words = defaultdict(lambda: defaultdict(int))
+
+    # Count words per party
+    for word in words:
+        dict_words[word.video.political_party][word.word] += 1
+
+    dict_words = {k: dict(v) for k, v in dict_words.items()}
+
+    # Convert dictionary to JSON
+    dict_words = json.dumps(dict_words)
 
     return render(
         request,
@@ -166,5 +186,6 @@ def load_charts(request):
             "dict_sentiments": dict_sentiments,
             "dict_languages": dict_languages,
             "videos": videos,
+            "dict_words": dict_words,
         },
     )
