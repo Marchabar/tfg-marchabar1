@@ -59,6 +59,7 @@ def get_video_information(request, video_id):
 
     video = get_object_or_404(Video, id=video_id)
     topics = Topic.objects.filter(video=video)
+    print(topics)
     sentiments = Sentiment.objects.filter(video=video)
     languages = Language.objects.filter(video=video)
     words = Word.objects.filter(video=video)

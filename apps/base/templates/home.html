@@ -177,6 +177,20 @@
 
         var labelsPie = jsonDataSentiments[party];
         var valuesPie = labelsPie.map(sentiment => labelsPie.filter(s => s === sentiment).length);
+        var labelDescriptionsPie = {
+            "enojo": "Emoción intensa de ira o irritación.",
+            "frustracion": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
+            "pasion": "Fuerte emoción o entusiasmo por algo.",
+            "entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
+            "preocupacion": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
+            "confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
+            "desesperacion": "Sentimiento de angustia o falta de esperanza.",
+            "optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
+            "satisfaccion": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
+            "escepticismo": "Actitud de duda o incredulidad hacia algo.",
+            "desden": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
+            "empatia": "Capacidad de comprender y compartir los sentimientos de otra persona.",
+        };
 
         if (pieChart) {
             pieChart.destroy();
@@ -205,6 +219,19 @@
                         fontColor: 'rgb(167 174 188)'
                     }
                 },
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index];
+                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            var description = labelDescriptionsPie[label] || '';
+                            return description ;
+                        }
+                    }
+                },
                 responsive: true,
                 maintainAspectRatio: false // Add this line
             }
@@ -212,6 +239,29 @@
 
         var labelsPolar = Object.keys(jsonDataLanguages[party]);
         var valuesPolar = Object.values(jsonDataLanguages[party]);
+        var labelDescriptionsPolar = {
+            "formal": "Utilizado en contextos serios o profesionales.",
+            "tecnico": "Especializado en un área específica del conocimiento.",
+            "emocional": "Dirigido a evocar sentimientos y emociones.",
+            "persuasivo": "Diseñado para influir en las opiniones o acciones.",
+            "retorico": "Se enfoca en la persuasión y la elocuencia.",
+            "bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
+            "partidista": "Centrado en los intereses y objetivos de un partido político específico.",
+            "populista": "Dirigido a las preocupaciones y deseos del público general.",
+            "consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
+            "confrontacion": "Utilizado para enfrentar directamente opiniones opuestas.",
+            "compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
+            "promesas": "Incluye compromisos o garantías de acciones futuras.",
+            "critica": "Se centra en señalar defectos o problemas en políticas o acciones.",
+            "estadisticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
+            "datos": "Enfocado en la presentación objetiva de información.",
+            "debate": "Utilizado en discusiones estructuradas para argumentar.",
+            "discurso_publico": "Dirigido a un público amplio en eventos públicos.",
+            "campana": "Utilizado durante las campañas electorales para promover candidatos.",
+            "legislacion": "Relacionado con la redacción de leyes y regulaciones.",
+            "negociacion": "Utilizado en procesos de negociación para llegar a acuerdos."
+        };
+
 
         if (polarChart) {
             polarChart.destroy();
@@ -238,6 +288,19 @@
                     align: 'center',
                     labels: {
                         fontColor: 'rgb(167 174 188)'
+                    }
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index];
+                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            var description = labelDescriptionsPolar[label] || '';
+                            return description ;
+                        }
                     }
                 },
                 responsive: true,
