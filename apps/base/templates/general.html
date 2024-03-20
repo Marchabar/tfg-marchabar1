@@ -6,8 +6,6 @@
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
-<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-core.min.js"></script>
-<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-tag-cloud.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -34,25 +32,25 @@
     </div>
     <div class="grid grid-cols-2 sm:h-full">
         <div class="p-4">
-            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div id="pp" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">PP</h2>
                 <canvas id="ppChart"></canvas>
             </div>
         </div>
         <div class="p-4">
-            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div id="psoe" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">PSOE</h2>
                 <canvas id="psoeChart"></canvas>
             </div>
         </div>
         <div class="p-4">
-            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div id="vox" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">VOX</h2>
                 <canvas id="voxChart"></canvas>
             </div>
         </div>
         <div class="p-4">
-            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div id="sumar" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">SUMAR</h2>
                 <canvas id="sumarChart"></canvas>
             </div>
@@ -63,28 +61,59 @@
 {% endblock %}
 
 {% block extrascript %}
-
 <script>
     let dict_general = '{{dict_general | escapejs}}';
     let jsonData = JSON.parse(dict_general);
 
-    var ppBarChart;
-    var psoeBarChart;
-    var voxBarChart;
-    var sumarBarChart;
+    let chartInstances = [];
 
     function updateChart(dropdownOption) {
-
         document.getElementById('dropdownButton').textContent = dropdownOption === 'topics' ? 'Temática' :
                                                                dropdownOption === 'sentiments' ? 'Sentimiento' :
                                                                dropdownOption === 'languages' ? 'Lenguage' :
                                                                'Dropdown';
 
-        if (ppBarChart) ppBarChart.destroy();
-        if (psoeBarChart) psoeBarChart.destroy();
-        if (voxBarChart) voxBarChart.destroy();
-        if (sumarBarChart) sumarBarChart.destroy();
+        // Destroy previous charts
+        chartInstances.forEach(chart => chart.destroy());
+        chartInstances = []; // Clear the array
 
+        var labelDescriptionsBar = {
+            "Economía": "Asuntos financieros y comerciales de un país",
+            "Salud": "Temas relacionados con la atención médica y el bienestar físico y mental.",
+            "Educación": "Asuntos relacionados con el sistema educativo y la enseñanza.",
+            "Medio ambiente": "Problemas ambientales y conservación de recursos naturales.",
+            "Derechos civiles": "Derechos y libertades básicas de los ciudadanos frente al Estado.",
+            "Inmigración": "Movimiento de personas de un país a otro para establecerse o trabajar.",
+            "Seguridad nacional": "Protección del Estado contra amenazas internas y externas.",
+            "Política exterior": "Relaciones con otros países y organizaciones internacionales.",
+            "Empleo": "Asuntos relacionados con el trabajo y la contratación laboral.",
+            "Criminalidad": "Delitos y actividades criminales dentro de la sociedad.",
+            "Impuestos": "Cargas financieras impuestas por el gobierno a los contribuyentes.",
+            "Bienestar social": "Programas y políticas para el bienestar general de la sociedad.",
+            "Tecnología": "Desarrollo y aplicación de conocimientos técnicos y científicos.",
+            "Energía": "Producción y consumo de recursos energéticos.",
+            "Vivienda": "Acceso a viviendas y políticas relacionadas con la vivienda.",
+            "Corrupción": "Uso indebido de poder para obtener beneficios",
+            "Libertad de prensa": "Derecho a la libertad de expresión y prensa sin censura.",
+            "Igualdad de género": "Trato igualitario entre hombres y mujeres en la sociedad.",
+            "Diversidad y discriminación": "Respeto de la diversidad cultural y la eliminación de la discriminación.",
+            "Pobreza": "Escasez de recursos económicos y condiciones de vida precarias.",
+            "Infraestructura": "Estructuras y servicios básicos necesarios para el funcionamiento de una sociedad.",
+            "Religión": "Creencias y prácticas espirituales y religiosas.",
+            "Derechos de las minorías": "Protección de los derechos de grupos minoritarios dentro de la sociedad.",
+            "Paz y conflicto": "Resolución de conflictos y promoción de la paz en el ámbito nacional e internacional.",
+            "Defensa": "Protección y seguridad militar del país.",
+            "Legislación": "Elaboración y aplicación de leyes y regulaciones.",
+            "Presupuesto": "Asignación de recursos financieros para programas y actividades gubernamentales.",
+            "Justicia": "Sistema legal y administración de la ley.",
+            "ETA": "Grupo separatista vasco y sus actividades políticas y violentas.",
+            "Historia reciente de españa": "Eventos y desarrollos significativos en la historia contemporánea de España.",
+            "Terrorismo": "Uso de la violencia y el terror con fines políticos.",
+            "Acusaciones políticas": "Alegaciones y acusaciones contra figuras políticas.",
+            "Campaña electoral": "Actividades y estrategias durante los períodos electorales."
+        };
+
+        // Create new charts
         let chartOptionsBar = {
             scales: {
                 xAxes: [{
@@ -111,102 +140,133 @@
             },
             legend: {
                 display: false
-            }
-        };
-
-        let chartOptions = {
-            legend: {
-                position: 'right',
-                labels: {
-                    boxWidth: 20
+            },
+            tooltips: {
+                callbacks: {
+                    title: function(tooltipItem, data) {
+                        return data.labels[tooltipItem[0].index];
+                    },
+                    label: function(tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        var description = labelDescriptionsBar[label] || '';
+                        return value + " " + description ;
+                    }
                 }
-            }
+            },
+            responsive: true,
         };
-
-        ppChart = document.getElementById('ppChart').getContext('2d', {willReadFrequently: true})
-        psoeChart = document.getElementById('psoeChart').getContext('2d', {willReadFrequently: true})
-        voxChart = document.getElementById('voxChart').getContext('2d', {willReadFrequently: true})
-        sumarChart = document.getElementById('sumarChart').getContext('2d', {willReadFrequently: true})
 
         if (dropdownOption === 'sentiments') {
-            ppBarChart = createPieChart(ppChart, 'PP', dropdownOption, chartOptions);
-            psoeBarChart = createPieChart(psoeChart, 'PSOE', dropdownOption, chartOptions);
-            voxBarChart = createPieChart(voxChart, 'VOX', dropdownOption, chartOptions);
-            sumarBarChart = createPieChart(sumarChart, 'SUMAR', dropdownOption, chartOptions);
+            createPieCharts('pie', dropdownOption);
         } else if (dropdownOption === 'languages') {
-            ppBarChart = createPolarChart(ppChart, 'PP', dropdownOption, chartOptions);
-            psoeBarChart = createPolarChart(psoeChart, 'PSOE', dropdownOption, chartOptions);
-            voxBarChart = createPolarChart(voxChart, 'VOX', dropdownOption, chartOptions);
-            sumarBarChart = createPolarChart(sumarChart, 'SUMAR', dropdownOption, chartOptions);
+            createPieCharts('doughnut', dropdownOption);
         } else {
-            ppBarChart = createBarChart(ppChart, 'PP', dropdownOption, chartOptionsBar);
-            psoeBarChart = createBarChart(psoeChart, 'PSOE', dropdownOption, chartOptionsBar);
-            voxBarChart = createBarChart(voxChart, 'VOX', dropdownOption, chartOptionsBar);
-            sumarBarChart = createBarChart(sumarChart, 'SUMAR', dropdownOption, chartOptionsBar);
+            createBarCharts(dropdownOption, chartOptionsBar);
         }
     }
 
-    function createBarChart(context, party, dropdownOption, chartOptionsBar) {
-        let data = jsonData[party][dropdownOption];
-        let labels = Object.keys(data);
-        let values = Object.values(data);
-        let backgroundColors = labels.map((_, index) => getNextColor(index));
+    function snakeToTitleCase(str, choices) {
+            for (var i = 0; i < choices.length; i++) {
+                if (choices[i][0] === str) {
+                    return choices[i][1];
+                }
+            }
+            // If no match found, return original string
+            return str.replace(/_/g, ' ')
+                    .replace(/\b\w/g, function(char) {
+                        return char.toUpperCase();
+                    });
+        }
 
-        new Chart(context, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: party,
-                    data: values,
-                    backgroundColor: backgroundColors,
-                    borderColor: backgroundColors,
-                    borderWidth: 1
-                }]
-            },
-            options: chartOptionsBar
+    function createPieCharts(type, dropdownOption) {
+        ['PP', 'PSOE', 'VOX', 'SUMAR'].forEach(party => {
+            let canvas = document.getElementById(`${party.toLowerCase()}Chart`);
+            let context = canvas.getContext('2d');
+            let chartOptions = {
+                type: type,
+                data: {
+                    labels: Object.keys(jsonData[party][dropdownOption]),
+                    datasets: [{
+                        data: Object.values(jsonData[party][dropdownOption]),
+                        backgroundColor: Object.keys(jsonData[party][dropdownOption]).map((_, index) => getNextColor(index)),
+                        borderColor: Object.keys(jsonData[party][dropdownOption]).map((_, index) => getNextColor(index)),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 20
+                        }
+                    },
+                    responsive: true,
+                }
+            };
+            chartInstances.push(new Chart(context, chartOptions));
         });
     }
 
-    function createPieChart(context, party, dropdownOption, chartOptions) {
-        let data = jsonData[party][dropdownOption];
-        let labels = Object.keys(data);
-        let values = Object.values(data);
-        let backgroundColors = labels.map((_, index) => getNextColor(index));
-
-        new Chart(context, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: backgroundColors,
-                    borderColor: backgroundColors,
-                    borderWidth: 1
-                }]
-            },
-            options: chartOptions
-        });
-    }
-
-    function createPolarChart(context, party, dropdownOption, chartOptions) {
-        let data = jsonData[party][dropdownOption];
-        let labels = Object.keys(data);
-        let values = Object.values(data);
-        let backgroundColors = labels.map((_, index) => getNextColor(index));
-
-        new Chart(context, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: backgroundColors,
-                    borderColor: backgroundColors,
-                    borderWidth: 1
-                }]
-            },
-            options: chartOptions
+    function createBarCharts(dropdownOption, chartOptions) {
+        var TOPIC_CHOICES = [
+            ["economia", "Economía"],
+            ["salud", "Salud"],
+            ["educacion", "Educación"],
+            ["medio_ambiente", "Medio ambiente"],
+            ["derechos_civiles", "Derechos civiles"],
+            ["inmigracion", "Inmigración"],
+            ["seguridad_nacional", "Seguridad nacional"],
+            ["politica_exterior", "Política exterior"],
+            ["empleo", "Empleo"],
+            ["criminalidad", "Criminalidad"],
+            ["impuestos", "Impuestos"],
+            ["bienestar_social", "Bienestar social"],
+            ["tecnologia", "Tecnología"],
+            ["energia", "Energía"],
+            ["vivienda", "Vivienda"],
+            ["corrupcion", "Corrupción"],
+            ["libertad_de_prensa", "Libertad de prensa"],
+            ["igualdad_de_genero", "Igualdad de género"],
+            ["diversidad_y_discriminacion", "Diversidad y discriminación"],
+            ["pobreza", "Pobreza"],
+            ["infraestructura", "Infraestructura"],
+            ["religion", "Religión"],
+            ["derechos_de_las_minorias", "Derechos de las minorías"],
+            ["paz_y_conflicto", "Paz y conflicto"],
+            ["defensa", "Defensa"],
+            ["legislacion", "Legislación"],
+            ["presupuesto", "Presupuesto"],
+            ["justicia", "Justicia"],
+            ["ETA", "ETA"],
+            ["historia_reciente_espana", "Historia reciente de España"],
+            ["terrorismo", "Terrorismo"],
+            ["acusaciones_políticas", "Acusaciones políticas"],
+            ["campana_electoral", "Campaña electoral"],
+            ["patriotismo", "Patriotismo"]
+        ];
+        ['PP', 'PSOE', 'VOX', 'SUMAR'].forEach(party => {
+            let canvas = document.getElementById(`${party.toLowerCase()}Chart`);
+            let context = canvas.getContext('2d');
+            let data = jsonData[party][dropdownOption];
+            let labels = Object.keys(data);
+            let values = Object.values(data);
+            let backgroundColors = labels.map((_, index) => getNextColor(index));
+            let chart = new Chart(context, {
+                type: 'bar',
+                data: {
+                    labels: labels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
+                    datasets: [{
+                        label: party,
+                        data: values,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: chartOptions
+            });
+            chartInstances.push(chart);
         });
     }
 
@@ -221,12 +281,11 @@
             '#9966ff', // Purple
             '#ff6384'  // Indigo
         ];
-
         return defaultColors[index % defaultColors.length];
     }
 
     // Initially update the chart with the default option
     updateChart('topics');
 </script>
-
 {% endblock %}
+
