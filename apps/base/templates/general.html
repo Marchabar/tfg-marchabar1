@@ -16,8 +16,8 @@
     <div class="flex">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
         <div class="dropdown">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Temática</div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+            <div id="dropdownButton" tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-34 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Temática</div>
+            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-34">
                 <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('topics')">Temática</a></li>
                 <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('sentiments')">Sentimiento</a></li>
                 <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('languages')">Lenguage</a></li>
@@ -68,12 +68,23 @@
     let dict_general = '{{dict_general | escapejs}}';
     let jsonData = JSON.parse(dict_general);
 
-    let ppChart = document.getElementById('ppChart').getContext('2d');
-    let psoeChart = document.getElementById('psoeChart').getContext('2d');
-    let voxChart = document.getElementById('voxChart').getContext('2d');
-    let sumarChart = document.getElementById('sumarChart').getContext('2d');
+    var ppBarChart;
+    var psoeBarChart;
+    var voxBarChart;
+    var sumarBarChart;
 
     function updateChart(dropdownOption) {
+
+        document.getElementById('dropdownButton').textContent = dropdownOption === 'topics' ? 'Temática' :
+                                                               dropdownOption === 'sentiments' ? 'Sentimiento' :
+                                                               dropdownOption === 'languages' ? 'Lenguage' :
+                                                               'Dropdown';
+
+        if (ppBarChart) ppBarChart.destroy();
+        if (psoeBarChart) psoeBarChart.destroy();
+        if (voxBarChart) voxBarChart.destroy();
+        if (sumarBarChart) sumarBarChart.destroy();
+
         let chartOptionsBar = {
             scales: {
                 xAxes: [{
@@ -112,21 +123,26 @@
             }
         };
 
+        ppChart = document.getElementById('ppChart').getContext('2d', {willReadFrequently: true})
+        psoeChart = document.getElementById('psoeChart').getContext('2d', {willReadFrequently: true})
+        voxChart = document.getElementById('voxChart').getContext('2d', {willReadFrequently: true})
+        sumarChart = document.getElementById('sumarChart').getContext('2d', {willReadFrequently: true})
+
         if (dropdownOption === 'sentiments') {
-            createPieChart(ppChart, 'PP', dropdownOption, chartOptions);
-            createPieChart(psoeChart, 'PSOE', dropdownOption, chartOptions);
-            createPieChart(voxChart, 'VOX', dropdownOption, chartOptions);
-            createPieChart(sumarChart, 'SUMAR', dropdownOption, chartOptions);
+            ppBarChart = createPieChart(ppChart, 'PP', dropdownOption, chartOptions);
+            psoeBarChart = createPieChart(psoeChart, 'PSOE', dropdownOption, chartOptions);
+            voxBarChart = createPieChart(voxChart, 'VOX', dropdownOption, chartOptions);
+            sumarBarChart = createPieChart(sumarChart, 'SUMAR', dropdownOption, chartOptions);
         } else if (dropdownOption === 'languages') {
-            createPolarChart(ppChart, 'PP', dropdownOption, chartOptions);
-            createPolarChart(psoeChart, 'PSOE', dropdownOption, chartOptions);
-            createPolarChart(voxChart, 'VOX', dropdownOption, chartOptions);
-            createPolarChart(sumarChart, 'SUMAR', dropdownOption, chartOptions);
+            ppBarChart = createPolarChart(ppChart, 'PP', dropdownOption, chartOptions);
+            psoeBarChart = createPolarChart(psoeChart, 'PSOE', dropdownOption, chartOptions);
+            voxBarChart = createPolarChart(voxChart, 'VOX', dropdownOption, chartOptions);
+            sumarBarChart = createPolarChart(sumarChart, 'SUMAR', dropdownOption, chartOptions);
         } else {
-            createBarChart(ppChart, 'PP', dropdownOption, chartOptionsBar);
-            createBarChart(psoeChart, 'PSOE', dropdownOption, chartOptionsBar);
-            createBarChart(voxChart, 'VOX', dropdownOption, chartOptionsBar);
-            createBarChart(sumarChart, 'SUMAR', dropdownOption, chartOptionsBar);
+            ppBarChart = createBarChart(ppChart, 'PP', dropdownOption, chartOptionsBar);
+            psoeBarChart = createBarChart(psoeChart, 'PSOE', dropdownOption, chartOptionsBar);
+            voxBarChart = createBarChart(voxChart, 'VOX', dropdownOption, chartOptionsBar);
+            sumarBarChart = createBarChart(sumarChart, 'SUMAR', dropdownOption, chartOptionsBar);
         }
     }
 
