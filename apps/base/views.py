@@ -11,6 +11,52 @@ from ..videos.models import Video
 from ..words.models import Word
 
 
+def load_general(request):
+    videos = Video.objects.filter(published=True)
+    dict_general = defaultdict(
+        lambda: {
+            "topics": defaultdict(int),
+            "sentiments": defaultdict(int),
+            "languages": defaultdict(int),
+        }
+    )
+
+    for video in videos:
+        party = video.political_party
+
+        # Count topics
+        topics = Topic.objects.filter(video=video)
+        for topic in topics:
+            if topic.topic_type not in dict_general[party]["topics"]:
+                dict_general[party]["topics"][topic.topic_type] = 0
+            dict_general[party]["topics"][topic.topic_type] += topic.percentage
+
+        # Count sentiments
+        sentiments = Sentiment.objects.filter(video=video)
+        for sentiment in sentiments:
+            dict_general[party]["sentiments"][sentiment.sentiment_type] += 1
+
+        # Count languages
+        languages = Language.objects.filter(video=video)
+        for language in languages:
+            dict_general[party]["languages"][language.language_type] += 1
+
+    for topic in dict_general[party]["topics"]:
+        total = sum(dict_general[party]["topics"].values())
+        dict_general[party]["topics"][topic] = round(
+            dict_general[party]["topics"][topic] / total * 100, 2
+        )
+
+    # Convert defaultdict to dict
+    dict_general = {k: dict(v) for k, v in dict_general.items()}
+
+    # Convert to JSON
+    dict_general_json = json.dumps(dict_general)
+    print(dict_general_json)
+
+    return render(request, "general.html", {"dict_general": dict_general_json})
+
+
 def load_politician(request):
     videos = Video.objects.filter(published=True)
     dict_politicians = {}

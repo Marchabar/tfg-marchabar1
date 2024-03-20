@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboards{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'css/output.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-tag-cloud.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col h-screen">
+    <div class="flex">
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
+        <div class="dropdown">
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Temática</div>
+            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+                <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('topics')">Temática</a></li>
+                <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('sentiments')">Sentimiento</a></li>
+                <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('languages')">Lenguage</a></li>
+            </ul>
+        </div>
+        <div class="dropdown">
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">General</div>
+            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+                <li><a href="/" class="text-gray-700 dark:text-gray-100">General</a></li>
+                <li><a href="/by-party" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
+                <li><a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por político</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 sm:h-full">
+        <div class="p-4">
+            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+                <h2 class="text-lg font-semibold">PP</h2>
+                <canvas id="ppChart"></canvas>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+                <h2 class="text-lg font-semibold">PSOE</h2>
+                <canvas id="psoeChart"></canvas>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+                <h2 class="text-lg font-semibold">VOX</h2>
+                <canvas id="voxChart"></canvas>
+            </div>
+        </div>
+        <div class="p-4">
+            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+                <h2 class="text-lg font-semibold">SUMAR</h2>
+                <canvas id="sumarChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extrascript %}
+
+<script>
+    let dict_general = '{{dict_general | escapejs}}';
+    let jsonData = JSON.parse(dict_general);
+
+    let ppChart = document.getElementById('ppChart').getContext('2d');
+    let psoeChart = document.getElementById('psoeChart').getContext('2d');
+    let voxChart = document.getElementById('voxChart').getContext('2d');
+    let sumarChart = document.getElementById('sumarChart').getContext('2d');
+
+    function updateChart(dropdownOption) {
+        let chartOptionsBar = {
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                            display: true,
+                            labelString: 'Temáticas',
+                            fontColor: 'rgb(167 174 188)'
+                        },
+                    ticks: {
+                        display: false
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                            display: true,
+                            labelString: 'Porcentaje (%)',
+                            fontColor: 'rgb(167 174 188)'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: 'rgb(167 174 188)'
+                        }
+                }]
+            },
+            legend: {
+                display: false
+            }
+        };
+
+        let chartOptions = {
+            legend: {
+                position: 'right',
+                labels: {
+                    boxWidth: 20
+                }
+            }
+        };
+
+        if (dropdownOption === 'sentiments') {
+            createPieChart(ppChart, 'PP', dropdownOption, chartOptions);
+            createPieChart(psoeChart, 'PSOE', dropdownOption, chartOptions);
+            createPieChart(voxChart, 'VOX', dropdownOption, chartOptions);
+            createPieChart(sumarChart, 'SUMAR', dropdownOption, chartOptions);
+        } else if (dropdownOption === 'languages') {
+            createPolarChart(ppChart, 'PP', dropdownOption, chartOptions);
+            createPolarChart(psoeChart, 'PSOE', dropdownOption, chartOptions);
+            createPolarChart(voxChart, 'VOX', dropdownOption, chartOptions);
+            createPolarChart(sumarChart, 'SUMAR', dropdownOption, chartOptions);
+        } else {
+            createBarChart(ppChart, 'PP', dropdownOption, chartOptionsBar);
+            createBarChart(psoeChart, 'PSOE', dropdownOption, chartOptionsBar);
+            createBarChart(voxChart, 'VOX', dropdownOption, chartOptionsBar);
+            createBarChart(sumarChart, 'SUMAR', dropdownOption, chartOptionsBar);
+        }
+    }
+
+    function createBarChart(context, party, dropdownOption, chartOptionsBar) {
+        let data = jsonData[party][dropdownOption];
+        let labels = Object.keys(data);
+        let values = Object.values(data);
+        let backgroundColors = labels.map((_, index) => getNextColor(index));
+
+        new Chart(context, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: party,
+                    data: values,
+                    backgroundColor: backgroundColors,
+                    borderColor: backgroundColors,
+                    borderWidth: 1
+                }]
+            },
+            options: chartOptionsBar
+        });
+    }
+
+    function createPieChart(context, party, dropdownOption, chartOptions) {
+        let data = jsonData[party][dropdownOption];
+        let labels = Object.keys(data);
+        let values = Object.values(data);
+        let backgroundColors = labels.map((_, index) => getNextColor(index));
+
+        new Chart(context, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: backgroundColors,
+                    borderColor: backgroundColors,
+                    borderWidth: 1
+                }]
+            },
+            options: chartOptions
+        });
+    }
+
+    function createPolarChart(context, party, dropdownOption, chartOptions) {
+        let data = jsonData[party][dropdownOption];
+        let labels = Object.keys(data);
+        let values = Object.values(data);
+        let backgroundColors = labels.map((_, index) => getNextColor(index));
+
+        new Chart(context, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: backgroundColors,
+                    borderColor: backgroundColors,
+                    borderWidth: 1
+                }]
+            },
+            options: chartOptions
+        });
+    }
+
+    function getNextColor(index) {
+        // Array of default Chart.js colors
+        const defaultColors = [
+            '#36a2eb', // Blue
+            '#4bc0c0', // Green
+            '#ffcd56', // Yellow
+            '#ff9f40', // Orange
+            '#c9cbcf', // Gray
+            '#9966ff', // Purple
+            '#ff6384'  // Indigo
+        ];
+
+        return defaultColors[index % defaultColors.length];
+    }
+
+    // Initially update the chart with the default option
+    updateChart('topics');
+</script>
+
+{% endblock %}

@@ -59,7 +59,6 @@ def get_video_information(request, video_id):
 
     video = get_object_or_404(Video, id=video_id)
     topics = Topic.objects.filter(video=video)
-    print(topics)
     sentiments = Sentiment.objects.filter(video=video)
     languages = Language.objects.filter(video=video)
     words = Word.objects.filter(video=video)
@@ -128,7 +127,6 @@ def analyze_video_user(request):
         for choice in TOPIC_CHOICES:
             if choice[0] == topic["topic_type"]:
                 topic["topic_type"] = choice[1]
-    print(top_topics)
 
     search = request.GET.get("video-url")
 
@@ -193,7 +191,6 @@ def analyze_video_user(request):
                     )
                 if video_details:
                     response = generate_response(prompt)
-                    print(response)
                     # response = {
                     #     "politician_name": "Pedro Sánchez",
                     #     "political_party": "PSOE",
