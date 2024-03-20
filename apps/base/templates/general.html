@@ -180,13 +180,87 @@
         }
 
     function createPieCharts(type, dropdownOption) {
-        ['PP', 'PSOE', 'VOX', 'SUMAR'].forEach(party => {
+            SENTIMENT_CHOICES = [
+                ["enojo", "Enojo"],
+                ["frustracion", "Frustración"],
+                ["pasion", "Pasión"],
+                ["entusiasmo", "Entusiasmo"],
+                ["preocupacion", "Preocupación"],
+                ["confianza", "Confianza"],
+                ["desesperacion", "Desesperación"],
+                ["optimismo", "Optimismo"],
+                ["satisfaccion", "Satisfacción"],
+                ["escepticismo", "Escepticismo"],
+                ["desden", "Desdén"],
+                ["empatia", "Empatía"]
+            ];
+            LANGUAGE_CHOICES = [
+                ["formal", "Formal"],
+                ["tecnico", "Técnico"],
+                ["emocional", "Emocional"],
+                ["persuasivo", "Persuasivo"],
+                ["retorico", "Retórico"],
+                ["bipartidista", "Bipartidista"],
+                ["partidista", "Partidista"],
+                ["populista", "Populista"],
+                ["consenso", "Consenso"],
+                ["confrontacion", "Confrontación"],
+                ["compromiso", "Compromiso"],
+                ["promesas", "Promesas"],
+                ["critica", "Crítica"],
+                ["estadisticas", "Estadísticas"],
+                ["datos", "Datos"],
+                ["debate", "Debate"],
+                ["discurso_publico", "Discurso Público"],
+                ["campana", "Campaña"],
+                ["legislacion", "Legislación"],
+                ["negociacion", "Negociación"],
+                ["patriotico", "Patriótico"]
+            ];
+            var labelDescriptionsPie = {
+                "Enojo": "Emoción intensa de ira o irritación.",
+                "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
+                "Pasión": "Fuerte emoción o entusiasmo por algo.",
+                "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
+                "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
+                "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
+                "Desesperación": "Sentimiento de angustia o falta de esperanza.",
+                "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
+                "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
+                "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
+                "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
+                "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
+            };
+
+            var labelDescriptionsPolar = {
+                "Formal": "Utilizado en contextos serios o profesionales.",
+                "Técnico": "Especializado en un área específica del conocimiento.",
+                "Emocional": "Dirigido a evocar sentimientos y emociones.",
+                "Persuasivo": "Diseñado para influir en las opiniones o acciones.",
+                "Retórico": "Se enfoca en la persuasión y la elocuencia.",
+                "Bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
+                "Partidista": "Centrado en los intereses y objetivos de un partido político específico.",
+                "Populista": "Dirigido a las preocupaciones y deseos del público general.",
+                "Consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
+                "Confrontación": "Utilizado para enfrentar directamente opiniones opuestas.",
+                "Compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
+                "Promesas": "Incluye compromisos o garantías de acciones futuras.",
+                "Crítica": "Se centra en señalar defectos o problemas en políticas o acciones.",
+                "Estadísticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
+                "Datos": "Enfocado en la presentación objetiva de información.",
+                "Debate": "Utilizado en discusiones estructuradas para argumentar.",
+                "Discurso Público": "Dirigido a un público amplio en eventos públicos.",
+                "Campaña": "Utilizado durante las campañas electorales para promover candidatos.",
+                "Legislación": "Relacionado con la redacción de leyes y regulaciones.",
+                "Negociación": "Utilizado en procesos de negociación para llegar a acuerdos."
+            };
+            ['PP', 'PSOE', 'VOX', 'SUMAR'].forEach(party => {
             let canvas = document.getElementById(`${party.toLowerCase()}Chart`);
             let context = canvas.getContext('2d');
             let chartOptions = {
                 type: type,
                 data: {
-                    labels: Object.keys(jsonData[party][dropdownOption]),
+                    labels: Object.keys(jsonData[party][dropdownOption]).map(label => snakeToTitleCase(label, dropdownOption === 'sentiments' ? SENTIMENT_CHOICES : LANGUAGE_CHOICES)),
                     datasets: [{
                         data: Object.values(jsonData[party][dropdownOption]),
                         backgroundColor: Object.keys(jsonData[party][dropdownOption]).map((_, index) => getNextColor(index)),
@@ -199,6 +273,19 @@
                         position: 'right',
                         labels: {
                             boxWidth: 20
+                        }
+                    },
+                    tooltips: {
+                        callbacks: {
+                            title: function(tooltipItem, data) {
+                                return data.labels[tooltipItem[0].index];
+                            },
+                            label: function(tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index];
+                                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                var description = dropdownOption === 'sentiments' ? labelDescriptionsPie[label] : labelDescriptionsPolar[label] || '';
+                                return value + " " + description ;
+                            }
                         }
                     },
                     responsive: true,
