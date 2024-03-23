@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Dashboards{% endblock %}
+{% block title %}Portada{% endblock %}
 
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
@@ -12,7 +12,7 @@
 
 <div class="flex flex-col h-screen">
     <div class="flex">
-        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
         <div class="dropdown">
             <div id="dropdownButton" tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-34 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Temática</div>
             <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-34">
@@ -33,25 +33,25 @@
     <div class="grid grid-cols-2 sm:h-full">
         <div class="p-4">
             <div id="pp" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <h2 class="text-lg font-semibold">PP</h2>
+                <img src="{% static 'images/pp.png' %}" alt="PP" class="w-24 h-20 inline-block object-contain">
                 <canvas id="ppChart"></canvas>
             </div>
         </div>
         <div class="p-4">
             <div id="psoe" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <h2 class="text-lg font-semibold">PSOE</h2>
+                <img src="{% static 'images/psoe.png' %}" alt="PSOE" class="w-20 h-16 inline-block object-contain">
                 <canvas id="psoeChart"></canvas>
             </div>
         </div>
         <div class="p-4">
             <div id="vox" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <h2 class="text-lg font-semibold">VOX</h2>
+                <img src="{% static 'images/vox.png' %}" alt="VOX" class="w-16 h-14 inline-block object-contain">
                 <canvas id="voxChart"></canvas>
             </div>
         </div>
         <div class="p-4">
             <div id="sumar" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <h2 class="text-lg font-semibold">SUMAR</h2>
+                <img src="{% static 'images/sumar.png' %}" alt="SUMAR" class="w-20 h-16 inline-block object-contain">
                 <canvas id="sumarChart"></canvas>
             </div>
         </div>
