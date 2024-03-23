@@ -14,15 +14,25 @@
     <div class="flex">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
         <div class="dropdown">
-            <div id="dropdownButton" tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-34 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Temática</div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-34">
+            <div id="dropdownButton" tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">
+                Temática 
+            </div>
+            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-32">
                 <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('topics')">Temática</a></li>
                 <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('sentiments')">Sentimiento</a></li>
                 <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('languages')">Lenguage</a></li>
             </ul>
         </div>
         <div class="dropdown">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">General</div>
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center items-center">
+                <div class="flex items-center"> <!-- Container to center the text and SVG -->
+                    <span class="mr-2 ml-2">General</span> <!-- Text -->
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <!-- SVG Icon -->
+                        <rect x="0" fill="none" width="24" height="24"/>
+                        <g><path d="M7 10l5 5 5-5"/></g>
+                    </svg>
+                </div>
+            </div>            
             <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
                 <li><a href="/" class="text-gray-700 dark:text-gray-100">General</a></li>
                 <li><a href="/by-party" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
@@ -68,10 +78,21 @@
     let chartInstances = [];
 
     function updateChart(dropdownOption) {
-        document.getElementById('dropdownButton').textContent = dropdownOption === 'topics' ? 'Temática' :
-                                                               dropdownOption === 'sentiments' ? 'Sentimiento' :
-                                                               dropdownOption === 'languages' ? 'Lenguage' :
-                                                               'Dropdown';
+        let arrowSVG = '<svg class="w-6 h-6 ml-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+               '<rect x="0" fill="none" width="24" height="24"/>' +
+               '<g><path d="M7 10l5 5 5-5"/></g></svg>';
+
+        // Update dropdown text with SVG
+        let dropdownText = dropdownOption === 'topics' ? 'Temática' :
+                            dropdownOption === 'sentiments' ? 'Sentimiento' :
+                            dropdownOption === 'languages' ? 'Lenguaje' :
+                            'Dropdown';
+        let dropdownContent = '<div class="flex items-center">' +
+                                '<span class="mr-2 ml-2">' + dropdownText + '</span>' +
+                                arrowSVG +
+                            '</div>';
+        document.getElementById('dropdownButton').innerHTML = dropdownContent;
+
 
         // Destroy previous charts
         chartInstances.forEach(chart => chart.destroy());
