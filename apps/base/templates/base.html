@@ -74,12 +74,12 @@
                     <h4 class="mx-2 mt-2 font-medium text-gray-800 dark:text-gray-200">{{user.username}}</h4>
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn w-32 px-4 py-2 mt-2 font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-500">Cerrar Sesión</button>
+                        <button type="submit" class="btn w-32 px-4 py-2 mt-2 font-medium text-center text-white bg-red-600 rounded-lg shadow-lg hover:bg-red-500 border-none">Cerrar Sesión</button>
                     </form>
                 </div>
             {% else %}
                 <div class="flex flex-col items-center mt-6 -mx-2">
-                    <button class="btn w-32 px-4 py-2 mx-2 font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-500" onclick="my_modal_3.showModal()">Iniciar Sesión</button>
+                    <button class="btn w-32 px-4 py-2 mx-2 font-medium text-center text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-500 border-none" onclick="my_modal_3.showModal()">Iniciar Sesión</button>
                     <dialog id="my_modal_3" class="modal">
                         <div class="modal-box w-11/12 max-w-5xl bg-white dark:bg-gray-800">
                             <form id="myForm" method="post" action="{% url 'login' %}">
