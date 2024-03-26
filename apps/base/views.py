@@ -41,11 +41,14 @@ def load_general(request):
         for language in languages:
             dict_general[party]["languages"][language.language_type] += 1
 
-    for topic in dict_general[party]["topics"]:
-        total = sum(dict_general[party]["topics"].values())
-        dict_general[party]["topics"][topic] = round(
-            dict_general[party]["topics"][topic] / total * 100, 2
-        )
+    for party, values in dict_general.items():
+        total = sum(
+            values["topics"].values()
+        )  # Calculate total percentage for the party
+        # Iterate through each topic for the party
+        for topic, percentage in values["topics"].items():
+            # Update the percentage for the topic by dividing by the total and multiplying by 100
+            dict_general[party]["topics"][topic] = round((percentage / total) * 100, 2)
 
     # Convert defaultdict to dict
     dict_general = {k: dict(v) for k, v in dict_general.items()}
