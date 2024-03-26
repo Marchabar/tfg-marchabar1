@@ -11,7 +11,7 @@
 {% block content %}
 
 <div class="flex flex-col h-screen">
-    <div class="flex">
+    <div class="flex  pr-4">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
         <div class="dropdown">
             <div id="dropdownButton" tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">
@@ -38,6 +38,9 @@
                 <li><a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por político</a></li>
             </ul>
         </div>
+        <button onclick="location.href='/analysis'" class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto">
+            Nuevo vídeo
+        </button>
     </div>
     <div class="grid grid-cols-2 sm:h-full">
         <div class="p-4">

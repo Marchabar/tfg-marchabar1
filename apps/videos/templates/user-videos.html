@@ -11,8 +11,11 @@
 {% block content %}
 
 <div class="flex flex-col h-screen">
-    <div class="flex">
+    <div class="flex pr-4">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Mis vídeos</h1>
+        <button onclick="location.href='/analysis'" class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto">
+            Nuevo vídeo
+        </button>
     </div>
     <div class="grid grid-cols-3 gap-2 p-4">
         {% for video in user_videos %}
