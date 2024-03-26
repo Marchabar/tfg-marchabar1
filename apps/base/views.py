@@ -52,7 +52,6 @@ def load_general(request):
 
     # Convert to JSON
     dict_general_json = json.dumps(dict_general)
-    print(dict_general_json)
 
     return render(request, "general.html", {"dict_general": dict_general_json})
 

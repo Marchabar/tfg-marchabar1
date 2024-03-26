@@ -27,9 +27,8 @@
             <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center items-center">
                 <div class="flex items-center"> <!-- Container to center the text and SVG -->
                     <span class="mr-2 ml-2">General</span> <!-- Text -->
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"> <!-- SVG Icon -->
-                        <rect x="0" fill="none" width="24" height="24"/>
-                        <g><path d="M7 10l5 5 5-5"/></g>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </div>
             </div>            
@@ -78,9 +77,8 @@
     let chartInstances = [];
 
     function updateChart(dropdownOption) {
-        let arrowSVG = '<svg class="w-6 h-6 ml-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
-               '<rect x="0" fill="none" width="24" height="24"/>' +
-               '<g><path d="M7 10l5 5 5-5"/></g></svg>';
+        let arrowSVG = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+               '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
 
         // Update dropdown text with SVG
         let dropdownText = dropdownOption === 'topics' ? 'Temática' :
