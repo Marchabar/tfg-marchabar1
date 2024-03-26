@@ -42,27 +42,27 @@
             Nuevo vídeo
         </button>        
     </div>
-    <div class="grid grid-cols-2 sm:h-full">
+    <div class="grid grid-cols-2 sm:h-screen">
         <div class="p-4">
-            <div id="pp" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div id="pp" class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <img src="{% static 'images/pp.png' %}" alt="PP" class="w-24 h-20 inline-block object-contain">
                 <canvas id="ppChart"></canvas>
             </div>
         </div>
         <div class="p-4">
-            <div id="psoe" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div id="psoe" class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <img src="{% static 'images/psoe.png' %}" alt="PSOE" class="w-20 h-16 inline-block object-contain">
                 <canvas id="psoeChart"></canvas>
             </div>
         </div>
         <div class="p-4">
-            <div id="vox" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div id="vox" class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <img src="{% static 'images/vox.png' %}" alt="VOX" class="w-16 h-14 inline-block object-contain">
                 <canvas id="voxChart"></canvas>
             </div>
         </div>
         <div class="p-4">
-            <div id="sumar" class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div id="sumar" class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <img src="{% static 'images/sumar.png' %}" alt="SUMAR" class="w-20 h-16 inline-block object-contain">
                 <canvas id="sumarChart"></canvas>
             </div>
@@ -145,7 +145,10 @@
                             fontColor: 'rgb(167 174 188)'
                         },
                     ticks: {
-                        display: false
+                        display: true,
+                        maxRotation: 90,
+                        minRotation: 90,
+                        fontSize: 11,
                     }
                 }],
                 yAxes: [{

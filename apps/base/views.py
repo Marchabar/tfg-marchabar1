@@ -1,3 +1,4 @@
+import heapq
 import json
 from collections import defaultdict
 
@@ -41,14 +42,38 @@ def load_general(request):
         for language in languages:
             dict_general[party]["languages"][language.language_type] += 1
 
+    # Iterate through each party
     for party, values in dict_general.items():
-        total = sum(
+        total_percentage = sum(
             values["topics"].values()
         )  # Calculate total percentage for the party
-        # Iterate through each topic for the party
+
+        # Get the top 6 topics with highest percentages
+        top_topics = heapq.nlargest(6, values["topics"], key=values["topics"].get)
+
+        # Calculate the sum of percentages of topics not in top 6
+        rest_percentage = sum(
+            percentage
+            for topic, percentage in values["topics"].items()
+            if topic not in top_topics
+        )
+
+        # Calculate percentage for each topic based on the total percentage
         for topic, percentage in values["topics"].items():
-            # Update the percentage for the topic by dividing by the total and multiplying by 100
-            dict_general[party]["topics"][topic] = round((percentage / total) * 100, 2)
+            values["topics"][topic] = round((percentage / total_percentage) * 100, 2)
+
+        # Assign the sum of rest to 'Otros'
+        values["topics"]["Otros"] = round(rest_percentage / total_percentage * 100, 2)
+
+        topics_to_remove = [
+            topic
+            for topic in values["topics"]
+            if topic not in top_topics and topic != "Otros"
+        ]
+
+        # Remove topics not in top 6
+        for topic in topics_to_remove:
+            del values["topics"][topic]
 
     # Convert defaultdict to dict
     dict_general = {k: dict(v) for k, v in dict_general.items()}
