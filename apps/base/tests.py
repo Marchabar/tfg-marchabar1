@@ -1,4 +1,5 @@
 from django.test import Client, TestCase
+from django.urls import reverse
 
 from apps.base.views import load_charts
 
@@ -8,7 +9,7 @@ class LoadChartsTestCase(TestCase):
         self.client = Client()
 
     def test_load_charts(self):
-        response = self.client.get("/")
+        response = self.client.get("/by-party")
 
         # Assert that the response status code is 200 (OK)
         self.assertEqual(response.status_code, 200)
