@@ -44,36 +44,79 @@ def load_general(request):
 
     # Iterate through each party
     for party, values in dict_general.items():
-        total_percentage = sum(
+        total_percentage_topics = sum(
             values["topics"].values()
         )  # Calculate total percentage for the party
 
+        top_sentiments = heapq.nlargest(
+            6, values["sentiments"], key=values["sentiments"].get
+        )
+
+        top_languages = heapq.nlargest(
+            6, values["languages"], key=values["languages"].get
+        )
         # Get the top 6 topics with highest percentages
         top_topics = heapq.nlargest(6, values["topics"], key=values["topics"].get)
 
         # Calculate the sum of percentages of topics not in top 6
-        rest_percentage = sum(
+        rest_percentage_topics = sum(
             percentage
             for topic, percentage in values["topics"].items()
             if topic not in top_topics
         )
 
+        rest_count_sentiments = sum(
+            count
+            for sentiment, count in values["sentiments"].items()
+            if sentiment not in top_sentiments
+        )
+
+        rest_count_languages = sum(
+            count
+            for language, count in values["languages"].items()
+            if language not in top_languages
+        )
+
         # Calculate percentage for each topic based on the total percentage
         for topic, percentage in values["topics"].items():
-            values["topics"][topic] = round((percentage / total_percentage) * 100, 2)
+            values["topics"][topic] = round(
+                (percentage / total_percentage_topics) * 100, 2
+            )
 
-        # Assign the sum of rest to 'Otros'
-        values["topics"]["Otros"] = round(rest_percentage / total_percentage * 100, 2)
+        values["sentiments"]["Otros"] = rest_count_sentiments
+
+        values["languages"]["Otros"] = rest_count_languages
+
+        values["topics"]["Otros"] = round(
+            rest_percentage_topics / total_percentage_topics * 100, 2
+        )
 
         topics_to_remove = [
             topic
             for topic in values["topics"]
             if topic not in top_topics and topic != "Otros"
         ]
+        sentiments_to_remove = [
+            sentiment
+            for sentiment in values["sentiments"]
+            if sentiment not in top_sentiments and sentiment != "Otros"
+        ]
+
+        languages_to_remove = [
+            language
+            for language in values["languages"]
+            if language not in top_languages and language != "Otros"
+        ]
 
         # Remove topics not in top 6
         for topic in topics_to_remove:
             del values["topics"][topic]
+
+        for sentiment in sentiments_to_remove:
+            del values["sentiments"][sentiment]
+
+        for language in languages_to_remove:
+            del values["languages"][language]
 
     # Convert defaultdict to dict
     dict_general = {k: dict(v) for k, v in dict_general.items()}
@@ -92,9 +135,9 @@ def load_politician(request):
             dict_politicians[video.politician_name] = [video]
         else:
             dict_politicians[video.politician_name].append(video)
-    # I want to order dict_politicians by the key in alphabetic order
+
     dict_politicians = dict(sorted(dict_politicians.items()))
-    # I want to delete the key that says "Politico no reconocido"
+
     if "Político no reconocido" in dict_politicians:
         dict_politicians.pop("Político no reconocido")
 
@@ -120,13 +163,35 @@ def load_politician(request):
                 dict_topics[politician][topic] / total * 100, 2
             )
 
-    for politician in dict_topics:
+    for politician, values in dict_topics.items():
+        total_percentage = sum(values.values())
+
+        top_topics = heapq.nlargest(6, values, key=values.get)
+
+        rest_percentage = sum(
+            percentage
+            for topic, percentage in values.items()
+            if topic not in top_topics
+        )
+
+        for topic, percentage in values.items():
+            values[topic] = round((percentage / total_percentage) * 100, 2)
+
+        values["Otros"] = round(rest_percentage / total_percentage * 100, 2)
+
+        topics_to_remove = [
+            topic for topic in values if topic not in top_topics and topic != "Otros"
+        ]
+
+        for topic in topics_to_remove:
+            del values[topic]
+
         dict_topics[politician] = str(dict_topics[politician]).replace("'", '"')
 
     dict_sentiments = {}
     for video in videos:
         if video.politician_name not in dict_sentiments:
-            dict_sentiments[video.politician_name] = []
+            dict_sentiments[video.politician_name] = {}
         for sentiment in sentiments:
             if sentiment.video.id != video.id:
                 continue
@@ -135,12 +200,33 @@ def load_politician(request):
                     sentiment.sentiment_type
                     not in dict_sentiments[video.politician_name]
                 ):
-                    dict_sentiments[video.politician_name].append(
+                    dict_sentiments[video.politician_name][sentiment.sentiment_type] = 1
+                else:
+                    dict_sentiments[video.politician_name][
                         sentiment.sentiment_type
-                    )
+                    ] += 1
 
-    for politician in dict_sentiments:
-        dict_sentiments[politician] = str(dict_sentiments[politician]).replace("'", '"')
+    for party, values in dict_sentiments.items():
+        top_sentiments = heapq.nlargest(6, values, key=values.get)
+
+        rest_count = sum(
+            count
+            for sentiment, count in values.items()
+            if sentiment not in top_sentiments
+        )
+
+        values["Otros"] = rest_count
+
+        sentiments_to_remove = [
+            sentiment
+            for sentiment in values
+            if sentiment not in top_sentiments and sentiment != "Otros"
+        ]
+
+        for sentiment in sentiments_to_remove:
+            del values[sentiment]
+
+        dict_sentiments[party] = str(values).replace("'", '"')
 
     dict_languages = {}
     for video in videos:
@@ -153,8 +239,26 @@ def load_politician(request):
                 if language.language_type not in dict_languages[video.politician_name]:
                     dict_languages[video.politician_name][language.language_type] = 0
                 dict_languages[video.politician_name][language.language_type] += 1
-    for poltician in dict_languages:
-        dict_languages[politician] = str(dict_languages[politician]).replace("'", '"')
+
+    for party, values in dict_languages.items():
+        top_languages = heapq.nlargest(6, values, key=values.get)
+
+        rest_count = sum(
+            count for language, count in values.items() if language not in top_languages
+        )
+
+        values["Otros"] = rest_count
+
+        languages_to_remove = [
+            language
+            for language in values
+            if language not in top_languages and language != "Otros"
+        ]
+
+        for language in languages_to_remove:
+            del values[language]
+
+        dict_languages[party] = str(values).replace("'", '"')
 
     politicians = Video.objects.values_list("politician_name", flat=True).distinct()
     videos = Video.objects.all().order_by("-date")[:3]

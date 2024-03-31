@@ -100,7 +100,8 @@
     let jsonData = JSON.parse(validJson);
 
     let dict_sentiments = '{{ dict_sentiments|escapejs }}';
-    let validJsonSentiments = dict_sentiments.replace(/'/g, '"').replace(/"(\[.*?\])"/g, '$1');
+    let validJsonSentiments = dict_sentiments.replace(/'/g, '"');
+    validJsonSentiments = validJsonSentiments.replace(/"{/g, '{').replace(/}"/g, '}')
     jsonDataSentiments = JSON.parse(validJsonSentiments);
 
     let dict_languages = '{{ dict_languages|escapejs }}';
@@ -108,8 +109,8 @@
     validJsonLanguages = validJsonLanguages.replace(/"{/g, '{').replace(/}"/g, '}')
     jsonDataLanguages = JSON.parse(validJsonLanguages);
 
-    var barChart; // Variable to store the current chart instance
-    var pieChart; // Variable to store the current chart instance
+    var barChart; 
+    var pieChart; 
     var polarChart;
 
 
@@ -282,7 +283,11 @@
                                 fontColor: 'rgb(167 174 188)'
                             },
                             ticks: {
-                                display: false
+                                display: true,
+                                maxRotation: 90,
+                                minRotation: 90,
+                                fontSize: 11,
+                                fontColor: 'rgb(167 174 188)'
                             }
                         }],
                         yAxes: [{
@@ -319,8 +324,8 @@
             });
         }
 
-        var labelsPie = jsonDataSentiments[politician];
-        var valuesPie = labelsPie.map(sentiment => labelsPie.filter(s => s === sentiment).length);
+        var labelsPie = Object.keys(jsonDataSentiments[politician]);
+        var valuesPie = Object.values(jsonDataSentiments[politician]);
         var labelDescriptionsPie = {
                 "Enojo": "Emoción intensa de ira o irritación.",
                 "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
