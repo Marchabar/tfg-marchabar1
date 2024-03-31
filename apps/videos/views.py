@@ -58,10 +58,24 @@ def get_video_information(request, video_id):
         return redirect("/?login_required=true")
 
     video = get_object_or_404(Video, id=video_id)
+    dict_topics = {}
     topics = Topic.objects.filter(video=video)
+    for topic in topics:
+        dict_topics[topic.topic_type] = topic.percentage
     sentiments = Sentiment.objects.filter(video=video)
+    dict_sentiments = {}
+    for sentiment in sentiments:
+        if sentiment.sentiment_type not in dict_sentiments:
+            dict_sentiments[sentiment.sentiment_type] = 1
+
+    dict_languages = {}
     languages = Language.objects.filter(video=video)
+    for language in languages:
+        dict_languages[language.language_type] = 1
+    dict_words = {}
     words = Word.objects.filter(video=video)
+    for word in words:
+        dict_words[word.word] = 1
     video_id = extract_video_id(video.url)
     return render(
         request,
@@ -69,10 +83,10 @@ def get_video_information(request, video_id):
         {
             "video": video,
             "video_id": video_id,
-            "topics": topics,
-            "sentiments": sentiments,
-            "languages": languages,
-            "words": words,
+            "dict_topics": dict_topics,
+            "dict_sentiments": dict_sentiments,
+            "dict_languages": dict_languages,
+            "dict_words": dict_words,
         },
     )
 

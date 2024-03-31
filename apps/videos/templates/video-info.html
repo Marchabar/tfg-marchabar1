@@ -6,15 +6,17 @@
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-tag-cloud.min.js"></script>
 {% endblock %}
 
 {% block content %}
 
-<div class="flex flex-col h-screen">
+<div class="flex flex-col h-full">
     <div class="flex justify-center h-full">
         <div class="w-full card flex bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400">
-            <div class="w-full h-1/2 flex justify-around">
-                <div class="w-1/2 p-8">
+            <div class="w-full h-96 flex justify-around">
+                <div class="w-1/2 h-full p-8">
                     <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allowfullscreen></iframe>
                 </div>
                 <div class = "flex flex-col w-1/2 h-full m-4 items-center justify-center">
@@ -26,8 +28,389 @@
             <div class="m-4">
                 <p class="text-gray-700 dark:text-gray-300 items-start px-4">{{ video.summary }}</p>
             </div>
+            <div class="grid grid-cols-2 m-4 sm:h-full">
+                <div class="p-4">
+                    <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
+                        <h2 class="text-lg font-semibold">Temática</h2>
+                        <canvas id="partyChart"></canvas>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
+                        <h2 class="text-lg font-semibold">Sentimiento</h2>
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
+                        <h2 class="text-lg font-semibold">Lenguaje</h2>
+                        <canvas id="polarChart"></canvas>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
+                        <h2 class="text-lg font-semibold">Palabras usadas</h2>
+                        <div id="wordChart" class="w-full h-full">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block extrascript %}
+<script>
+    function getNextColor(index) {
+        // Array of default Chart.js colors
+        const defaultColors = [
+            '#36a2eb', // Blue
+            '#4bc0c0', // Green
+            '#ffcd56', // Yellow
+            '#ff9f40', // Orange
+            '#c9cbcf', // Gray
+            '#9966ff', // Purple
+            '#ff6384'  // Indigo
+        ];
+
+        return defaultColors[index % defaultColors.length];
+    }
+
+    function snakeToTitleCase(str, choices) {
+        for (var i = 0; i < choices.length; i++) {
+            if (choices[i][0] === str) {
+                return choices[i][1];
+            }
+        }
+        // If no match found, return original string
+        return str.replace(/_/g, ' ')
+                .replace(/\b\w/g, function(char) {
+                    return char.toUpperCase();
+                });
+    }
+
+    let dict_topics = '{{ dict_topics|escapejs }}';
+    let validJson = dict_topics.replace(/'/g, '"');
+    validJson = validJson.replace(/"{/g, '{').replace(/}"/g, '}');
+    let jsonData = JSON.parse(validJson);
+
+    let dict_sentiments = '{{ dict_sentiments|escapejs }}';
+    let validJsonSentiments = dict_sentiments.replace(/'/g, '"');
+    validJsonSentiments = validJsonSentiments.replace(/"{/g, '{').replace(/}"/g, '}');
+    let jsonDataSentiments = JSON.parse(validJsonSentiments);
+
+    let dict_languages = '{{ dict_languages|escapejs }}';
+    let validJsonLanguages = dict_languages.replace(/'/g, '"');
+    validJsonLanguages = validJsonLanguages.replace(/"{/g, '{').replace(/}"/g, '}');
+    let jsonDataLanguages = JSON.parse(validJsonLanguages);
+
+    let dict_words = '{{ dict_words|escapejs }}';
+    let validJsonWords = dict_words.replace(/'/g, '"');
+    validJsonWords = validJsonWords.replace(/"{/g, '{').replace(/}"/g, '}');
+    let jsonDataWords = JSON.parse(validJsonWords);
+
+    var labelDescriptionsBar = {
+        "Economía": "Asuntos financieros y comerciales de un país",
+        "Salud": "Temas relacionados con la atención médica y el bienestar físico y mental.",
+        "Educación": "Asuntos relacionados con el sistema educativo y la enseñanza.",
+        "Medio ambiente": "Problemas ambientales y conservación de recursos naturales.",
+        "Derechos civiles": "Derechos y libertades básicas de los ciudadanos frente al Estado.",
+        "Inmigración": "Movimiento de personas de un país a otro para establecerse o trabajar.",
+        "Seguridad nacional": "Protección del Estado contra amenazas internas y externas.",
+        "Política exterior": "Relaciones con otros países y organizaciones internacionales.",
+        "Empleo": "Asuntos relacionados con el trabajo y la contratación laboral.",
+        "Criminalidad": "Delitos y actividades criminales dentro de la sociedad.",
+        "Impuestos": "Cargas financieras impuestas por el gobierno a los contribuyentes.",
+        "Bienestar social": "Programas y políticas para el bienestar general de la sociedad.",
+        "Tecnología": "Desarrollo y aplicación de conocimientos técnicos y científicos.",
+        "Energía": "Producción y consumo de recursos energéticos.",
+        "Vivienda": "Acceso a viviendas y políticas relacionadas con la vivienda.",
+        "Corrupción": "Uso indebido de poder para obtener beneficios",
+        "Libertad de prensa": "Derecho a la libertad de expresión y prensa sin censura.",
+        "Igualdad de género": "Trato igualitario entre hombres y mujeres en la sociedad.",
+        "Diversidad y discriminación": "Respeto de la diversidad cultural y la eliminación de la discriminación.",
+        "Pobreza": "Escasez de recursos económicos y condiciones de vida precarias.",
+        "Infraestructura": "Estructuras y servicios básicos necesarios para el funcionamiento de una sociedad.",
+        "Religión": "Creencias y prácticas espirituales y religiosas.",
+        "Derechos de las minorías": "Protección de los derechos de grupos minoritarios dentro de la sociedad.",
+        "Paz y conflicto": "Resolución de conflictos y promoción de la paz en el ámbito nacional e internacional.",
+        "Defensa": "Protección y seguridad militar del país.",
+        "Legislación": "Elaboración y aplicación de leyes y regulaciones.",
+        "Presupuesto": "Asignación de recursos financieros para programas y actividades gubernamentales.",
+        "Justicia": "Sistema legal y administración de la ley.",
+        "ETA": "Grupo separatista vasco y sus actividades políticas y violentas.",
+        "Historia reciente de españa": "Eventos y desarrollos significativos en la historia contemporánea de España.",
+        "Terrorismo": "Uso de la violencia y el terror con fines políticos.",
+        "Acusaciones políticas": "Alegaciones y acusaciones contra figuras políticas.",
+        "Campaña electoral": "Actividades y estrategias durante los períodos electorales."
+    };
+
+    var TOPIC_CHOICES = [
+        ["economia", "Economía"],
+        ["salud", "Salud"],
+        ["educacion", "Educación"],
+        ["medio_ambiente", "Medio ambiente"],
+        ["derechos_civiles", "Derechos civiles"],
+        ["inmigracion", "Inmigración"],
+        ["seguridad_nacional", "Seguridad nacional"],
+        ["politica_exterior", "Política exterior"],
+        ["empleo", "Empleo"],
+        ["criminalidad", "Criminalidad"],
+        ["impuestos", "Impuestos"],
+        ["bienestar_social", "Bienestar social"],
+        ["tecnologia", "Tecnología"],
+        ["energia", "Energía"],
+        ["vivienda", "Vivienda"],
+        ["corrupcion", "Corrupción"],
+        ["libertad_de_prensa", "Libertad de prensa"],
+        ["igualdad_de_genero", "Igualdad de género"],
+        ["diversidad_y_discriminacion", "Diversidad y discriminación"],
+        ["pobreza", "Pobreza"],
+        ["infraestructura", "Infraestructura"],
+        ["religion", "Religión"],
+        ["derechos_de_las_minorias", "Derechos de las minorías"],
+        ["paz_y_conflicto", "Paz y conflicto"],
+        ["defensa", "Defensa"],
+        ["legislacion", "Legislación"],
+        ["presupuesto", "Presupuesto"],
+        ["justicia", "Justicia"],
+        ["ETA", "ETA"],
+        ["historia_reciente_espana", "Historia reciente de España"],
+        ["terrorismo", "Terrorismo"],
+        ["acusaciones_políticas", "Acusaciones políticas"],
+        ["campana_electoral", "Campaña electoral"],
+        ["patriotismo", "Patriotismo"]
+    ];
+
+    let barLabels = Object.keys(jsonData);
+    let barData = Object.values(jsonData);
+
+    var ctx = document.getElementById('partyChart').getContext('2d', {willReadFrequently: true});
+        barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: barLabels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
+                datasets: [{
+                    label: 'Tematica',
+                    data: barData,
+                    backgroundColor: barLabels.map((_, i) => getNextColor(i)),
+                    borderColor: barLabels.map((_, i) => getNextColor(i)),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Temáticas',
+                            fontColor: 'rgb(167 174 188)'
+                        },
+                        ticks: {
+                            display: true,
+                            maxRotation: 90,
+                            minRotation: 90,
+                            fontSize: 11,
+                            fontColor: 'rgb(167 174 188)'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Porcentaje (%)',
+                            fontColor: 'rgb(167 174 188)'
+                        },
+                        ticks: {
+                            beginAtZero: true,
+                            fontColor: 'rgb(167 174 188)'
+                        }
+                    }]
+                },
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index];
+                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            var description = labelDescriptionsBar[label] || '';
+                            return value.toFixed(2) + " " + description ;
+                        }
+                    }
+                },
+                responsive: true,            }
+        });
+
+        var labelDescriptionsPie = {
+            "Enojo": "Emoción intensa de ira o irritación.",
+            "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
+            "Pasión": "Fuerte emoción o entusiasmo por algo.",
+            "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
+            "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
+            "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
+            "Desesperación": "Sentimiento de angustia o falta de esperanza.",
+            "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
+            "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
+            "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
+            "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
+            "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
+        };
+
+        SENTIMENT_CHOICES = [
+            ["enojo", "Enojo"],
+            ["frustracion", "Frustración"],
+            ["pasion", "Pasión"],
+            ["entusiasmo", "Entusiasmo"],
+            ["preocupacion", "Preocupación"],
+            ["confianza", "Confianza"],
+            ["desesperacion", "Desesperación"],
+            ["optimismo", "Optimismo"],
+            ["satisfaccion", "Satisfacción"],
+            ["escepticismo", "Escepticismo"],
+            ["desden", "Desdén"],
+            ["empatia", "Empatía"]
+        ]
+
+
+        let pieLabels = Object.keys(jsonDataSentiments);
+        let pieData = Object.values(jsonDataSentiments);
+        var pieCtx = document.getElementById('pieChart').getContext('2d', {willReadFrequently: true});
+        barChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: pieLabels.map(label => snakeToTitleCase(label, SENTIMENT_CHOICES)),
+                datasets: [{
+                    label: 'Sentimiento',
+                    data: pieData,
+                    backgroundColor: pieLabels.map((_, i) => getNextColor(i)),
+                    borderColor: pieLabels.map((_, i) => getNextColor(i)),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    align: 'center',
+                    labels: {
+                        fontColor: 'rgb(167 174 188)'
+                    }
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index];
+                            return "1" + " " + labelDescriptionsPie[label] ;
+                        }
+                    }
+                },
+                responsive: true,
+            }
+        });
+
+        var labelDescriptionsPolar = {
+            "Formal": "Utilizado en contextos serios o profesionales.",
+            "Técnico": "Especializado en un área específica del conocimiento.",
+            "Emocional": "Dirigido a evocar sentimientos y emociones.",
+            "Persuasivo": "Diseñado para influir en las opiniones o acciones.",
+            "Retórico": "Se enfoca en la persuasión y la elocuencia.",
+            "Bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
+            "Partidista": "Centrado en los intereses y objetivos de un partido político específico.",
+            "Populista": "Dirigido a las preocupaciones y deseos del público general.",
+            "Consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
+            "Confrontación": "Utilizado para enfrentar directamente opiniones opuestas.",
+            "Compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
+            "Promesas": "Incluye compromisos o garantías de acciones futuras.",
+            "Crítica": "Se centra en señalar defectos o problemas en políticas o acciones.",
+            "Estadísticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
+            "Datos": "Enfocado en la presentación objetiva de información.",
+            "Debate": "Utilizado en discusiones estructuradas para argumentar.",
+            "Discurso Público": "Dirigido a un público amplio en eventos públicos.",
+            "Campaña": "Utilizado durante las campañas electorales para promover candidatos.",
+            "Legislación": "Relacionado con la redacción de leyes y regulaciones.",
+            "Negociación": "Utilizado en procesos de negociación para llegar a acuerdos."
+        };
+
+        LANGUAGE_CHOICES = [
+            ["formal", "Formal"],
+            ["tecnico", "Técnico"],
+            ["emocional", "Emocional"],
+            ["persuasivo", "Persuasivo"],
+            ["retorico", "Retórico"],
+            ["bipartidista", "Bipartidista"],
+            ["partidista", "Partidista"],
+            ["populista", "Populista"],
+            ["consenso", "Consenso"],
+            ["confrontacion", "Confrontación"],
+            ["compromiso", "Compromiso"],
+            ["promesas", "Promesas"],
+            ["critica", "Crítica"],
+            ["estadisticas", "Estadísticas"],
+            ["datos", "Datos"],
+            ["debate", "Debate"],
+            ["discurso_publico", "Discurso Público"],
+            ["campana", "Campaña"],
+            ["legislacion", "Legislación"],
+            ["negociacion", "Negociación"],
+            ["patriotico", "Patriótico"]
+        ]
+
+        let polarLabels = Object.keys(jsonDataLanguages);
+        let polarData = Object.values(jsonDataLanguages);
+        var polarCtx = document.getElementById('polarChart').getContext('2d', {willReadFrequently: true});
+        polarChart = new Chart(polarCtx, {
+            type: 'doughnut',
+            data: {
+                labels: polarLabels.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
+                datasets: [{
+                    label: 'Lenguaje',
+                    data: polarData,
+                    backgroundColor: polarLabels.map((_, i) => getNextColor(i)),
+                    borderColor: polarLabels.map((_, i) => getNextColor(i)),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                    align: 'center',
+                    labels: {
+                        fontColor: 'rgb(167 174 188)'
+                    }
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index];
+                            return "1" + " " + labelDescriptionsPolar[label] ;
+                        }
+                    }
+                },
+                responsive: true,
+            }
+        });
+
+        var wordChart = anychart.tagCloud(Object.entries(jsonDataWords));
+        wordChart.container('wordChart');
+
+        wordChart.background().enabled(true);
+        wordChart.background().fill("transparent");
+
+        wordChart.draw();
+
+</script>
 
 {% endblock %}
