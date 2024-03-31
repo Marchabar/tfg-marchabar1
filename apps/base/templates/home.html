@@ -1,51 +1,64 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Dashboards{% endblock %}
+{% block title %}Por partido{% endblock %}
 
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-tag-cloud.min.js"></script>
 {% endblock %}
 
 {% block content %}
 
 <div class="flex flex-col h-screen">
-    <div class="flex">
-        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Dashboards</h1>
-        <div class="dropdown dropdown-right">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">PP</div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+    <div class="flex pr-4">
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
+        <div class="dropdown">
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-28 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 border-none">PP</div>
+            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-28">
                 <li><a class="text-gray-700 dark:text-gray-100" data-party="PP">PP</a></li>
                 <li><a class="text-gray-700 dark:text-gray-100" data-party="PSOE">PSOE</a></li>
                 <li><a class="text-gray-700 dark:text-gray-100" data-party="VOX">VOX</a></li>
                 <li><a class="text-gray-700 dark:text-gray-100" data-party="SUMAR">SUMAR</a></li>
             </ul>
         </div>
-        <div class="dropdown dropdown-right">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-20 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800">Por partido</div>
+        <div class="dropdown">
+            <div tabindex="0" role="button" class="flex items-center btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-28 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
+                <div class="flex items-center"> <!-- Container to center the text and SVG -->
+                    <span class="mr-2 ml-2">Por partido</span> <!-- Text -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>            
             <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
-                <li><a href="/" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
+                <li><a href="/" class="text-gray-700 dark:text-gray-100">General</a></li>
+                <li><a href="/by-party" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
                 <li><a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por político</a></li>
             </ul>
         </div>
+        <button onclick="location.href='/analysis'" class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+            Nuevo vídeo
+        </button>
     </div>    
-    <div class="flex flex-wrap sm:h-full">
-        <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+    <div class="grid grid-cols-2 sm:h-full">
+        <div class="p-4 h-full">
+            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Temática</h2>
                 <canvas id="partyChart"></canvas>
             </div>
         </div>
-        <div class="w-full sm:w-1/2 p-4">
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        <div class="p-4">
+            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
                 <div class="flex flex-col gap-1 w-full justify-center items-center p-2">
                     {% for video in videos %}
                     <a href="/videos/{{video.id}}" class="flex w-4/5 bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
                         <div>
                             <figure>
-                                <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg"/>
+                                <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-24 max-w-24 max-h-20 rounded-lg"/>
                             </figure>
                         </div>
                         <div class="flex flex-col justify-center ml-4 text-gray-700 dark:text-gray-200">
@@ -59,18 +72,26 @@
                 </div>
             </div>
         </div>                                                    
-        <div class="w-full sm:w-1/2 p-4">
+        <div class="p-4">
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>
                 <canvas id="pieChart"></canvas>
             </div>
         </div>
-        <div class="w-full sm:w-1/2 p-4">
+        <div class="p-4">
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Tipo de lenguaje</h2>
                 <canvas id="polarChart"></canvas>
             </div>
         </div>
+    </div>
+    <div class="p-4 h-full">
+        <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <h2 class="text-lg font-semibold">Palabras más usadas</h2>
+            <div id="myWordCloudChart" class="h-full w-full">
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-700 text-white dark:text-gray-700 w-30 z-10 absolute bottom-[30px] right-[20px]">betisbetisbetisbetis</div>
     </div>
 </div>
 
@@ -87,22 +108,66 @@
     let jsonData = JSON.parse(validJson);
 
     let dict_sentiments = '{{ dict_sentiments|escapejs }}';
-    let validJsonSentiments = dict_sentiments.replace(/'/g, '"').replace(/"(\[.*?\])"/g, '$1');
+    let validJsonSentiments = dict_sentiments.replace(/'/g, '"');
+    validJsonSentiments = validJsonSentiments.replace(/"{/g, '{').replace(/}"/g, '}')
     jsonDataSentiments = JSON.parse(validJsonSentiments);
+    console.log(jsonDataSentiments);
 
     let dict_languages = '{{ dict_languages|escapejs }}';
     let validJsonLanguages = dict_languages.replace(/'/g, '"');
     validJsonLanguages = validJsonLanguages.replace(/"{/g, '{').replace(/}"/g, '}')
     jsonDataLanguages = JSON.parse(validJsonLanguages);
 
-    var barChart; // Variable to store the current chart instance
-    var pieChart; // Variable to store the current chart instance
-    var polarChart;
+    let dict_words = '{{ dict_words|escapejs }}';
+    let validJsonWords = dict_words.replace(/'/g, '"');
+    validJsonWords = validJsonWords.replace(/"{/g, '{').replace(/}"/g, '}')
+    jsonDataWords = JSON.parse(validJsonWords);
 
+    var barChart; 
+    var pieChart; 
+    var polarChart;
+    var wordChart;
 
     function updateChart(party) {
         var labels = Object.keys(jsonData[party]);
         var values = Object.values(jsonData[party]);
+        var labelDescriptionsBar = {
+            "Economía": "Asuntos financieros y comerciales de un país",
+            "Salud": "Temas relacionados con la atención médica y el bienestar físico y mental.",
+            "Educación": "Asuntos relacionados con el sistema educativo y la enseñanza.",
+            "Medio ambiente": "Problemas ambientales y conservación de recursos naturales.",
+            "Derechos civiles": "Derechos y libertades básicas de los ciudadanos frente al Estado.",
+            "Inmigración": "Movimiento de personas de un país a otro para establecerse o trabajar.",
+            "Seguridad nacional": "Protección del Estado contra amenazas internas y externas.",
+            "Política exterior": "Relaciones con otros países y organizaciones internacionales.",
+            "Empleo": "Asuntos relacionados con el trabajo y la contratación laboral.",
+            "Criminalidad": "Delitos y actividades criminales dentro de la sociedad.",
+            "Impuestos": "Cargas financieras impuestas por el gobierno a los contribuyentes.",
+            "Bienestar social": "Programas y políticas para el bienestar general de la sociedad.",
+            "Tecnología": "Desarrollo y aplicación de conocimientos técnicos y científicos.",
+            "Energía": "Producción y consumo de recursos energéticos.",
+            "Vivienda": "Acceso a viviendas y políticas relacionadas con la vivienda.",
+            "Corrupción": "Uso indebido de poder para obtener beneficios",
+            "Libertad de prensa": "Derecho a la libertad de expresión y prensa sin censura.",
+            "Igualdad de género": "Trato igualitario entre hombres y mujeres en la sociedad.",
+            "Diversidad y discriminación": "Respeto de la diversidad cultural y la eliminación de la discriminación.",
+            "Pobreza": "Escasez de recursos económicos y condiciones de vida precarias.",
+            "Infraestructura": "Estructuras y servicios básicos necesarios para el funcionamiento de una sociedad.",
+            "Religión": "Creencias y prácticas espirituales y religiosas.",
+            "Derechos de las minorías": "Protección de los derechos de grupos minoritarios dentro de la sociedad.",
+            "Paz y conflicto": "Resolución de conflictos y promoción de la paz en el ámbito nacional e internacional.",
+            "Defensa": "Protección y seguridad militar del país.",
+            "Legislación": "Elaboración y aplicación de leyes y regulaciones.",
+            "Presupuesto": "Asignación de recursos financieros para programas y actividades gubernamentales.",
+            "Justicia": "Sistema legal y administración de la ley.",
+            "ETA": "Grupo separatista vasco y sus actividades políticas y violentas.",
+            "Historia reciente de españa": "Eventos y desarrollos significativos en la historia contemporánea de España.",
+            "Terrorismo": "Uso de la violencia y el terror con fines políticos.",
+            "Acusaciones políticas": "Alegaciones y acusaciones contra figuras políticas.",
+            "Campaña electoral": "Actividades y estrategias durante los períodos electorales."
+        };
+
+
 
         
         function getNextColor(index) {
@@ -121,9 +186,15 @@
         }
 
 
+        let arrowSVG = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+               '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
 
-        // Update the dropdown button text
-        document.querySelector('.dropdown .btn').textContent = party;
+        let dropdownContent = '<div class="flex items-center">' +
+                                '<span class="mr-2">' + `${party}` + '</span>' +
+                                arrowSVG +
+                            '</div>';
+        document.querySelector('.dropdown .btn').innerHTML = dropdownContent;
+
 
         // Disable the currently selected option
         document.querySelectorAll('.dropdown-content a').forEach(item => {
@@ -139,12 +210,62 @@
             barChart.destroy();
         }
 
+        var TOPIC_CHOICES = [
+            ["economia", "Economía"],
+            ["salud", "Salud"],
+            ["educacion", "Educación"],
+            ["medio_ambiente", "Medio ambiente"],
+            ["derechos_civiles", "Derechos civiles"],
+            ["inmigracion", "Inmigración"],
+            ["seguridad_nacional", "Seguridad nacional"],
+            ["politica_exterior", "Política exterior"],
+            ["empleo", "Empleo"],
+            ["criminalidad", "Criminalidad"],
+            ["impuestos", "Impuestos"],
+            ["bienestar_social", "Bienestar social"],
+            ["tecnologia", "Tecnología"],
+            ["energia", "Energía"],
+            ["vivienda", "Vivienda"],
+            ["corrupcion", "Corrupción"],
+            ["libertad_de_prensa", "Libertad de prensa"],
+            ["igualdad_de_genero", "Igualdad de género"],
+            ["diversidad_y_discriminacion", "Diversidad y discriminación"],
+            ["pobreza", "Pobreza"],
+            ["infraestructura", "Infraestructura"],
+            ["religion", "Religión"],
+            ["derechos_de_las_minorias", "Derechos de las minorías"],
+            ["paz_y_conflicto", "Paz y conflicto"],
+            ["defensa", "Defensa"],
+            ["legislacion", "Legislación"],
+            ["presupuesto", "Presupuesto"],
+            ["justicia", "Justicia"],
+            ["ETA", "ETA"],
+            ["historia_reciente_espana", "Historia reciente de España"],
+            ["terrorismo", "Terrorismo"],
+            ["acusaciones_políticas", "Acusaciones políticas"],
+            ["campana_electoral", "Campaña electoral"],
+            ["patriotismo", "Patriotismo"]
+        ];
+
+        function snakeToTitleCase(str, choices) {
+            for (var i = 0; i < choices.length; i++) {
+                if (choices[i][0] === str) {
+                    return choices[i][1];
+                }
+            }
+            // If no match found, return original string
+            return str.replace(/_/g, ' ')
+                    .replace(/\b\w/g, function(char) {
+                        return char.toUpperCase();
+                    });
+        }
+
         // Update bar chart
-        var ctx = document.getElementById('partyChart').getContext('2d');
+        var ctx = document.getElementById('partyChart').getContext('2d', {willReadFrequently: true});
         barChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels,
+                labels: labels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
                 datasets: [{
                     label: 'Tematica ' + party,
                     data: values,
@@ -156,11 +277,25 @@
             options: {
                 scales: {
                     xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Temáticas',
+                            fontColor: 'rgb(167 174 188)'
+                        },
                         ticks: {
-                            display: false
+                            display: true,
+                            maxRotation: 90,
+                            minRotation: 90,
+                            fontSize: 11,
+                            fontColor: 'rgb(167 174 188)'
                         }
                     }],
                     yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Porcentaje (%)',
+                            fontColor: 'rgb(167 174 188)'
+                        },
                         ticks: {
                             beginAtZero: true,
                             fontColor: 'rgb(167 174 188)'
@@ -170,39 +305,17 @@
                 legend: {
                     display: false
                 },
-                responsive: true,
-                maintainAspectRatio: false // Add this line
-            }
-        });
-
-        var labelsPie = jsonDataSentiments[party];
-        var valuesPie = labelsPie.map(sentiment => labelsPie.filter(s => s === sentiment).length);
-
-        if (pieChart) {
-            pieChart.destroy();
-        }
-
-        // Update pie chart
-        var ctxPie = document.getElementById('pieChart').getContext('2d');
-        pieChart = new Chart(ctxPie, {
-            type: 'pie',
-            data: {
-                labels: labelsPie,
-                datasets: [{
-                    label: 'Sentiments of ' + party,
-                    data: valuesPie,
-                    backgroundColor: labels.map((_, i) => getNextColor(i)),
-                    borderColor: labels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                legend: {
-                    display: true,
-                    position: 'right',
-                    align: 'center',
-                    labels: {
-                        fontColor: 'rgb(167 174 188)'
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index];
+                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            var description = labelDescriptionsBar[label] || '';
+                            return value + " " + description ;
+                        }
                     }
                 },
                 responsive: true,
@@ -210,19 +323,148 @@
             }
         });
 
+            var labelsPie = Object.keys(jsonDataSentiments[party]);
+            var valuesPie = Object.values(jsonDataSentiments[party]);
+            var labelDescriptionsPie = {
+                "Enojo": "Emoción intensa de ira o irritación.",
+                "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
+                "Pasión": "Fuerte emoción o entusiasmo por algo.",
+                "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
+                "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
+                "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
+                "Desesperación": "Sentimiento de angustia o falta de esperanza.",
+                "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
+                "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
+                "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
+                "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
+                "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
+            };
+
+            SENTIMENT_CHOICES = [
+                ["enojo", "Enojo"],
+                ["frustracion", "Frustración"],
+                ["pasion", "Pasión"],
+                ["entusiasmo", "Entusiasmo"],
+                ["preocupacion", "Preocupación"],
+                ["confianza", "Confianza"],
+                ["desesperacion", "Desesperación"],
+                ["optimismo", "Optimismo"],
+                ["satisfaccion", "Satisfacción"],
+                ["escepticismo", "Escepticismo"],
+                ["desden", "Desdén"],
+                ["empatia", "Empatía"]
+            ]
+
+
+            if (pieChart) {
+                pieChart.destroy();
+            }
+
+            // Update pie chart
+            var ctxPie = document.getElementById('pieChart').getContext('2d', {willReadFrequently: true});
+            pieChart = new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: labelsPie.map(label => snakeToTitleCase(label, SENTIMENT_CHOICES)),
+                    datasets: [{
+                        label: 'Sentiments of ' + party,
+                        data: valuesPie,
+                        backgroundColor: labels.map((_, i) => getNextColor(i)),
+                        borderColor: labels.map((_, i) => getNextColor(i)),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center',
+                        labels: {
+                            fontColor: 'rgb(167 174 188)'
+                        }
+                    },
+                    tooltips: {
+                        callbacks: {
+                            title: function(tooltipItem, data) {
+                                return data.labels[tooltipItem[0].index];
+                            },
+                            label: function(tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index];
+                                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                var description = labelDescriptionsPie[label] || '';
+                                return value + " " + description ;
+                            }
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false // Add this line
+                }
+            });
+
         var labelsPolar = Object.keys(jsonDataLanguages[party]);
         var valuesPolar = Object.values(jsonDataLanguages[party]);
+        var labelDescriptionsPolar = {
+            "Formal": "Utilizado en contextos serios o profesionales.",
+            "Técnico": "Especializado en un área específica del conocimiento.",
+            "Emocional": "Dirigido a evocar sentimientos y emociones.",
+            "Persuasivo": "Diseñado para influir en las opiniones o acciones.",
+            "Retórico": "Se enfoca en la persuasión y la elocuencia.",
+            "Bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
+            "Partidista": "Centrado en los intereses y objetivos de un partido político específico.",
+            "Populista": "Dirigido a las preocupaciones y deseos del público general.",
+            "Consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
+            "Confrontación": "Utilizado para enfrentar directamente opiniones opuestas.",
+            "Compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
+            "Promesas": "Incluye compromisos o garantías de acciones futuras.",
+            "Crítica": "Se centra en señalar defectos o problemas en políticas o acciones.",
+            "Estadísticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
+            "Datos": "Enfocado en la presentación objetiva de información.",
+            "Debate": "Utilizado en discusiones estructuradas para argumentar.",
+            "Discurso Público": "Dirigido a un público amplio en eventos públicos.",
+            "Campaña": "Utilizado durante las campañas electorales para promover candidatos.",
+            "Legislación": "Relacionado con la redacción de leyes y regulaciones.",
+            "Negociación": "Utilizado en procesos de negociación para llegar a acuerdos."
+        };
+
+
+        LANGUAGE_CHOICES = [
+            ["formal", "Formal"],
+            ["tecnico", "Técnico"],
+            ["emocional", "Emocional"],
+            ["persuasivo", "Persuasivo"],
+            ["retorico", "Retórico"],
+            ["bipartidista", "Bipartidista"],
+            ["partidista", "Partidista"],
+            ["populista", "Populista"],
+            ["consenso", "Consenso"],
+            ["confrontacion", "Confrontación"],
+            ["compromiso", "Compromiso"],
+            ["promesas", "Promesas"],
+            ["critica", "Crítica"],
+            ["estadisticas", "Estadísticas"],
+            ["datos", "Datos"],
+            ["debate", "Debate"],
+            ["discurso_publico", "Discurso Público"],
+            ["campana", "Campaña"],
+            ["legislacion", "Legislación"],
+            ["negociacion", "Negociación"],
+            ["patriotico", "Patriótico"]
+        ]
+
+
 
         if (polarChart) {
             polarChart.destroy();
         }
 
+    
+
         // Update doughnut chart
-        var ctxDoughnut = document.getElementById('polarChart').getContext('2d');
+        var ctxDoughnut = document.getElementById('polarChart').getContext('2d', {willReadFrequently: true});
         polarChart = new Chart(ctxDoughnut, {
             type: 'doughnut',
             data: {
-                labels: labelsPolar,
+                labels: labelsPolar.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
                 datasets: [{
                     label: 'Language of ' + party,
                     data: valuesPolar,
@@ -240,15 +482,54 @@
                         fontColor: 'rgb(167 174 188)'
                     }
                 },
+                tooltips: {
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        },
+                        label: function(tooltipItem, data) {
+                            var label = data.labels[tooltipItem.index];
+                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                            var description = labelDescriptionsPolar[label] || '';
+                            return value + " " + description ;
+                        }
+                    }
+                },
                 responsive: true,
                 maintainAspectRatio: false // Add this line
             }
         });
-        
+
+        document.getElementById("myWordCloudChart").innerHTML = "";
+
+        var data = [];
+
+        // Check if the selected party exists in the JSON data
+        if (jsonDataWords.hasOwnProperty(party)) {
+            // Iterate over each word in the selected party's word cloud data
+            for (var word in jsonDataWords[party]) {
+                // Add the word and its frequency to the data array
+                data.push({x: word, value: jsonDataWords[party][word]});
+            }
+        }
+
+        // Create a chart and set the data
+        var wordChart = anychart.tagCloud(data);
+
+        // Set the container id
+        wordChart.container("myWordCloudChart");
+
+        // Set background properties
+        wordChart.background().enabled(true);
+        wordChart.background().fill("transparent");
+
+        // Initiate drawing the chart
+        wordChart.draw();
 
     }
     // Initial chart with PP values
     updateChart('PP');
+
 
     // Event listener for dropdown items
     document.querySelectorAll('.dropdown-content a').forEach(item => {
@@ -256,7 +537,7 @@
             if (!event.target.classList.contains('disabled')) {
                 updateChart(event.target.dataset.party);
             }
-        });
+        }, { passive: true }); 
     });
 </script>
 

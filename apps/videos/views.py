@@ -58,10 +58,24 @@ def get_video_information(request, video_id):
         return redirect("/?login_required=true")
 
     video = get_object_or_404(Video, id=video_id)
+    dict_topics = {}
     topics = Topic.objects.filter(video=video)
+    for topic in topics:
+        dict_topics[topic.topic_type] = topic.percentage
     sentiments = Sentiment.objects.filter(video=video)
+    dict_sentiments = {}
+    for sentiment in sentiments:
+        if sentiment.sentiment_type not in dict_sentiments:
+            dict_sentiments[sentiment.sentiment_type] = 1
+
+    dict_languages = {}
     languages = Language.objects.filter(video=video)
+    for language in languages:
+        dict_languages[language.language_type] = 1
+    dict_words = {}
     words = Word.objects.filter(video=video)
+    for word in words:
+        dict_words[word.word] = 1
     video_id = extract_video_id(video.url)
     return render(
         request,
@@ -69,10 +83,10 @@ def get_video_information(request, video_id):
         {
             "video": video,
             "video_id": video_id,
-            "topics": topics,
-            "sentiments": sentiments,
-            "languages": languages,
-            "words": words,
+            "dict_topics": dict_topics,
+            "dict_sentiments": dict_sentiments,
+            "dict_languages": dict_languages,
+            "dict_words": dict_words,
         },
     )
 
@@ -86,6 +100,47 @@ def analyze_video_user(request):
         .order_by("-video_count")[:12]
     )
     top_topics = list(top_topics)
+    TOPIC_CHOICES = [
+        ("economia", "Economía"),
+        ("salud", "Salud"),
+        ("educacion", "Educación"),
+        ("medio_ambiente", "Medio ambiente"),
+        ("derechos_civiles", "Derechos civiles"),
+        ("inmigracion", "Inmigración"),
+        ("seguridad_nacional", "Seguridad nacional"),
+        ("politica_exterior", "Política exterior"),
+        ("empleo", "Empleo"),
+        ("criminalidad", "Criminalidad"),
+        ("impuestos", "Impuestos"),
+        ("bienestar_social", "Bienestar social"),
+        ("tecnologia", "Tecnología"),
+        ("energia", "Energía"),
+        ("vivienda", "Vivienda"),
+        ("corrupcion", "Corrupción"),
+        ("libertad_de_prensa", "Libertad de prensa"),
+        ("igualdad_de_genero", "Igualdad de género"),
+        ("diversidad_y_discriminacion", "Diversidad y discriminación"),
+        ("pobreza", "Pobreza"),
+        ("infraestructura", "Infraestructura"),
+        ("religion", "Religión"),
+        ("derechos_de_las_minorias", "Derechos de las minorías"),
+        ("paz_y_conflicto", "Paz y conflicto"),
+        ("defensa", "Defensa"),
+        ("legislacion", "Legislación"),
+        ("presupuesto", "Presupuesto"),
+        ("justicia", "Justicia"),
+        ("ETA", "ETA"),
+        ("historia_reciente_espana", "Historia reciente de España"),
+        ("terrorismo", "Terrorismo"),
+        ("acusaciones_políticas", "Acusaciones políticas"),
+        ("campana_electoral", "Campaña electoral"),
+        ("patriotismo", "Patriotismo"),
+    ]
+    # I need to convert the topic_type to the name of the topic
+    for topic in top_topics:
+        for choice in TOPIC_CHOICES:
+            if choice[0] == topic["topic_type"]:
+                topic["topic_type"] = choice[1]
 
     search = request.GET.get("video-url")
 
@@ -150,7 +205,6 @@ def analyze_video_user(request):
                     )
                 if video_details:
                     response = generate_response(prompt)
-                    print(response)
                     # response = {
                     #     "politician_name": "Pedro Sánchez",
                     #     "political_party": "PSOE",
@@ -430,7 +484,7 @@ def general_statement(transcription):
     Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
     Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
     Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. 
-    Para la key politician_name (nombre del político) tienes que intentar sacarlo del title o description (sino sacas el politican_name pon Político no reconocido)
+    Para la key politician_name (nombre del político) tienes que sacarlo del title o description del video (sino sacas el politican_name pon Político no reconocido)
     La transcripción es la siguiente, y ya contiene el partido al que pertenece, la url, la fecha, y la duracion. Esto tambien tienes que incluirlo en el json que me das como respuesta. Además tienes que incluir un resumen corto en un párrafo de la transcripcion para la key summary. Recuerda tener en cuenta las limitaciones y solo coger valores de los arrays para las keys que lo necesitan: {transcription}
     """
     return prompt
@@ -474,6 +528,46 @@ def get_videos_by_topic(request, topic_type):
     for topic in topics:
         if topic.video.published:
             videos.append(topic.video)
+    TOPIC_CHOICES = [
+        ("economia", "Economía"),
+        ("salud", "Salud"),
+        ("educacion", "Educación"),
+        ("medio_ambiente", "Medio ambiente"),
+        ("derechos_civiles", "Derechos civiles"),
+        ("inmigracion", "Inmigración"),
+        ("seguridad_nacional", "Seguridad nacional"),
+        ("politica_exterior", "Política exterior"),
+        ("empleo", "Empleo"),
+        ("criminalidad", "Criminalidad"),
+        ("impuestos", "Impuestos"),
+        ("bienestar_social", "Bienestar social"),
+        ("tecnologia", "Tecnología"),
+        ("energia", "Energía"),
+        ("vivienda", "Vivienda"),
+        ("corrupcion", "Corrupción"),
+        ("libertad_de_prensa", "Libertad de prensa"),
+        ("igualdad_de_genero", "Igualdad de género"),
+        ("diversidad_y_discriminacion", "Diversidad y discriminación"),
+        ("pobreza", "Pobreza"),
+        ("infraestructura", "Infraestructura"),
+        ("religion", "Religión"),
+        ("derechos_de_las_minorias", "Derechos de las minorías"),
+        ("paz_y_conflicto", "Paz y conflicto"),
+        ("defensa", "Defensa"),
+        ("legislacion", "Legislación"),
+        ("presupuesto", "Presupuesto"),
+        ("justicia", "Justicia"),
+        ("ETA", "ETA"),
+        ("historia_reciente_espana", "Historia reciente de España"),
+        ("terrorismo", "Terrorismo"),
+        ("acusaciones_políticas", "Acusaciones políticas"),
+        ("campana_electoral", "Campaña electoral"),
+        ("patriotismo", "Patriotismo"),
+    ]
+
+    for choice in TOPIC_CHOICES:
+        if choice[0] == topic_type:
+            topic_type = choice[1]
 
     return render(
         request, "videos-topic.html", {"videos": videos, "topic_type": topic_type}
@@ -486,6 +580,5 @@ def get_videos_by_user(request):
 
     # I need to get the videos which user is the one that is logged in
     user_videos = Video.objects.filter(user=request.user)
-    print(user_videos)
 
     return render(request, "user-videos.html", {"user_videos": user_videos})
