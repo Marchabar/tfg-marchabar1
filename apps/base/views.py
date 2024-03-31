@@ -225,7 +225,7 @@ def load_charts(request):
     dict_sentiments = {}
     for video in videos:
         if video.political_party not in dict_sentiments:
-            dict_sentiments[video.political_party] = []
+            dict_sentiments[video.political_party] = {}
         for sentiment in sentiments:
             if sentiment.video.id != video.id:
                 continue
@@ -234,11 +234,33 @@ def load_charts(request):
                     sentiment.sentiment_type
                     not in dict_sentiments[video.political_party]
                 ):
-                    dict_sentiments[video.political_party].append(
+                    dict_sentiments[video.political_party][sentiment.sentiment_type] = 1
+                else:
+                    dict_sentiments[video.political_party][
                         sentiment.sentiment_type
-                    )
-    for party in dict_sentiments:
-        dict_sentiments[party] = dict_sentiments[party]
+                    ] += 1
+
+    for party, values in dict_sentiments.items():
+        top_sentiments = heapq.nlargest(6, values, key=values.get)
+
+        rest_count = sum(
+            count
+            for sentiment, count in values.items()
+            if sentiment not in top_sentiments
+        )
+
+        values["Otros"] = rest_count
+
+        sentiments_to_remove = [
+            sentiment
+            for sentiment in values
+            if sentiment not in top_sentiments and sentiment != "Otros"
+        ]
+
+        for sentiment in sentiments_to_remove:
+            del values[sentiment]
+
+        dict_sentiments[party] = str(values).replace("'", '"')
 
     dict_languages = {}
     for video in videos:
