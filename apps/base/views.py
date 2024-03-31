@@ -197,7 +197,29 @@ def load_charts(request):
                 dict_topics[party][topic] / total * 100, 2
             )
 
-    for party in dict_topics:
+    for party, values in dict_topics.items():
+        total_percentage = sum(values.values())
+
+        top_topics = heapq.nlargest(6, values, key=values.get)
+
+        rest_percentage = sum(
+            percentage
+            for topic, percentage in values.items()
+            if topic not in top_topics
+        )
+
+        for topic, percentage in values.items():
+            values[topic] = round((percentage / total_percentage) * 100, 2)
+
+        values["Otros"] = round(rest_percentage / total_percentage * 100, 2)
+
+        topics_to_remove = [
+            topic for topic in values if topic not in top_topics and topic != "Otros"
+        ]
+
+        for topic in topics_to_remove:
+            del values[topic]
+
         dict_topics[party] = str(dict_topics[party]).replace("'", '"')
 
     dict_sentiments = {}
@@ -216,7 +238,7 @@ def load_charts(request):
                         sentiment.sentiment_type
                     )
     for party in dict_sentiments:
-        dict_sentiments[party] = str(dict_sentiments[party]).replace("'", '"')
+        dict_sentiments[party] = dict_sentiments[party]
 
     dict_languages = {}
     for video in videos:
@@ -229,8 +251,26 @@ def load_charts(request):
                 if language.language_type not in dict_languages[video.political_party]:
                     dict_languages[video.political_party][language.language_type] = 0
                 dict_languages[video.political_party][language.language_type] += 1
-    for party in dict_languages:
-        dict_languages[party] = str(dict_languages[party]).replace("'", '"')
+
+    for party, values in dict_languages.items():
+        top_languages = heapq.nlargest(6, values, key=values.get)
+
+        rest_count = sum(
+            count for language, count in values.items() if language not in top_languages
+        )
+
+        values["Otros"] = rest_count
+
+        languages_to_remove = [
+            language
+            for language in values
+            if language not in top_languages and language != "Otros"
+        ]
+
+        for language in languages_to_remove:
+            del values[language]
+
+        dict_languages[party] = str(values).replace("'", '"')
 
     videos = Video.objects.all().order_by("-date")[:3]
     PARTIES = ["PP", "PSOE", "VOX", "SUMAR"]
