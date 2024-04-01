@@ -1,13 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Por partido{% endblock %}
+{% block title %}Por político{% endblock %}
 
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
-<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-core.min.js"></script>
-<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-tag-cloud.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -16,23 +14,22 @@
     <div class="flex pr-4">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
         <div class="dropdown">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-28 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 border-none">PP</div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-28">
-                <li><a class="text-gray-700 dark:text-gray-100" data-party="PP">PP</a></li>
-                <li><a class="text-gray-700 dark:text-gray-100" data-party="PSOE">PSOE</a></li>
-                <li><a class="text-gray-700 dark:text-gray-100" data-party="VOX">VOX</a></li>
-                <li><a class="text-gray-700 dark:text-gray-100" data-party="SUMAR">SUMAR</a></li>
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-44 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">Alberto Nuñez Feijóo</div>
+            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-44">
+                {% for politician in dict_politicians %}
+                    <li><a class="text-gray-700 dark:text-gray-100" data-politician="{{politician}}">{{politician}}</a></li>
+                {% endfor %}
             </ul>
         </div>
         <div class="dropdown">
-            <div tabindex="0" role="button" class="flex items-center btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-28 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
+            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-28 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
                 <div class="flex items-center"> <!-- Container to center the text and SVG -->
-                    <span class="mr-2 ml-2">Por partido</span> <!-- Text -->
+                    <span class="mr-2 ml-2">Por político</span> <!-- Text -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </div>
-            </div>            
+            </div>
             <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
                 <li><a href="/" class="text-gray-700 dark:text-gray-100">General</a></li>
                 <li><a href="/by-party" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
@@ -45,20 +42,21 @@
     </div>    
     <div class="grid grid-cols-2 sm:h-full">
         <div class="p-4 h-full">
-            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="h-96 bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Temática</h2>
                 <canvas id="partyChart"></canvas>
+                <div id="barContainer"></div>
             </div>
         </div>
-        <div class="p-4">
-            <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        <div class="p-4 h-full">
+            <div class="h-96 bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
                 <div class="flex flex-col gap-1 w-full justify-center items-center p-2">
                     {% for video in videos %}
                     <a href="/videos/{{video.id}}" class="flex w-4/5 bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
                         <div>
                             <figure>
-                                <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-24 max-w-24 max-h-20 rounded-lg"/>
+                                <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg"/>
                             </figure>
                         </div>
                         <div class="flex flex-col justify-center ml-4 text-gray-700 dark:text-gray-200">
@@ -76,22 +74,16 @@
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>
                 <canvas id="pieChart"></canvas>
+                <div id="pieContainer"></div>
             </div>
         </div>
         <div class="p-4">
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Tipo de lenguaje</h2>
                 <canvas id="polarChart"></canvas>
+                <div id="polarContainer"></div>
             </div>
         </div>
-    </div>
-    <div class="p-4 h-full">
-        <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-            <h2 class="text-lg font-semibold">Palabras más usadas</h2>
-            <div id="myWordCloudChart" class="h-full w-full">
-            </div>
-        </div>
-        <div class="bg-white dark:bg-gray-700 text-white dark:text-gray-700 w-30 z-10 absolute bottom-[30px] right-[20px]">betisbetisbetisbetis</div>
     </div>
 </div>
 
@@ -111,26 +103,64 @@
     let validJsonSentiments = dict_sentiments.replace(/'/g, '"');
     validJsonSentiments = validJsonSentiments.replace(/"{/g, '{').replace(/}"/g, '}')
     jsonDataSentiments = JSON.parse(validJsonSentiments);
-    console.log(jsonDataSentiments);
 
     let dict_languages = '{{ dict_languages|escapejs }}';
     let validJsonLanguages = dict_languages.replace(/'/g, '"');
     validJsonLanguages = validJsonLanguages.replace(/"{/g, '{').replace(/}"/g, '}')
     jsonDataLanguages = JSON.parse(validJsonLanguages);
 
-    let dict_words = '{{ dict_words|escapejs }}';
-    let validJsonWords = dict_words.replace(/'/g, '"');
-    validJsonWords = validJsonWords.replace(/"{/g, '{').replace(/}"/g, '}')
-    jsonDataWords = JSON.parse(validJsonWords);
-
     var barChart; 
     var pieChart; 
     var polarChart;
-    var wordChart;
 
-    function updateChart(party) {
-        var labels = Object.keys(jsonData[party]);
-        var values = Object.values(jsonData[party]);
+
+    function updateChart(politician) {
+        if (!politician) {
+            // Handle the case when no specific politician is selected
+            // For example, you can display default data or show a message
+            console.log("No politician selected");
+            return;
+        }
+
+        
+        function getNextColor(index) {
+            // Array of default Chart.js colors
+            const defaultColors = [
+                '#36a2eb', // Blue
+                '#4bc0c0', // Green
+                '#ffcd56', // Yellow
+                '#ff9f40', // Orange
+                '#c9cbcf', // Gray
+                '#9966ff', // Purple
+                '#ff6384'  // Indigo
+            ];
+
+            return defaultColors[index % defaultColors.length];
+        }
+
+
+
+        let arrowSVG = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+               '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
+
+        // Update dropdown button text with SVG and politician's name
+        let dropdownContent = '<div class="flex items-center">' +
+                                '<span class="mr-2">' + politician + '</span>' +
+                                arrowSVG +
+                            '</div>';
+        document.querySelector('.dropdown .btn').innerHTML = dropdownContent;
+
+        // Disable the currently selected option
+        document.querySelectorAll('.dropdown-content a').forEach(item => {
+            if (item.dataset.politician === politician) {
+                item.classList.add('disabled');
+            } else {
+                item.classList.remove('disabled');
+            }
+        });
+
+        var labels = Object.keys(jsonData[politician]);
+        var values = Object.values(jsonData[politician]);
         var labelDescriptionsBar = {
             "Economía": "Asuntos financieros y comerciales de un país",
             "Salud": "Temas relacionados con la atención médica y el bienestar físico y mental.",
@@ -166,49 +196,6 @@
             "Acusaciones políticas": "Alegaciones y acusaciones contra figuras políticas.",
             "Campaña electoral": "Actividades y estrategias durante los períodos electorales."
         };
-
-
-
-        
-        function getNextColor(index) {
-            // Array of default Chart.js colors
-            const defaultColors = [
-                '#36a2eb', // Blue
-                '#4bc0c0', // Green
-                '#ffcd56', // Yellow
-                '#ff9f40', // Orange
-                '#c9cbcf', // Gray
-                '#9966ff', // Purple
-                '#ff6384'  // Indigo
-            ];
-
-            return defaultColors[index % defaultColors.length];
-        }
-
-
-        let arrowSVG = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
-               '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
-
-        let dropdownContent = '<div class="flex items-center">' +
-                                '<span class="mr-2">' + `${party}` + '</span>' +
-                                arrowSVG +
-                            '</div>';
-        document.querySelector('.dropdown .btn').innerHTML = dropdownContent;
-
-
-        // Disable the currently selected option
-        document.querySelectorAll('.dropdown-content a').forEach(item => {
-            if (item.dataset.party === party) {
-                item.classList.add('disabled');
-            } else {
-                item.classList.remove('disabled');
-            }
-        });
-
-        // Destroy the previous bar chart instance if it exists
-        if (barChart) {
-            barChart.destroy();
-        }
 
         var TOPIC_CHOICES = [
             ["economia", "Economía"],
@@ -247,6 +234,7 @@
             ["patriotismo", "Patriotismo"]
         ];
 
+        // Function to convert snake_case to Title Case using the topic choices array
         function snakeToTitleCase(str, choices) {
             for (var i = 0; i < choices.length; i++) {
                 if (choices[i][0] === str) {
@@ -260,72 +248,85 @@
                     });
         }
 
-        // Update bar chart
-        var ctx = document.getElementById('partyChart').getContext('2d', {willReadFrequently: true});
-        barChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
-                datasets: [{
-                    label: 'Tematica ' + party,
-                    data: values,
-                    backgroundColor: labels.map((_, i) => getNextColor(i)),
-                    borderColor: labels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Temáticas',
-                            fontColor: 'rgb(167 174 188)'
-                        },
-                        ticks: {
-                            display: true,
-                            maxRotation: 90,
-                            minRotation: 90,
-                            fontSize: 11,
-                            fontColor: 'rgb(167 174 188)'
-                        }
-                    }],
-                    yAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Porcentaje (%)',
-                            fontColor: 'rgb(167 174 188)'
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            fontColor: 'rgb(167 174 188)'
-                        }
+
+        if (values.length === 0) {
+            document.getElementById('partyChart').style.display = 'none';
+            var noDataDiv = document.createElement('div');
+            noDataDiv.textContent = 'No se han encontrado sentimientos';
+            document.getElementById('barContainer').appendChild(noDataDiv);
+        } else {
+            document.getElementById('partyChart').style.display = 'block';
+            if (barChart) {
+                barChart.destroy();
+            }
+
+            // Update bar chart
+            var ctx = document.getElementById('partyChart').getContext('2d');
+            barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
+                    datasets: [{
+                        label: 'Tematica ' + politician,
+                        data: values,
+                        backgroundColor: labels.map((_, i) => getNextColor(i)),
+                        borderColor: labels.map((_, i) => getNextColor(i)),
+                        borderWidth: 1
                     }]
                 },
-                legend: {
-                    display: false
-                },
-                tooltips: {
-                    callbacks: {
-                        title: function(tooltipItem, data) {
-                            return data.labels[tooltipItem[0].index];
-                        },
-                        label: function(tooltipItem, data) {
-                            var label = data.labels[tooltipItem.index];
-                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                            var description = labelDescriptionsBar[label] || '';
-                            return value + " " + description ;
+                options: {
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Temáticas',
+                                fontColor: 'rgb(167 174 188)'
+                            },
+                            ticks: {
+                                display: true,
+                                maxRotation: 90,
+                                minRotation: 90,
+                                fontSize: 11,
+                                fontColor: 'rgb(167 174 188)'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Porcentaje (%)',
+                                fontColor: 'rgb(167 174 188)'
+                            },
+                            ticks: {
+                                beginAtZero: true,
+                                fontColor: 'rgb(167 174 188)'
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        callbacks: {
+                            title: function(tooltipItem, data) {
+                                return data.labels[tooltipItem[0].index];
+                            },
+                            label: function(tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index];
+                                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                var description = labelDescriptionsBar[label] || '';
+                                return value + " " + description ;
+                            }
                         }
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false // Add this line
-            }
-        });
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false // Add this line
+                }
+            });
+        }
 
-            var labelsPie = Object.keys(jsonDataSentiments[party]);
-            var valuesPie = Object.values(jsonDataSentiments[party]);
-            var labelDescriptionsPie = {
+        var labelsPie = Object.keys(jsonDataSentiments[politician]);
+        var valuesPie = Object.values(jsonDataSentiments[politician]);
+        var labelDescriptionsPie = {
                 "Enojo": "Emoción intensa de ira o irritación.",
                 "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
                 "Pasión": "Fuerte emoción o entusiasmo por algo.",
@@ -355,19 +356,31 @@
                 ["empatia", "Empatía"]
             ]
 
-
+        if (valuesPie.length === 0) {
+            document.getElementById('pieChart').style.display = 'none';
+            if (!document.getElementById('noDataDivPie')){
+                var noDataDiv = document.createElement('div');
+                noDataDiv.textContent = 'No se han encontrado sentimientos';
+                document.getElementById('pieContainer').appendChild(noDataDiv);
+            }
+            
+        } else {
+            document.getElementById('pieChart').style.display = 'block';
+            if (document.getElementById('noDataDivPie')) {
+                document.getElementById('pieContainer').removeChild(document.getElementById('noDataDivPie'));
+            }
             if (pieChart) {
                 pieChart.destroy();
             }
 
             // Update pie chart
-            var ctxPie = document.getElementById('pieChart').getContext('2d', {willReadFrequently: true});
+            var ctxPie = document.getElementById('pieChart').getContext('2d');
             pieChart = new Chart(ctxPie, {
                 type: 'pie',
                 data: {
                     labels: labelsPie.map(label => snakeToTitleCase(label, SENTIMENT_CHOICES)),
                     datasets: [{
-                        label: 'Sentiments of ' + party,
+                        label: 'Sentiments of ' + politician,
                         data: valuesPie,
                         backgroundColor: labels.map((_, i) => getNextColor(i)),
                         borderColor: labels.map((_, i) => getNextColor(i)),
@@ -400,9 +413,10 @@
                     maintainAspectRatio: false // Add this line
                 }
             });
+        }
 
-        var labelsPolar = Object.keys(jsonDataLanguages[party]);
-        var valuesPolar = Object.values(jsonDataLanguages[party]);
+        var labelsPolar = Object.keys(jsonDataLanguages[politician]);
+        var valuesPolar = Object.values(jsonDataLanguages[politician]);
         var labelDescriptionsPolar = {
             "Formal": "Utilizado en contextos serios o profesionales.",
             "Técnico": "Especializado en un área específica del conocimiento.",
@@ -451,93 +465,76 @@
             ["patriotico", "Patriótico"]
         ]
 
+        if (valuesPolar.length === 0) {
+            document.getElementById('polarChart').style.display = 'none';
+            if (!document.getElementById('noDataDivPolar')) {
+                var noDataDiv = document.createElement('div');
+                noDataDiv.id = 'noDataDivPolar';
+                noDataDiv.textContent = 'No se han encontrado sentimientos';
+                document.getElementById('polarContainer').appendChild(noDataDiv);
+            }
+        } else {
+            document.getElementById('polarChart').style.display = 'block';
+            if (document.getElementById('noDataDivPolar')) {
+                document.getElementById('polarContainer').removeChild(document.getElementById('noDataDivPolar'));
+            }
+            if (polarChart) {
+                polarChart.destroy();
+            }
 
-
-        if (polarChart) {
-            polarChart.destroy();
-        }
-
-    
-
-        // Update doughnut chart
-        var ctxDoughnut = document.getElementById('polarChart').getContext('2d', {willReadFrequently: true});
-        polarChart = new Chart(ctxDoughnut, {
-            type: 'doughnut',
-            data: {
-                labels: labelsPolar.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
-                datasets: [{
-                    label: 'Language of ' + party,
-                    data: valuesPolar,
-                    backgroundColor: labels.map((_, i) => getNextColor(i)),
-                    borderColor: labels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                legend: {
-                    display: true,
-                    position: 'right',
-                    align: 'center',
-                    labels: {
-                        fontColor: 'rgb(167 174 188)'
-                    }
+            // Update doughnut chart
+            var ctxDoughnut = document.getElementById('polarChart').getContext('2d');
+            polarChart = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: labelsPolar.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
+                    datasets: [{
+                        label: 'Language of ' + politician,
+                        data: valuesPolar,
+                        backgroundColor: labels.map((_, i) => getNextColor(i)),
+                        borderColor: labels.map((_, i) => getNextColor(i)),
+                        borderWidth: 1
+                    }]
                 },
-                tooltips: {
-                    callbacks: {
-                        title: function(tooltipItem, data) {
-                            return data.labels[tooltipItem[0].index];
-                        },
-                        label: function(tooltipItem, data) {
-                            var label = data.labels[tooltipItem.index];
-                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                            var description = labelDescriptionsPolar[label] || '';
-                            return value + " " + description ;
+                options: {
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center',
+                        labels: {
+                            fontColor: 'rgb(167 174 188)'
                         }
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false // Add this line
-            }
-        });
-
-        document.getElementById("myWordCloudChart").innerHTML = "";
-
-        var data = [];
-
-        // Check if the selected party exists in the JSON data
-        if (jsonDataWords.hasOwnProperty(party)) {
-            // Iterate over each word in the selected party's word cloud data
-            for (var word in jsonDataWords[party]) {
-                // Add the word and its frequency to the data array
-                data.push({x: word, value: jsonDataWords[party][word]});
-            }
+                    },
+                    tooltips: {
+                        callbacks: {
+                            title: function(tooltipItem, data) {
+                                return data.labels[tooltipItem[0].index];
+                            },
+                            label: function(tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index];
+                                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                var description = labelDescriptionsPolar[label] || '';
+                                return value + " " + description ;
+                            }
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false // Add this line
+                }
+            });
         }
-
-        // Create a chart and set the data
-        var wordChart = anychart.tagCloud(data);
-
-        // Set the container id
-        wordChart.container("myWordCloudChart");
-
-        // Set background properties
-        wordChart.background().enabled(true);
-        wordChart.background().fill("transparent");
-
-        // Initiate drawing the chart
-        wordChart.draw();
-
+        
     }
     // Initial chart with PP values
-    updateChart('PP');
-
+    updateChart('Alberto Núñez Feijóo');
 
     // Event listener for dropdown items
     document.querySelectorAll('.dropdown-content a').forEach(item => {
         item.addEventListener('click', event => {
             if (!event.target.classList.contains('disabled')) {
-                updateChart(event.target.dataset.party);
+                updateChart(event.target.dataset.politician);
             }
-        }, { passive: true }); 
+        });
     });
 </script>
 

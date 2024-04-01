@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load slugify_topic %}
 
 {% block title %}Analizar{% endblock %}
 
@@ -13,10 +14,51 @@
 <div class="flex flex-col h-screen">
     <div class="flex">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Analizar</h1>
-    </div>    
-    <div class="flex flex-wrap sm:h-full justify-center items-center">
-        <h2 class="text-lg font-semibold">Contenido para analizar</h2>
+    </div>
+    <div class="flex flex-col items-center w-1/2 mx-auto">
+        <form id="search-form" class="input input-bordered flex items-center gap-2 bg-gray-300 dark:bg-gray-600 w-full">
+            {% csrf_token %}
+            <input id="search-input" name="video-url" type="text" class="grow" placeholder="Analizar un vídeo político"/>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>
+        </form>
+        {% if message %} 
+            <h2 id="error-msg" class="text-red-500 dark:text-red-400 text-center p-2">{{message}}</h2>
+        {% endif %}
+        <div id="loader" class="py-2 hidden">
+            <span class="loading loading-spinner loading-lg"></span>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center">
+        {% for topic in top_topics %}
+            <div class="w-1/4 p-4">
+                <a href="{% url 'topic' topic.topic_type|slugify_topic %}">
+                    <div class="flex items-center justify-center bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-lg p-4 h-40">
+                        <h2 class="font-semibold dark:text-gray-300">{{ topic.topic_type }}</h2>
+                    </div>
+                </a>
+            </div>
+            {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                </div><div class="flex flex-wrap justify-center">
+            {% endif %}
+        {% endfor %}
     </div>
 </div>
+{% endblock %}
 
+
+{% block extrascript %}
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const form = document.getElementById('search-form');
+        const loader = document.getElementById('loader');
+
+        form.addEventListener('submit', function() {
+            loader.style.display = 'block';
+        });
+
+        window.addEventListener('load', function() {
+            loader.style.display = 'none';
+        });
+    });
+</script>
 {% endblock %}

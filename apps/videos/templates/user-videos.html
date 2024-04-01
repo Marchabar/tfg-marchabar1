@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analizar{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'css/output.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col h-screen">
+    <div class="flex pr-4">
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Mis vídeos</h1>
+        <button onclick="location.href='/analysis'" class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+            Nuevo vídeo
+        </button>
+    </div>
+    <div class="grid grid-cols-3 gap-2 p-4">
+        {% for video in user_videos %}
+            {% if video.published %}
+                <a href="{% url 'video' video.id %}" class="card bg-white dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-700 shadow-xl text-gray-600 dark:text-gray-400">
+                    <figure class="px-10 pt-10">
+                        <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="rounded-lg" />
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">{{video.political_party}}</h2>
+                        <p>{{video.title}}</p>
+                        <p class="text-green-400"><strong>Publicado</strong></p>
+                    </div>
+                </a>
+            {% else %}
+                <div class="card bg-gray-400 dark:bg-gray-700 hover:bg-gray-500 dark:hover:bg-gray-800 shadow-xl text-gray-800 hover:text-gray-200 dark:text-gray-300">
+                    <figure class="px-10 pt-10">
+                        <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="rounded-lg" />
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">{{video.political_party}}</h2>
+                        <p>{{video.title}}</p>
+                        <p class="text-red-600 dark:text-red-400"><strong>No publicado</strong></p>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
