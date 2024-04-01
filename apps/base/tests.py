@@ -3,14 +3,17 @@ from datetime import date
 
 from django.conf import settings
 from django.core.files import File
-from django.test import Client, TestCase
+from django.db.models.query import QuerySet
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from apps.base.views import load_charts
 from apps.languages.models import Language
 from apps.sentiments.models import Sentiment
 from apps.topics.models import Topic
+from apps.users.models import CustomUser
 from apps.videos.models import Video
+from apps.words.models import Word
 
 
 class LoadGeneralTestCase(TestCase):
@@ -117,18 +120,90 @@ class LoadGeneralTestCase(TestCase):
         self.assertEqual(languages["Language1"], 1)
 
 
-class LoadChartsTestCase(TestCase):
+class LoadPoliticianTestCase(TestCase):
     def setUp(self):
-        self.client = Client()
+        self.factory = RequestFactory()
+        self.user = CustomUser.objects.create(username="testuser", password="12345")
+        self.video1 = Video.objects.create(
+            title="Video 1",
+            url="http://example.com/video1",
+            length="00:10:00",
+            summary="This is a summary for video 1",
+            date="2022-01-01",
+            politician_name="Politician 1",
+            political_party="PP",
+            published=True,
+            user=self.user,
+        )
+        self.sentiment1 = Sentiment.objects.create(
+            video=self.video1, sentiment_type="Positive"
+        )
+        self.language1 = Language.objects.create(
+            video=self.video1, language_type="English"
+        )
+        self.topic1 = Topic.objects.create(
+            video=self.video1, topic_type="Politics", percentage=80
+        )
 
-    def test_load_charts(self):
-        response = self.client.get("/by-party")
+    def test_load_politician(self):
+        url = reverse("politician")
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, "politician.html")
 
         # Assert that the response status code is 200 (OK)
         self.assertEqual(response.status_code, 200)
 
-        # Assert that the context data contains the expected keys
+        # Assert that the response contains the expected context variables
+        self.assertIn("dict_politicians", response.context)
+        self.assertIn("dict_sentiments", response.context)
+        self.assertIn("dict_languages", response.context)
+        self.assertIn("dict_topics", response.context)
+        self.assertIn("politicians", response.context)
+        self.assertIn("videos", response.context)
+
+        # Assert that the response context variables have the expected types
+        self.assertIsInstance(response.context["dict_politicians"], dict)
+        self.assertIsInstance(response.context["dict_sentiments"], dict)
+        self.assertIsInstance(response.context["dict_languages"], dict)
+        self.assertIsInstance(response.context["dict_topics"], dict)
+        self.assertIsInstance(response.context["politicians"], QuerySet)
+        self.assertIsInstance(response.context["videos"], QuerySet)
+
+
+class LoadChartsTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = CustomUser.objects.create(username="testuser", password="12345")
+        self.video1 = Video.objects.create(
+            title="Video 1",
+            url="http://example.com/video1",
+            length="00:10:00",
+            summary="This is a summary for video 1",
+            date="2022-01-01",
+            politician_name="Politician 1",
+            political_party="PP",
+            published=True,
+            user=self.user,
+        )
+        self.sentiment1 = Sentiment.objects.create(
+            video=self.video1, sentiment_type="Positive"
+        )
+        self.language1 = Language.objects.create(
+            video=self.video1, language_type="Critica"
+        )
+        self.topic1 = Topic.objects.create(
+            video=self.video1, topic_type="Politics", percentage=80
+        )
+        self.word1 = Word.objects.create(video=self.video1, word="test")
+
+    def test_load_charts(self):
+        url = reverse("party")
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, "home.html")
+
+        self.assertEqual(response.status_code, 200)
         self.assertIn("dict_topics", response.context)
         self.assertIn("dict_sentiments", response.context)
         self.assertIn("dict_languages", response.context)
         self.assertIn("videos", response.context)
+        self.assertIn("dict_words", response.context)
