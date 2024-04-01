@@ -63,3 +63,51 @@ class VideoViewTest(TestCase):
         self.client.login(username="testuser", password="12345")
         response = self.client.get(reverse("video", args=[self.video.id]))
         self.assertEqual(response.status_code, 200)
+
+    def test_get_videos_by_topic(self):
+        self.client.login(username="testuser", password="12345")
+        response = self.client.get(reverse("topic", args=["economia"]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_analyze_video_user(self):
+        Video.objects.create(
+            title="Video 10",
+            url="https://youtu.be/test_video",
+            length="00:10:00",
+            summary="This is a summary for video 1",
+            date=date.today(),
+            politician_name="Politician 1",
+            political_party="PP",
+            published=True,
+            user=self.user,
+        )
+
+        self.client.login(username="testuser", password="12345")
+        response = self.client.get(
+            reverse("analysis"), {"video-url": "https://youtu.be/test_video"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+
+class VideosUserTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = CustomUser.objects.create_user(username="user2", password="12345")
+        self.video = Video.objects.create(
+            title="Video 1",
+            url="http://example.com/video1",
+            length="00:10:00",
+            summary="This is a summary for video 1",
+            date=date.today(),
+            politician_name="Politician 1",
+            political_party="PP",
+            published=True,
+            user=self.user,
+        )
+
+    def test_get_videos_by_user(self):
+        self.client.login(username="user2", password="12345")
+        response = self.client.get(reverse("my-videos"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.video.title)
