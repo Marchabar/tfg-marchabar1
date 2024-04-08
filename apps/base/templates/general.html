@@ -141,46 +141,57 @@
     <div class="p-4">
       <div
         id="table"
-        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-            <h1>Tabla</h1>
-              <table>
-                <thead>
-                    <tr>
-                        <th>Party</th>
-                        <th>Main Topics</th>
-                        <th>Sentiments</th>
-                        <th>Languages</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for party, data in dict_general_table.items %}
-                    <tr>
-                        <td>{{ party }}</td>
-                        <td>
-                            <ul>
-                                {% for topic, percentage in data.topics.items %}
-                                <li>{{ topic }}: {{ percentage }}%</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                        <td>
-                            <ul>
-                                {% for sentiment, count in data.sentiments.items %}
-                                <li>{{ sentiment }}: {{ count }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                        <td>
-                            <ul>
-                                {% for language, count in data.languages.items %}
-                                <li>{{ language }}: {{ count }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>          
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4 text-black dark:text-gray-300">
+        <table class="table">
+          <thead>
+            <tr class="font-bold text-black dark:text-gray-300 text-lg">
+              <th>Partido</th>
+              <th>Temática</th>
+              <th>Sentimiento</th>
+              <th>Lenguaje</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for party, data in dict_general_table.items %}
+            <tr>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="w-28 h-10">
+                    <img
+                      src="{% static 'images/'|add:party|lower|add:'.png' %}"
+                      alt="Logo del partido" class="w-full h-full" />
+                  </div>
+                </div>
+              </td>
+              {% for main, percentage in data.items %}
+              <td>
+                {% if main == 'topics' %}
+                {% for topic, percentage in percentage.items %}
+                <div class="flex items center gap-2">
+                  <span>{{ topic }}</span>
+                  <span>{{ percentage }}</span>
+                </div>
+                {% endfor %}
+                {% elif main == 'sentiments' %}
+                {% for sentiment, percentage in percentage.items %}
+                <div class="flex items center gap-2">
+                  <span>{{ sentiment }}</span>
+                  <span>{{ percentage }}</span>
+                </div>
+                {% endfor %}
+                {% elif main == 'languages' %}
+                {% for language, percentage in percentage.items %}
+                <div class="flex items center gap-2">
+                  <span>{{ language }}</span>
+                  <span>{{ percentage }}</span>
+                </div>
+                {% endfor %}
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </table>
         </div>
       </div>
     </div>
