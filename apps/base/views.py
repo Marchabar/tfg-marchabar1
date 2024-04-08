@@ -126,7 +126,11 @@ def load_general(request):
 
     dict_general = json.loads(dict_general_json)
 
-    return render(request, "general.html", {"dict_general": dict_general_json, "dict_general_table": dict_general})
+    return render(
+        request,
+        "general.html",
+        {"dict_general": dict_general_json, "dict_general_table": dict_general},
+    )
 
 
 def load_politician(request):
@@ -418,7 +422,6 @@ def load_charts(request):
 
     # Convert dictionary to JSON
     dict_words = json.dumps(dict_words)
-    print(dict_words)
 
     return render(
         request,
