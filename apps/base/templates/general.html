@@ -76,13 +76,22 @@
         </li>
       </ul>
     </div>
+    <div class="flex justify-center items-center">
+      <label class="flex cursor-pointer gap-2 ml-[170px]">
+        <span class="label-text">Gráfico</span>
+        <input type="checkbox" id="viewToggle" value="synthwave"
+          class="toggle theme-controller" />
+        <span class="label-text">Tabla</span>
+      </label>
+    </div>
     <button
       onclick="location.href='/analysis'"
       class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
       Nuevo vídeo
     </button>
   </div>
-  <div class="grid grid-cols-2 sm:h-screen">
+  <div id="graphContainer" class="grid grid-cols-2 sm:h-screen"
+    style="display: grid;">
     <div class="p-4">
       <div
         id="pp"
@@ -128,10 +137,75 @@
       </div>
     </div>
   </div>
+  <div id="tableContainer" style="display: none;">
+    <div class="p-4">
+      <div
+        id="table"
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <h1>Tabla</h1>
+              <table>
+                <thead>
+                    <tr>
+                        <th>Party</th>
+                        <th>Main Topics</th>
+                        <th>Sentiments</th>
+                        <th>Languages</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for party, data in dict_general_table.items %}
+                    <tr>
+                        <td>{{ party }}</td>
+                        <td>
+                            <ul>
+                                {% for topic, percentage in data.topics.items %}
+                                <li>{{ topic }}: {{ percentage }}%</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for sentiment, count in data.sentiments.items %}
+                                <li>{{ sentiment }}: {{ count }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                                {% for language, count in data.languages.items %}
+                                <li>{{ language }}: {{ count }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>          
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-{% endblock %} {% block extrascript %}
+{% endblock %}
+{% block extrascript %}
 <script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    let viewToggle = document.getElementById('viewToggle');
+    let graphContainer = document.getElementById('graphContainer');
+    let tableContainer = document.getElementById('tableContainer');
+
+    viewToggle.addEventListener('change', function() {
+      if (this.checked) {
+        graphContainer.style.display = 'none';
+        tableContainer.style.display = 'block';
+      } else {
+        graphContainer.style.display = 'grid';
+        tableContainer.style.display = 'none';
+      }
+    });
+  });
+
   let dict_general = "{{dict_general | escapejs}}";
   let jsonData = JSON.parse(dict_general);
 
