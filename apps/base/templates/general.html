@@ -86,7 +86,7 @@
     <div class="p-4">
       <div
         id="pp"
-        class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
         <img
           src="{% static 'images/pp.png' %}"
           alt="PP"
@@ -97,7 +97,7 @@
     <div class="p-4">
       <div
         id="psoe"
-        class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
         <img
           src="{% static 'images/psoe.png' %}"
           alt="PSOE"
@@ -108,7 +108,7 @@
     <div class="p-4">
       <div
         id="vox"
-        class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
         <img
           src="{% static 'images/vox.png' %}"
           alt="VOX"
@@ -119,7 +119,7 @@
     <div class="p-4">
       <div
         id="sumar"
-        class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
         <img
           src="{% static 'images/sumar.png' %}"
           alt="SUMAR"
@@ -136,6 +136,8 @@
   let jsonData = JSON.parse(dict_general);
 
   let chartInstances = [];
+
+  const fontColor = "#000";
 
   function updateChart(dropdownOption) {
     let arrowSVG =
@@ -227,14 +229,14 @@
             scaleLabel: {
               display: true,
               labelString: "Temáticas",
-              fontColor: "rgb(167 174 188)",
+              fontColor: fontColor,
             },
             ticks: {
               display: true,
               maxRotation: 90,
               minRotation: 90,
               fontSize: 11,
-              fontColor: "rgb(167 174 188)",
+              fontColor: fontColor,
             },
           },
         ],
@@ -243,11 +245,11 @@
             scaleLabel: {
               display: true,
               labelString: "Porcentaje (%)",
-              fontColor: "rgb(167 174 188)",
+              fontColor: fontColor,
             },
             ticks: {
               beginAtZero: true,
-              fontColor: "rgb(167 174 188)",
+              fontColor: fontColor,
             },
           },
         ],
@@ -415,7 +417,7 @@
             position: "right",
             labels: {
               boxWidth: 20,
-              fontColor: "rgb(167 174 188)",
+              fontColor: fontColor,
             },
           },
           tooltips: {
