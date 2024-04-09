@@ -124,7 +124,88 @@ def load_general(request):
     # Convert to JSON
     dict_general_json = json.dumps(dict_general)
 
-    return render(request, "general.html", {"dict_general": dict_general_json})
+    mapping_dict = {
+        "economia": "Economía",
+        "salud": "Salud",
+        "educacion": "Educación",
+        "medio_ambiente": "Medio ambiente",
+        "derechos_civiles": "Derechos civiles",
+        "inmigracion": "Inmigración",
+        "seguridad_nacional": "Seguridad nacional",
+        "politica_exterior": "Política exterior",
+        "empleo": "Empleo",
+        "criminalidad": "Criminalidad",
+        "impuestos": "Impuestos",
+        "bienestar_social": "Bienestar social",
+        "tecnologia": "Tecnología",
+        "energia": "Energía",
+        "vivienda": "Vivienda",
+        "corrupcion": "Corrupción",
+        "libertad_de_prensa": "Libertad de prensa",
+        "igualdad_de_genero": "Igualdad de género",
+        "diversidad_y_discriminacion": "Diversidad y discriminación",
+        "pobreza": "Pobreza",
+        "infraestructura": "Infraestructura",
+        "religion": "Religión",
+        "derechos_de_las_minorias": "Derechos de las minorías",
+        "paz_y_conflicto": "Paz y conflicto",
+        "defensa": "Defensa",
+        "legislacion": "Legislación",
+        "presupuesto": "Presupuesto",
+        "justicia": "Justicia",
+        "eta": "ETA",
+        "historia_reciente_de_espana": "Historia reciente de España",
+        "terrorismo": "Terrorismo",
+        "acusaciones_politicas": "Acusaciones políticas",
+        "campana_electoral": "Campaña electoral",
+        "enojo": "Enojo",
+        "frustracion": "Frustración",
+        "pasion": "Pasión",
+        "entusiasmo": "Entusiasmo",
+        "preocupacion": "Preocupación",
+        "confianza": "Confianza",
+        "desesperacion": "Desesperación",
+        "optimismo": "Optimismo",
+        "satisfaccion": "Satisfacción",
+        "escepticismo": "Escepticismo",
+        "desden": "Desdén",
+        "empatia": "Empatía",
+        "formal": "Lenguaje formal",
+        "tecnico": "Lenguaje técnico",
+        "emocional": "Lenguaje emocional",
+        "persuasivo": "Lenguaje persuasivo",
+        "retorico": "Lenguaje retórico",
+        "bipartidista": "Lenguaje bipartidista",
+        "partidista": "Lenguaje partidista",
+        "populista": "Lenguaje populista",
+        "confrontacion": "Lenguaje de confrontación",
+        "consenso": "Lenguaje de consenso",
+        "compromiso": "Lenguaje de compromiso",
+        "promesas": "Lenguaje de promesas",
+        "critica": "Lenguaje de crítica",
+        "estadisticas": "Lenguaje de estadísticas",
+        "datos": "Lenguaje de datos",
+        "debate": "Lenguaje de debate",
+        "discurso_publico": "Lenguaje de discurso público",
+        "campana": "Lenguaje de campaña",
+        "legislacion": "Lenguaje de legislación",
+        "negociacion": "Lenguaje de negociación",
+    }
+
+    dict_general = json.loads(dict_general_json)
+
+    for party in dict_general:
+        for category in ["topics", "sentiments", "languages"]:
+            dict_general[party][category] = {
+                mapping_dict.get(key, key): value
+                for key, value in dict_general[party][category].items()
+            }
+
+    return render(
+        request,
+        "general.html",
+        {"dict_general": dict_general_json, "dict_general_table": dict_general},
+    )
 
 
 def load_politician(request):

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load slugify_topic %}
+{% load slugify_sentiment %}
+{% load slugify_language %}
+
+{% block title %}Analizar{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'css/output.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col h-full">
+    <div class="flex pr-4">
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Todos los vídeos</h1>
+        <div class="dropdown" id="dropdown-general">
+            <div tabindex="0" role="button"
+                class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center items-center border-none">
+                <div class="flex items-center">
+                    <!-- Container to center the text and SVG -->
+                    <span class="mr-2 ml-2" id="dropdownButtonText">Temática</span>
+                    <!-- Text -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+            <ul tabindex="0"
+                class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-32">
+                <li>
+                    <a class="text-gray-700 dark:text-gray-100" onclick="showDiv('topics', 'Temática')">Temática</a>
+                </li>
+                <li>
+                    <a class="text-gray-700 dark:text-gray-100"
+                        onclick="showDiv('sentiments', 'Sentimiento')">Sentimiento</a>
+                </li>
+                <li>
+                    <a class="text-gray-700 dark:text-gray-100" onclick="showDiv('languages', 'Lenguage')">Lenguage</a>
+                </li>
+            </ul>
+        </div>
+        <button onclick="location.href='/analysis'"
+            class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+            Nuevo vídeo
+        </button>
+    </div>
+    <div id="topics" class="flex flex-wrap justify-center">
+        {% for topic in top_topics %}
+        <div class="w-1/4 p-4">
+            <a href="{% url 'topic' topic.topic_type|slugify_topic %}">
+                <div
+                    class="flex items-center justify-center bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-lg p-4 h-40">
+                    <h2 class="font-semibold dark:text-gray-300">{{ topic.topic_type }}</h2>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div id="sentiments" class="flex flex-wrap justify-center" style="display: none;">
+        {% for sentiment in top_sentiments %}
+        <div class="w-1/4 p-4">
+            <a href="{% url 'sentiment' sentiment.sentiment_type|slugify_sentiment %}">
+                <div
+                    class="flex items-center justify-center bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-lg p-4 h-40">
+                    <h2 class="font-semibold dark:text-gray-300">{{ sentiment.sentiment_type }}</h2>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div id="languages" class="flex flex-wrap justify-center" style="display: none;">
+        {% for language in top_languages%}
+        <div class="w-1/4 p-4">
+            <a href="{% url 'language' language.language_type|slugify_language %}">
+                <div
+                    class="flex items-center justify-center bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-lg p-4 h-40">
+                    <h2 class="font-semibold dark:text-gray-300">{{ language.language_type }}</h2>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extrascript %}
+<script>
+
+    function showDiv(id, text) {
+        // Get all divs with the class 'content-div'
+        document.getElementById('topics').style.display = 'none';
+        document.getElementById('sentiments').style.display = 'none';
+        document.getElementById('languages').style.display = 'none';
+
+        // Show the selected div
+        document.getElementById(id).style.display = 'flex';
+
+        // Change the text of the dropdown button
+        document.getElementById('dropdownButtonText').textContent = text;
+    }
+</script>
+{% endblock %}

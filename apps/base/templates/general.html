@@ -1,405 +1,719 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Portada{% endblock %}
-
+{% extends 'base.html' %} {% load static %} {% block title %}Portada{%endblock%}
 {% block extrahead %}
-<link rel="stylesheet" href="{% static 'css/output.css' %}">
+<link rel="stylesheet" href="{% static 'css/output.css' %}" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 
 <div class="flex flex-col h-screen">
-    <div class="flex  pr-4">
-        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
-        <div class="dropdown">
-            <div id="dropdownButton" tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
-                Temática 
-            </div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-32">
-                <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('topics')">Temática</a></li>
-                <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('sentiments')">Sentimiento</a></li>
-                <li><a class="text-gray-700 dark:text-gray-100" onclick="updateChart('languages')">Lenguage</a></li>
-            </ul>
-        </div>
-        <div class="dropdown">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center items-center border-none">
-                <div class="flex items-center"> <!-- Container to center the text and SVG -->
-                    <span class="mr-2 ml-2">General</span> <!-- Text -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </div>
-            </div>            
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
-                <li><a href="/" class="text-gray-700 dark:text-gray-100">General</a></li>
-                <li><a href="/by-party" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
-                <li><a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por político</a></li>
-            </ul>
-        </div>
-        <button onclick="location.href='/analysis'" class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
-            Nuevo vídeo
-        </button>        
+  <div class="flex pr-4">
+    <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">
+      Portada
+    </h1>
+    <div class="dropdown" id="dropdown-general">
+      <div
+        id="dropdownButton"
+        tabindex="0"
+        role="button"
+        class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
+        Temática
+      </div>
+      <ul
+        tabindex="0"
+        class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-32">
+        <li>
+          <a
+            class="text-gray-700 dark:text-gray-100"
+            onclick="updateChart('topics')">Temática</a>
+        </li>
+        <li>
+          <a
+            class="text-gray-700 dark:text-gray-100"
+            onclick="updateChart('sentiments')">Sentimiento</a>
+        </li>
+        <li>
+          <a
+            class="text-gray-700 dark:text-gray-100"
+            onclick="updateChart('languages')">Lenguage</a>
+        </li>
+      </ul>
     </div>
-    <div class="grid grid-cols-2 sm:h-screen">
-        <div class="p-4">
-            <div id="pp" class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <img src="{% static 'images/pp.png' %}" alt="PP" class="w-24 h-20 inline-block object-contain">
-                <canvas id="ppChart"></canvas>
-            </div>
+    <div class="dropdown">
+      <div
+        tabindex="0"
+        role="button"
+        class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center items-center border-none">
+        <div class="flex items-center">
+          <!-- Container to center the text and SVG -->
+          <span class="mr-2 ml-2">General</span>
+          <!-- Text -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"></path>
+          </svg>
         </div>
-        <div class="p-4">
-            <div id="psoe" class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <img src="{% static 'images/psoe.png' %}" alt="PSOE" class="w-20 h-16 inline-block object-contain">
-                <canvas id="psoeChart"></canvas>
-            </div>
-        </div>
-        <div class="p-4">
-            <div id="vox" class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <img src="{% static 'images/vox.png' %}" alt="VOX" class="w-16 h-14 inline-block object-contain">
-                <canvas id="voxChart"></canvas>
-            </div>
-        </div>
-        <div class="p-4">
-            <div id="sumar" class="bg-white h-full dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <img src="{% static 'images/sumar.png' %}" alt="SUMAR" class="w-20 h-16 inline-block object-contain">
-                <canvas id="sumarChart"></canvas>
-            </div>
-        </div>
+      </div>
+      <ul
+        tabindex="0"
+        class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+        <li>
+          <a href="/" class="text-gray-700 dark:text-gray-100">General</a>
+        </li>
+        <li>
+          <a href="/by-party" class="text-gray-700 dark:text-gray-100">Por
+            partido</a>
+        </li>
+        <li>
+          <a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por
+            político</a>
+        </li>
+      </ul>
     </div>
-</div>
+    <div class="flex justify-center items-center">
+      <label class="flex cursor-pointer gap-2 ml-[170px]">
+        <span class="label-text">Gráfico</span>
+        <input type="checkbox" id="viewToggle" value="synthwave"
+          class="toggle theme-controller" />
+        <span class="label-text">Tabla</span>
+      </label>
+    </div>
+    <button
+      onclick="location.href='/analysis'"
+      class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+      Nuevo vídeo
+    </button>
+  </div>
+  <div id="graphContainer" class="grid grid-cols-2 sm:h-screen"
+    style="display: grid;">
+    <div class="p-4">
+      <div
+        id="pp"
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        <img
+          src="{% static 'images/pp.png' %}"
+          alt="PP"
+          class="w-24 h-20 inline-block object-contain" />
+        <canvas id="ppChart"></canvas>
+      </div>
+    </div>
+    <div class="p-4">
+      <div
+        id="psoe"
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        <img
+          src="{% static 'images/psoe.png' %}"
+          alt="PSOE"
+          class="w-20 h-16 inline-block object-contain" />
+        <canvas id="psoeChart"></canvas>
+      </div>
+    </div>
+    <div class="p-4">
+      <div
+        id="vox"
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        <img
+          src="{% static 'images/vox.png' %}"
+          alt="VOX"
+          class="w-16 h-14 inline-block object-contain" />
+        <canvas id="voxChart"></canvas>
+      </div>
+    </div>
+    <div class="p-4">
+      <div
+        id="sumar"
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+        <img
+          src="{% static 'images/sumar.png' %}"
+          alt="SUMAR"
+          class="w-20 h-16 inline-block object-contain" />
+        <canvas id="sumarChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div id="tableContainer" style="display: none;">
+    <div class="p-4">
+      <div
+        id="table"
+        class="bg-white h-full dark:bg-gray-400 rounded-lg shadow-md flex flex-col justify-center items-center p-4 text-black">
+        <table class="table">
+          <thead>
+            <tr class="font-bold text-black text-lg">
+              <th>Partido</th>
+              <th>Temática</th>
+              <th>Sentimiento</th>
+              <th>Lenguaje</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for party, data in dict_general_table.items %}
+            {% if party == 'PP' %}
+            <tr class="bg-blue-200">
+              {% elif party == 'PSOE' %}
+              <tr class="bg-red-200">
+                {% elif party == 'VOX' %}
+                <tr class="bg-green-200">
+                  {% elif party == 'SUMAR' %}
+                  <tr class="bg-purple-300">
+                    {% endif %}
+                    <td>
+                      <div class="flex items-center gap-3">
+                        <div class="w-28 h-10">
+                          <img
+                            src="{% static 'images/'|add:party|lower|add:'.png' %}"
+                            alt="Logo del partido" class="w-full h-full" />
+                        </div>
+                      </div>
+                    </td>
+                    {% for main, percentage in data.items %}
+                    <td>
+                      {% if main == 'topics' %}
+                      {% for topic, percentage in percentage.items %}
+                      <div class="flex items center gap-2">
+                        <span class="font-bold">{{ topic }}:</span>
+                        <span>{{ percentage }}%</span>
+                      </div>
+                      {% endfor %}
+                      {% elif main == 'sentiments' %}
+                      {% for sentiment, percentage in percentage.items %}
+                      <div class="flex items center gap-2">
+                        <span class="font-bold">{{ sentiment }}:</span>
+                        <span>{{ percentage }}</span>
+                      </div>
+                      {% endfor %}
+                      {% elif main == 'languages' %}
+                      {% for language, percentage in percentage.items %}
+                      <div class="flex items center gap-2">
+                        <span class="font-bold">{{ language }}:</span>
+                        <span>{{ percentage }}</span>
+                      </div>
+                      {% endfor %}
+                      {% endif %}
+                    </td>
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-{% endblock %}
+    {% endblock %}
+    {% block extrascript %}
+    <script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    let viewToggle = document.getElementById('viewToggle');
+    let graphContainer = document.getElementById('graphContainer');
+    let tableContainer = document.getElementById('tableContainer');
+    let dropdownButton = document.getElementById('dropdownButton');
 
-{% block extrascript %}
-<script>
-    let dict_general = '{{dict_general | escapejs}}';
-    let jsonData = JSON.parse(dict_general);
+    viewToggle.addEventListener('change', function() {
+      if (this.checked) {
+        graphContainer.style.display = 'none';
+        tableContainer.style.display = 'block';
+        dropdownButton.setAttribute('disabled', 'disabled')
+      } else {
+        graphContainer.style.display = 'grid';
+        tableContainer.style.display = 'none';
+        dropdownButton.removeAttribute('disabled');
+      }
+    });
+  });
 
-    let chartInstances = [];
+  let dict_general = "{{dict_general | escapejs}}";
+  let jsonData = JSON.parse(dict_general);
 
-    function updateChart(dropdownOption) {
-        let arrowSVG = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
-               '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
+  let chartInstances = [];
 
-        // Update dropdown text with SVG
-        let dropdownText = dropdownOption === 'topics' ? 'Temática' :
-                            dropdownOption === 'sentiments' ? 'Sentimiento' :
-                            dropdownOption === 'languages' ? 'Lenguaje' :
-                            'Dropdown';
-        let dropdownContent = '<div class="flex items-center">' +
-                                '<span class="mr-2 ml-2">' + dropdownText + '</span>' +
-                                arrowSVG +
-                            '</div>';
-        document.getElementById('dropdownButton').innerHTML = dropdownContent;
+  const fontColor = "#000";
 
+  function updateChart(dropdownOption) {
+    let arrowSVG =
+      '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+      '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
 
-        // Destroy previous charts
-        chartInstances.forEach(chart => chart.destroy());
-        chartInstances = []; // Clear the array
+    let dropdownText =
+      dropdownOption === "topics"
+        ? "Temática"
+        : dropdownOption === "sentiments"
+        ? "Sentimiento"
+        : dropdownOption === "languages"
+        ? "Lenguaje"
+        : "Dropdown";
+    let dropdownContent =
+      '<div class="flex items-center">' +
+      '<span class="mr-2 ml-2">' +
+      dropdownText +
+      "</span>" +
+      arrowSVG +
+      "</div>";
+    document.getElementById("dropdownButton").innerHTML = dropdownContent;
 
-        var labelDescriptionsBar = {
-            "Economía": "Asuntos financieros y comerciales de un país",
-            "Salud": "Temas relacionados con la atención médica y el bienestar físico y mental.",
-            "Educación": "Asuntos relacionados con el sistema educativo y la enseñanza.",
-            "Medio ambiente": "Problemas ambientales y conservación de recursos naturales.",
-            "Derechos civiles": "Derechos y libertades básicas de los ciudadanos frente al Estado.",
-            "Inmigración": "Movimiento de personas de un país a otro para establecerse o trabajar.",
-            "Seguridad nacional": "Protección del Estado contra amenazas internas y externas.",
-            "Política exterior": "Relaciones con otros países y organizaciones internacionales.",
-            "Empleo": "Asuntos relacionados con el trabajo y la contratación laboral.",
-            "Criminalidad": "Delitos y actividades criminales dentro de la sociedad.",
-            "Impuestos": "Cargas financieras impuestas por el gobierno a los contribuyentes.",
-            "Bienestar social": "Programas y políticas para el bienestar general de la sociedad.",
-            "Tecnología": "Desarrollo y aplicación de conocimientos técnicos y científicos.",
-            "Energía": "Producción y consumo de recursos energéticos.",
-            "Vivienda": "Acceso a viviendas y políticas relacionadas con la vivienda.",
-            "Corrupción": "Uso indebido de poder para obtener beneficios",
-            "Libertad de prensa": "Derecho a la libertad de expresión y prensa sin censura.",
-            "Igualdad de género": "Trato igualitario entre hombres y mujeres en la sociedad.",
-            "Diversidad y discriminación": "Respeto de la diversidad cultural y la eliminación de la discriminación.",
-            "Pobreza": "Escasez de recursos económicos y condiciones de vida precarias.",
-            "Infraestructura": "Estructuras y servicios básicos necesarios para el funcionamiento de una sociedad.",
-            "Religión": "Creencias y prácticas espirituales y religiosas.",
-            "Derechos de las minorías": "Protección de los derechos de grupos minoritarios dentro de la sociedad.",
-            "Paz y conflicto": "Resolución de conflictos y promoción de la paz en el ámbito nacional e internacional.",
-            "Defensa": "Protección y seguridad militar del país.",
-            "Legislación": "Elaboración y aplicación de leyes y regulaciones.",
-            "Presupuesto": "Asignación de recursos financieros para programas y actividades gubernamentales.",
-            "Justicia": "Sistema legal y administración de la ley.",
-            "ETA": "Grupo separatista vasco y sus actividades políticas y violentas.",
-            "Historia reciente de españa": "Eventos y desarrollos significativos en la historia contemporánea de España.",
-            "Terrorismo": "Uso de la violencia y el terror con fines políticos.",
-            "Acusaciones políticas": "Alegaciones y acusaciones contra figuras políticas.",
-            "Campaña electoral": "Actividades y estrategias durante los períodos electorales."
-        };
+    chartInstances.forEach((chart) => chart.destroy());
+    chartInstances = []; 
 
-        // Create new charts
-        let chartOptionsBar = {
-            scales: {
-                xAxes: [{
-                    scaleLabel: {
-                            display: true,
-                            labelString: 'Temáticas',
-                            fontColor: 'rgb(167 174 188)'
-                        },
-                    ticks: {
-                        display: true,
-                        maxRotation: 90,
-                        minRotation: 90,
-                        fontSize: 11,
-                        fontColor: 'rgb(167 174 188)'
-                    }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                            display: true,
-                            labelString: 'Porcentaje (%)',
-                            fontColor: 'rgb(167 174 188)'
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            fontColor: 'rgb(167 174 188)'
-                        }
-                }]
+    var labelDescriptionsBar = {
+      Economía: "Asuntos financieros y comerciales de un país",
+      Salud:
+        "Temas relacionados con la atención médica y el bienestar físico y mental.",
+      Educación:
+        "Asuntos relacionados con el sistema educativo y la enseñanza.",
+      "Medio ambiente":
+        "Problemas ambientales y conservación de recursos naturales.",
+      "Derechos civiles":
+        "Derechos y libertades básicas de los ciudadanos frente al Estado.",
+      Inmigración:
+        "Movimiento de personas de un país a otro para establecerse o trabajar.",
+      "Seguridad nacional":
+        "Protección del Estado contra amenazas internas y externas.",
+      "Política exterior":
+        "Relaciones con otros países y organizaciones internacionales.",
+      Empleo: "Asuntos relacionados con el trabajo y la contratación laboral.",
+      Criminalidad: "Delitos y actividades criminales dentro de la sociedad.",
+      Impuestos:
+        "Cargas financieras impuestas por el gobierno a los contribuyentes.",
+      "Bienestar social":
+        "Programas y políticas para el bienestar general de la sociedad.",
+      Tecnología:
+        "Desarrollo y aplicación de conocimientos técnicos y científicos.",
+      Energía: "Producción y consumo de recursos energéticos.",
+      Vivienda: "Acceso a viviendas y políticas relacionadas con la vivienda.",
+      Corrupción: "Uso indebido de poder para obtener beneficios",
+      "Libertad de prensa":
+        "Derecho a la libertad de expresión y prensa sin censura.",
+      "Igualdad de género":
+        "Trato igualitario entre hombres y mujeres en la sociedad.",
+      "Diversidad y discriminación":
+        "Respeto de la diversidad cultural y la eliminación de la discriminación.",
+      Pobreza:
+        "Escasez de recursos económicos y condiciones de vida precarias.",
+      Infraestructura:
+        "Estructuras y servicios básicos necesarios para el funcionamiento de una sociedad.",
+      Religión: "Creencias y prácticas espirituales y religiosas.",
+      "Derechos de las minorías":
+        "Protección de los derechos de grupos minoritarios dentro de la sociedad.",
+      "Paz y conflicto":
+        "Resolución de conflictos y promoción de la paz en el ámbito nacional e internacional.",
+      Defensa: "Protección y seguridad militar del país.",
+      Legislación: "Elaboración y aplicación de leyes y regulaciones.",
+      Presupuesto:
+        "Asignación de recursos financieros para programas y actividades gubernamentales.",
+      Justicia: "Sistema legal y administración de la ley.",
+      ETA: "Grupo separatista vasco y sus actividades políticas y violentas.",
+      "Historia reciente de españa":
+        "Eventos y desarrollos significativos en la historia contemporánea de España.",
+      Terrorismo: "Uso de la violencia y el terror con fines políticos.",
+      "Acusaciones políticas":
+        "Alegaciones y acusaciones contra figuras políticas.",
+      "Campaña electoral":
+        "Actividades y estrategias durante los períodos electorales.",
+    };
+
+    // Create new charts
+    let chartOptionsBar = {
+      scales: {
+        xAxes: [
+          {
+            scaleLabel: {
+              display: true,
+              labelString: "Temáticas",
+              fontColor: fontColor,
             },
-            legend: {
-                display: false
+            ticks: {
+              display: true,
+              maxRotation: 90,
+              minRotation: 90,
+              fontSize: 11,
+              fontColor: fontColor,
             },
-            tooltips: {
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        return data.labels[tooltipItem[0].index];
-                    },
-                    label: function(tooltipItem, data) {
-                        var label = data.labels[tooltipItem.index];
-                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                        var description = labelDescriptionsBar[label] || '';
-                        return value + " " + description ;
-                    }
-                }
+          },
+        ],
+        yAxes: [
+          {
+            scaleLabel: {
+              display: true,
+              labelString: "Porcentaje (%)",
+              fontColor: fontColor,
             },
-            responsive: true,
-        };
+            ticks: {
+              beginAtZero: true,
+              fontColor: fontColor,
+            },
+          },
+        ],
+      },
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        callbacks: {
+          title: function (tooltipItem, data) {
+            return data.labels[tooltipItem[0].index];
+          },
+          label: function (tooltipItem, data) {
+            var label = data.labels[tooltipItem.index];
+            var value =
+              data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+            var description = labelDescriptionsBar[label] || "";
+            return value + " " + description;
+          },
+        },
+      },
+      responsive: true,
+    };
 
-        if (dropdownOption === 'sentiments') {
-            createPieCharts('pie', dropdownOption);
-        } else if (dropdownOption === 'languages') {
-            createPieCharts('doughnut', dropdownOption);
-        } else {
-            createBarCharts(dropdownOption, chartOptionsBar);
-        }
+    if (dropdownOption === "sentiments") {
+      createPieCharts("pie", dropdownOption);
+    } else if (dropdownOption === "languages") {
+      createPieCharts("doughnut", dropdownOption);
+    } else {
+      createBarCharts(dropdownOption, chartOptionsBar);
+    }
+  }
+
+  function snakeToTitleCase(str, choices) {
+    for (var i = 0; i < choices.length; i++) {
+      if (choices[i][0] === str) {
+        return choices[i][1];
+      }
+    }
+    return str.replace(/_/g, " ").replace(/\b\w/g, function (char) {
+      return char.toUpperCase();
+    });
+  }
+
+  function createPieCharts(type, dropdownOption) {
+    SENTIMENT_CHOICES = [
+      ["enojo", "Enojo"],
+      ["frustracion", "Frustración"],
+      ["pasion", "Pasión"],
+      ["entusiasmo", "Entusiasmo"],
+      ["preocupacion", "Preocupación"],
+      ["confianza", "Confianza"],
+      ["desesperacion", "Desesperación"],
+      ["optimismo", "Optimismo"],
+      ["satisfaccion", "Satisfacción"],
+      ["escepticismo", "Escepticismo"],
+      ["desden", "Desdén"],
+      ["empatia", "Empatía"],
+    ];
+    LANGUAGE_CHOICES = [
+      ["formal", "Formal"],
+      ["tecnico", "Técnico"],
+      ["emocional", "Emocional"],
+      ["persuasivo", "Persuasivo"],
+      ["retorico", "Retórico"],
+      ["bipartidista", "Bipartidista"],
+      ["partidista", "Partidista"],
+      ["populista", "Populista"],
+      ["consenso", "Consenso"],
+      ["confrontacion", "Confrontación"],
+      ["compromiso", "Compromiso"],
+      ["promesas", "Promesas"],
+      ["critica", "Crítica"],
+      ["estadisticas", "Estadísticas"],
+      ["datos", "Datos"],
+      ["debate", "Debate"],
+      ["discurso_publico", "Discurso Público"],
+      ["campana", "Campaña"],
+      ["legislacion", "Legislación"],
+      ["negociacion", "Negociación"],
+      ["patriotico", "Patriótico"],
+    ];
+    var labelDescriptionsPie = {
+      Enojo: "Emoción intensa de ira o irritación.",
+      Frustración:
+        "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
+      Pasión: "Fuerte emoción o entusiasmo por algo.",
+      Entusiasmo: "Gran interés o emoción por algo que se espera o desea.",
+      Preocupación:
+        "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
+      Confianza: "Sentimiento de seguridad o fe en uno mismo o en los demás.",
+      Desesperación: "Sentimiento de angustia o falta de esperanza.",
+      Optimismo: "Actitud positiva o expectativa favorable hacia el futuro.",
+      Satisfacción:
+        "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
+      Escepticismo: "Actitud de duda o incredulidad hacia algo.",
+      Desdén: "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
+      Empatía:
+        "Capacidad de comprender y compartir los sentimientos de otra persona.",
+    };
+
+    var labelDescriptionsPolar = {
+      Formal: "Utilizado en contextos serios o profesionales.",
+      Técnico: "Especializado en un área específica del conocimiento.",
+      Emocional: "Dirigido a evocar sentimientos y emociones.",
+      Persuasivo: "Diseñado para influir en las opiniones o acciones.",
+      Retórico: "Se enfoca en la persuasión y la elocuencia.",
+      Bipartidista:
+        "Relacionado con la cooperación entre dos partidos políticos.",
+      Partidista:
+        "Centrado en los intereses y objetivos de un partido político específico.",
+      Populista: "Dirigido a las preocupaciones y deseos del público general.",
+      Consenso: "Busca llegar a un acuerdo entre diferentes partes o grupos.",
+      Confrontación:
+        "Utilizado para enfrentar directamente opiniones opuestas.",
+      Compromiso:
+        "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
+      Promesas: "Incluye compromisos o garantías de acciones futuras.",
+      Crítica:
+        "Se centra en señalar defectos o problemas en políticas o acciones.",
+      Estadísticas:
+        "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
+      Datos: "Enfocado en la presentación objetiva de información.",
+      Debate: "Utilizado en discusiones estructuradas para argumentar.",
+      "Discurso Público": "Dirigido a un público amplio en eventos públicos.",
+      Campaña:
+        "Utilizado durante las campañas electorales para promover candidatos.",
+      Legislación: "Relacionado con la redacción de leyes y regulaciones.",
+      Negociación:
+        "Utilizado en procesos de negociación para llegar a acuerdos.",
+    };
+
+
+    ["PP", "PSOE", "VOX", "SUMAR"].forEach((party) => {
+      let canvas = document.getElementById(`${party.toLowerCase()}Chart`);
+      let context = canvas.getContext("2d");
+      labels = Object.keys(jsonData[party][dropdownOption]);
+      backgroundColors = labels.map((label) => { if (dropdownOption === 'sentiments') {
+        return getNextColorSentiment(label);
+      } else if (dropdownOption === 'languages') {
+        return getNextColorLanguage(label);
+      }});
+      let chartOptions = {
+        type: type,
+        data: {
+          labels: Object.keys(jsonData[party][dropdownOption]).map((label) =>
+            snakeToTitleCase(
+              label,
+              dropdownOption === "sentiments"
+                ? SENTIMENT_CHOICES
+                : LANGUAGE_CHOICES
+            )
+          ),
+          datasets: [
+            {
+              data: Object.values(jsonData[party][dropdownOption]),
+              backgroundColor: backgroundColors,
+              borderColor: backgroundColors,
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          legend: {
+            position: "right",
+            labels: {
+              boxWidth: 20,
+              fontColor: fontColor,
+            },
+          },
+          tooltips: {
+            callbacks: {
+              title: function (tooltipItem, data) {
+                return data.labels[tooltipItem[0].index];
+              },
+              label: function (tooltipItem, data) {
+                var label = data.labels[tooltipItem.index];
+                var value =
+                  data.datasets[tooltipItem.datasetIndex].data[
+                    tooltipItem.index
+                  ];
+                var description =
+                  dropdownOption === "sentiments"
+                    ? labelDescriptionsPie[label]
+                    : labelDescriptionsPolar[label] || "";
+                return value + " " + description;
+              },
+            },
+          },
+          responsive: true,
+        },
+      };
+      chartInstances.push(new Chart(context, chartOptions));
+    });
+  }
+
+  function createBarCharts(dropdownOption, chartOptions) {
+    var TOPIC_CHOICES = [
+      ["economia", "Economía"],
+      ["salud", "Salud"],
+      ["educacion", "Educación"],
+      ["medio_ambiente", "Medio ambiente"],
+      ["derechos_civiles", "Derechos civiles"],
+      ["inmigracion", "Inmigración"],
+      ["seguridad_nacional", "Seguridad nacional"],
+      ["politica_exterior", "Política exterior"],
+      ["empleo", "Empleo"],
+      ["criminalidad", "Criminalidad"],
+      ["impuestos", "Impuestos"],
+      ["bienestar_social", "Bienestar social"],
+      ["tecnologia", "Tecnología"],
+      ["energia", "Energía"],
+      ["vivienda", "Vivienda"],
+      ["corrupcion", "Corrupción"],
+      ["libertad_de_prensa", "Libertad de prensa"],
+      ["igualdad_de_genero", "Igualdad de género"],
+      ["diversidad_y_discriminacion", "Diversidad y discriminación"],
+      ["pobreza", "Pobreza"],
+      ["infraestructura", "Infraestructura"],
+      ["religion", "Religión"],
+      ["derechos_de_las_minorias", "Derechos de las minorías"],
+      ["paz_y_conflicto", "Paz y conflicto"],
+      ["defensa", "Defensa"],
+      ["legislacion", "Legislación"],
+      ["presupuesto", "Presupuesto"],
+      ["justicia", "Justicia"],
+      ["ETA", "ETA"],
+      ["historia_reciente_espana", "Historia reciente de España"],
+      ["terrorismo", "Terrorismo"],
+      ["acusaciones_políticas", "Acusaciones políticas"],
+      ["campana_electoral", "Campaña electoral"],
+      ["patriotismo", "Patriotismo"],
+    ];
+    ["PP", "PSOE", "VOX", "SUMAR"].forEach((party) => {
+      let canvas = document.getElementById(`${party.toLowerCase()}Chart`);
+      let context = canvas.getContext("2d");
+      let data = jsonData[party][dropdownOption];
+      let labels = Object.keys(data);
+      let values = Object.values(data);
+      let backgroundColors = labels.map((label) => getNextColor(label));
+      let chart = new Chart(context, {
+        type: "bar",
+        data: {
+          labels: labels.map((label) => snakeToTitleCase(label, TOPIC_CHOICES)),
+          datasets: [
+            {
+              label: party,
+              data: values,
+              backgroundColor: backgroundColors,
+              borderColor: backgroundColors,
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: chartOptions,
+      });
+      chartInstances.push(chart);
+    });
+  }
+
+  const sentimentColorMapping = {
+      enojo: "#FF69B4", // HotPink
+      frustracion: "#1E90FF", // DodgerBlue
+      pasion: "#32CD32", // LimeGreen
+      entusiasmo: "#FFD700", // Gold
+      preocupacion: "#FF6347", // Tomato
+      confianza: "#BA55D3", // MediumOrchid
+      desesperacion: "#2E8B57", // SeaGreen
+      optimismo: "#FF8C00", // DarkOrange
+      satisfaccion: "#9932CC", // DarkOrchid
+      escepticismo: "#4682B4", // SteelBlue
+      desden: "#8B008B", // DarkMagenta
+      empatia: "#20B2AA", // LightSeaGreen
+    };
+
+    const languageColorMapping = {
+      formal: "#FF69B4", // HotPink
+      tecnico: "#1E90FF", // DodgerBlue
+      emocional: "#32CD32", // LimeGreen
+      persuasivo: "#FFD700", // Gold
+      retorico: "#FF6347", // Tomato
+      bipartidista: "#BA55D3", // MediumOrchid
+      partidista: "#2E8B57", // SeaGreen
+      populista: "#FF8C00", // DarkOrange
+      consenso: "#9932CC", // DarkOrchid
+      confrontacion: "#4682B4", // SteelBlue
+      compromiso: "#8B008B", // DarkMagenta
+      promesas: "#20B2AA", // LightSeaGreen
+      critica: "#FFA07A", // LightSalmon
+      estadisticas: "#778899", // LightSlateGray
+      datos: "#FF4500", // OrangeRed
+      debate: "#6A5ACD", // SlateBlue
+      discurso_publico: "#00CED1", // DarkTurquoise
+      campana: "#00BFFF", // DeepSkyBlue
+      legislacion: "#008080", // Teal
+      negociacion: "#D2691E", // Chocolate
+      patriotico: "#9932CC", // DarkOrchid (reuse color for now)
+    };
+
+  const colorMapping = {
+    economia: "#FF5733", // Tomato
+    salud: "#FFC300", // Sunflower
+    educacion: "#E74C3C", // Turquoise
+    medio_ambiente: "#4CAF50", // Emerald
+    derechos_civiles: "#9B59B6", // Amethyst
+    inmigracion: "#3498DB", // Belize Hole
+    seguridad_nacional: "#E67E22", // Carrot
+    politica_exterior: "#36D7B7", // Alizarin 
+    empleo: "#16A085", // Green Sea
+    criminalidad: "#5B2C6F", // Wisteria
+    impuestos: "#F39C12", // Orange
+    bienestar_social: "#2980B9", // Belize Hole
+    tecnologia: "#2E86C1", // Belize Hole
+    energia: "#2C3E50", // Belize Hole
+    vivienda: "#F39C12", // Belize Hole
+    corrupcion: "#7F8C8D", // Nephritis 
+    libertad_de_prensa: "#C0392B", // Pomegranate
+    igualdad_de_genero: "#D35400", // Pumpkin
+    diversidad_y_discriminacion: "#27AE60", // Asbestos
+    pobreza: "#1ABC9C", // Nephritis
+    infraestructura: "#E74C3C", // Alizarin
+    religion: "#16A085", // Green Sea
+    derechos_de_las_minorias: "#3498DB", // Belize Hole
+    paz_y_conflicto: "#D35400", // Pumpkin
+    defensa: "#F1C40F", // Sun Flower
+    legislacion: "#34495E", // Wet Asphalt
+    presupuesto: "#2C3E50", // Midnight Blue
+    justicia: "#E67E22", // Carrot
+    ETA: "#F1C40F", // Sun Flower
+    historia_reciente_espana: "#9B59B6", // Amethyst
+    terrorismo: "#E74C3C", // Alizarin
+    acusaciones_políticas: "#8E44AD", // Wisteria
+    campana_electoral: "#27AE60", // Nephritis
+    patriotismo: "#2C3E50", // Midnight Blue
+  };
+
+
+  function getNextColorSentiment(sentiment) {
+    var color = sentimentColorMapping[sentiment];
+    
+    if (!color) {
+      color = "#000000";
+    }
+    
+    return color;
+  }
+
+  function getNextColorLanguage(language) {
+    var color = languageColorMapping[language];
+    
+    if (!color) {
+      color = "#000000"; 
+    }
+    
+    return color;
+  }
+
+  function getNextColor(topic) {
+    var color = colorMapping[topic];
+
+    if (!color) {
+      color = "#000000"; 
     }
 
-    function snakeToTitleCase(str, choices) {
-            for (var i = 0; i < choices.length; i++) {
-                if (choices[i][0] === str) {
-                    return choices[i][1];
-                }
-            }
-            // If no match found, return original string
-            return str.replace(/_/g, ' ')
-                    .replace(/\b\w/g, function(char) {
-                        return char.toUpperCase();
-                    });
-        }
+    return color;
+  }
 
-    function createPieCharts(type, dropdownOption) {
-            SENTIMENT_CHOICES = [
-                ["enojo", "Enojo"],
-                ["frustracion", "Frustración"],
-                ["pasion", "Pasión"],
-                ["entusiasmo", "Entusiasmo"],
-                ["preocupacion", "Preocupación"],
-                ["confianza", "Confianza"],
-                ["desesperacion", "Desesperación"],
-                ["optimismo", "Optimismo"],
-                ["satisfaccion", "Satisfacción"],
-                ["escepticismo", "Escepticismo"],
-                ["desden", "Desdén"],
-                ["empatia", "Empatía"]
-            ];
-            LANGUAGE_CHOICES = [
-                ["formal", "Formal"],
-                ["tecnico", "Técnico"],
-                ["emocional", "Emocional"],
-                ["persuasivo", "Persuasivo"],
-                ["retorico", "Retórico"],
-                ["bipartidista", "Bipartidista"],
-                ["partidista", "Partidista"],
-                ["populista", "Populista"],
-                ["consenso", "Consenso"],
-                ["confrontacion", "Confrontación"],
-                ["compromiso", "Compromiso"],
-                ["promesas", "Promesas"],
-                ["critica", "Crítica"],
-                ["estadisticas", "Estadísticas"],
-                ["datos", "Datos"],
-                ["debate", "Debate"],
-                ["discurso_publico", "Discurso Público"],
-                ["campana", "Campaña"],
-                ["legislacion", "Legislación"],
-                ["negociacion", "Negociación"],
-                ["patriotico", "Patriótico"]
-            ];
-            var labelDescriptionsPie = {
-                "Enojo": "Emoción intensa de ira o irritación.",
-                "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
-                "Pasión": "Fuerte emoción o entusiasmo por algo.",
-                "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
-                "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
-                "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
-                "Desesperación": "Sentimiento de angustia o falta de esperanza.",
-                "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
-                "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
-                "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
-                "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
-                "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
-            };
-
-            var labelDescriptionsPolar = {
-                "Formal": "Utilizado en contextos serios o profesionales.",
-                "Técnico": "Especializado en un área específica del conocimiento.",
-                "Emocional": "Dirigido a evocar sentimientos y emociones.",
-                "Persuasivo": "Diseñado para influir en las opiniones o acciones.",
-                "Retórico": "Se enfoca en la persuasión y la elocuencia.",
-                "Bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
-                "Partidista": "Centrado en los intereses y objetivos de un partido político específico.",
-                "Populista": "Dirigido a las preocupaciones y deseos del público general.",
-                "Consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
-                "Confrontación": "Utilizado para enfrentar directamente opiniones opuestas.",
-                "Compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
-                "Promesas": "Incluye compromisos o garantías de acciones futuras.",
-                "Crítica": "Se centra en señalar defectos o problemas en políticas o acciones.",
-                "Estadísticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
-                "Datos": "Enfocado en la presentación objetiva de información.",
-                "Debate": "Utilizado en discusiones estructuradas para argumentar.",
-                "Discurso Público": "Dirigido a un público amplio en eventos públicos.",
-                "Campaña": "Utilizado durante las campañas electorales para promover candidatos.",
-                "Legislación": "Relacionado con la redacción de leyes y regulaciones.",
-                "Negociación": "Utilizado en procesos de negociación para llegar a acuerdos."
-            };
-            ['PP', 'PSOE', 'VOX', 'SUMAR'].forEach(party => {
-            let canvas = document.getElementById(`${party.toLowerCase()}Chart`);
-            let context = canvas.getContext('2d');
-            let chartOptions = {
-                type: type,
-                data: {
-                    labels: Object.keys(jsonData[party][dropdownOption]).map(label => snakeToTitleCase(label, dropdownOption === 'sentiments' ? SENTIMENT_CHOICES : LANGUAGE_CHOICES)),
-                    datasets: [{
-                        data: Object.values(jsonData[party][dropdownOption]),
-                        backgroundColor: Object.keys(jsonData[party][dropdownOption]).map((_, index) => getNextColor(index)),
-                        borderColor: Object.keys(jsonData[party][dropdownOption]).map((_, index) => getNextColor(index)),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            boxWidth: 20,
-                            fontColor: 'rgb(167 174 188)'
-                        }
-                    },
-                    tooltips: {
-                        callbacks: {
-                            title: function(tooltipItem, data) {
-                                return data.labels[tooltipItem[0].index];
-                            },
-                            label: function(tooltipItem, data) {
-                                var label = data.labels[tooltipItem.index];
-                                var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                                var description = dropdownOption === 'sentiments' ? labelDescriptionsPie[label] : labelDescriptionsPolar[label] || '';
-                                return value + " " + description ;
-                            }
-                        }
-                    },
-                    responsive: true,
-                }
-            };
-            chartInstances.push(new Chart(context, chartOptions));
-        });
-    }
-
-    function createBarCharts(dropdownOption, chartOptions) {
-        var TOPIC_CHOICES = [
-            ["economia", "Economía"],
-            ["salud", "Salud"],
-            ["educacion", "Educación"],
-            ["medio_ambiente", "Medio ambiente"],
-            ["derechos_civiles", "Derechos civiles"],
-            ["inmigracion", "Inmigración"],
-            ["seguridad_nacional", "Seguridad nacional"],
-            ["politica_exterior", "Política exterior"],
-            ["empleo", "Empleo"],
-            ["criminalidad", "Criminalidad"],
-            ["impuestos", "Impuestos"],
-            ["bienestar_social", "Bienestar social"],
-            ["tecnologia", "Tecnología"],
-            ["energia", "Energía"],
-            ["vivienda", "Vivienda"],
-            ["corrupcion", "Corrupción"],
-            ["libertad_de_prensa", "Libertad de prensa"],
-            ["igualdad_de_genero", "Igualdad de género"],
-            ["diversidad_y_discriminacion", "Diversidad y discriminación"],
-            ["pobreza", "Pobreza"],
-            ["infraestructura", "Infraestructura"],
-            ["religion", "Religión"],
-            ["derechos_de_las_minorias", "Derechos de las minorías"],
-            ["paz_y_conflicto", "Paz y conflicto"],
-            ["defensa", "Defensa"],
-            ["legislacion", "Legislación"],
-            ["presupuesto", "Presupuesto"],
-            ["justicia", "Justicia"],
-            ["ETA", "ETA"],
-            ["historia_reciente_espana", "Historia reciente de España"],
-            ["terrorismo", "Terrorismo"],
-            ["acusaciones_políticas", "Acusaciones políticas"],
-            ["campana_electoral", "Campaña electoral"],
-            ["patriotismo", "Patriotismo"]
-        ];
-        ['PP', 'PSOE', 'VOX', 'SUMAR'].forEach(party => {
-            let canvas = document.getElementById(`${party.toLowerCase()}Chart`);
-            let context = canvas.getContext('2d');
-            let data = jsonData[party][dropdownOption];
-            let labels = Object.keys(data);
-            let values = Object.values(data);
-            let backgroundColors = labels.map((_, index) => getNextColor(index));
-            let chart = new Chart(context, {
-                type: 'bar',
-                data: {
-                    labels: labels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
-                    datasets: [{
-                        label: party,
-                        data: values,
-                        backgroundColor: backgroundColors,
-                        borderColor: backgroundColors,
-                        borderWidth: 1
-                    }]
-                },
-                options: chartOptions
-            });
-            chartInstances.push(chart);
-        });
-    }
-
-    function getNextColor(index) {
-        // Array of default Chart.js colors
-        const defaultColors = [
-            '#36a2eb', // Blue
-            '#4bc0c0', // Green
-            '#ffcd56', // Yellow
-            '#ff9f40', // Orange
-            '#c9cbcf', // Gray
-            '#9966ff', // Purple
-            '#ff6384'  // Indigo
-        ];
-        return defaultColors[index % defaultColors.length];
-    }
-
-    // Initially update the chart with the default option
-    updateChart('topics');
+  updateChart("topics");
 </script>
-{% endblock %}
-
+    {% endblock %}

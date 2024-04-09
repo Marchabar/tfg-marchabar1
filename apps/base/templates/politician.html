@@ -12,56 +12,82 @@
 
 <div class="flex flex-col h-screen">
     <div class="flex pr-4">
-        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
+        <h1
+            class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
         <div class="dropdown">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-44 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">Alberto Nuñez Feijóo</div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-44">
+            <div tabindex="0" role="button"
+                class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-48 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">Alberto
+                Nuñez Feijóo</div>
+            <ul tabindex="0"
+                class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-44">
                 {% for politician in dict_politicians %}
-                    <li><a class="text-gray-700 dark:text-gray-100" data-politician="{{politician}}">{{politician}}</a></li>
+                <li><a class="text-gray-700 dark:text-gray-100"
+                        data-politician="{{politician}}">{{politician}}</a></li>
                 {% endfor %}
             </ul>
         </div>
         <div class="dropdown">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-28 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
-                <div class="flex items-center"> <!-- Container to center the text and SVG -->
+            <div tabindex="0" role="button"
+                class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-36 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
+                <div class="flex items-center">
+                    <!-- Container to center the text and SVG -->
                     <span class="mr-2 ml-2">Por político</span> <!-- Text -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </div>
             </div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
-                <li><a href="/" class="text-gray-700 dark:text-gray-100">General</a></li>
-                <li><a href="/by-party" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
-                <li><a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por político</a></li>
+            <ul tabindex="0"
+                class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+                <li><a href="/"
+                        class="text-gray-700 dark:text-gray-100">General</a></li>
+                <li><a href="/by-party"
+                        class="text-gray-700 dark:text-gray-100">Por
+                        partido</a></li>
+                <li><a href="/by-politician"
+                        class="text-gray-700 dark:text-gray-100">Por
+                        político</a></li>
             </ul>
         </div>
-        <button onclick="location.href='/analysis'" class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+        <button onclick="location.href='/analysis'"
+            class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
             Nuevo vídeo
         </button>
-    </div>    
+    </div>
     <div class="grid grid-cols-2 sm:h-full">
         <div class="p-4 h-full">
-            <div class="h-96 bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-                <h2 class="text-lg font-semibold">Temática</h2>
+            <div
+                class="h-96 bg-white dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+                <h2
+                    class="text-lg font-semibold">Temática</h2>
                 <canvas id="partyChart"></canvas>
                 <div id="barContainer"></div>
             </div>
         </div>
         <div class="p-4 h-full">
-            <div class="h-96 bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div
+                class="h-96 bg-white dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
-                <div class="flex flex-col gap-1 w-full justify-center items-center p-2">
+                <div
+                    class="flex flex-col gap-1 w-full justify-center items-center p-2">
                     {% for video in videos %}
-                    <a href="/videos/{{video.id}}" class="flex w-4/5 bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
+                    <a href="/videos/{{video.id}}"
+                        class="flex w-4/5 bg-white dark:bg-gray-500 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
                         <div>
                             <figure>
-                                <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg"/>
+                                <img src="{{video.thumbnail}}"
+                                    alt="{{video.title}}"
+                                    class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg" />
                             </figure>
                         </div>
-                        <div class="flex flex-col justify-center ml-4 text-gray-700 dark:text-gray-200">
-                            <p class="font-semibold overflow-hidden overflow-ellipsis max-w-xs">
-                                <span class="line-clamp-2">{{video.title}}</span>
+                        <div
+                            class="flex flex-col justify-center ml-4 text-gray-700 dark:text-gray-200">
+                            <p
+                                class="font-semibold overflow-hidden overflow-ellipsis max-w-xs">
+                                <span
+                                    class="line-clamp-2">{{video.title}}</span>
                             </p>
                             <p>{{video.political_party}}</p>
                         </div>
@@ -69,16 +95,18 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>                                                    
+        </div>
         <div class="p-4">
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div
+                class="bg-white dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>
                 <canvas id="pieChart"></canvas>
                 <div id="pieContainer"></div>
             </div>
         </div>
         <div class="p-4">
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div
+                class="bg-white dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Tipo de lenguaje</h2>
                 <canvas id="polarChart"></canvas>
                 <div id="polarContainer"></div>
@@ -96,6 +124,8 @@
     let dict_topics = '{{ dict_topics|escapejs }}';
     let validJson = dict_topics.replace(/'/g, '"');
     validJson = validJson.replace(/"{/g, '{').replace(/}"/g, '}');
+
+    let fontColor = '#000';
 
     let jsonData = JSON.parse(validJson);
 
@@ -280,25 +310,25 @@
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Temáticas',
-                                fontColor: 'rgb(167 174 188)'
+                                fontColor: fontColor
                             },
                             ticks: {
                                 display: true,
                                 maxRotation: 90,
                                 minRotation: 90,
                                 fontSize: 11,
-                                fontColor: 'rgb(167 174 188)'
+                                fontColor: fontColor
                             }
                         }],
                         yAxes: [{
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Porcentaje (%)',
-                                fontColor: 'rgb(167 174 188)'
+                                fontColor: fontColor
                             },
                             ticks: {
                                 beginAtZero: true,
-                                fontColor: 'rgb(167 174 188)'
+                                fontColor: fontColor
                             }
                         }]
                     },
@@ -393,7 +423,7 @@
                         position: 'right',
                         align: 'center',
                         labels: {
-                            fontColor: 'rgb(167 174 188)'
+                            fontColor: fontColor
                         }
                     },
                     tooltips: {
@@ -502,7 +532,7 @@
                         position: 'right',
                         align: 'center',
                         labels: {
-                            fontColor: 'rgb(167 174 188)'
+                            fontColor: fontColor
                         }
                     },
                     tooltips: {
