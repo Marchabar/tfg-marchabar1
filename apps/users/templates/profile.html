@@ -14,8 +14,7 @@
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4 pb-2">Mi perfil</h1>
     </div>
     <div class="flex justify-center mx-auto">
-        <div
-            class="flex flex-col bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center mx-4 px-24 pb-10">
+        <div class="flex flex-col h-full rounded-lg flex flex-col justify-center items-center mx-4 px-24 pb-10">
             {% if user.avatar %}
             <div class="w-72 h-72 mt-6 mb-3"><img src="{{ user.avatar.url }}" alt="User Avatar" class="rounded-lg">
             </div>
@@ -25,10 +24,10 @@
             {% endif %}
             <div class="text-2xl font-bold mb-2 text-gray-700 dark:text-gray-300">{{user.username}}</div>
             <div class="grid grid-cols-2 gap-4 text-center">
-                <div class=" text-lg font-semibold">Vídeos subidos</div>
-                <div class="text-lg font-semibold">Vídeos publicados</div>
-                <div class="text-lg font-semibold">{{user.uploaded_videos}}</div>
-                <div class="text-lg font-semibold">{{published_number}}</div>
+                <div class="text-lg font-semibold text-gray-500 dark:text-gray-500">Vídeos subidos</div>
+                <div class="text-lg font-semibold text-gray-500 dark:text-gray-500">Vídeos publicados</div>
+                <div class="text-lg font-semibold text-gray-500 dark:text-gray-500">{{user.uploaded_videos}}</div>
+                <div class="text-lg font-semibold text-gray-500 dark:text-gray-500">{{published_number}}</div>
             </div>
         </div>
     </div>
