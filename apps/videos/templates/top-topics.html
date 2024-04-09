@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load slugify_topic %}
+{% load slugify_sentiment %}
+{% load slugify_language %}
 
 {% block title %}Analizar{% endblock %}
 
@@ -56,42 +58,30 @@
                 </div>
             </a>
         </div>
-        {% if forloop.counter|divisibleby:4 and not forloop.last %}
-    </div>
-    <div class="flex flex-wrap justify-center">
-        {% endif %}
         {% endfor %}
     </div>
-    <div id="sentiments" class="flex flex-wrap justify-center">
+    <div id="sentiments" class="flex flex-wrap justify-center" style="display: none;">
         {% for sentiment in top_sentiments %}
         <div class="w-1/4 p-4">
-            <a href="/">
+            <a href="{% url 'sentiment' sentiment.sentiment_type|slugify_sentiment %}">
                 <div
                     class="flex items-center justify-center bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-lg p-4 h-40">
                     <h2 class="font-semibold dark:text-gray-300">{{ sentiment.sentiment_type }}</h2>
                 </div>
             </a>
         </div>
-        {% if forloop.counter|divisibleby:4 and not forloop.last %}
-    </div>
-    <div class="flex flex-wrap justify-center">
-        {% endif %}
         {% endfor %}
     </div>
-    <div id="languages" class="flex flex-wrap justify-center">
-        {% for language in top_languages %}
+    <div id="languages" class="flex flex-wrap justify-center" style="display: none;">
+        {% for language in top_languages%}
         <div class="w-1/4 p-4">
-            <a href="/">
+            <a href="{% url 'language' language.language_type|slugify_language %}">
                 <div
                     class="flex items-center justify-center bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-lg p-4 h-40">
                     <h2 class="font-semibold dark:text-gray-300">{{ language.language_type }}</h2>
                 </div>
             </a>
         </div>
-        {% if forloop.counter|divisibleby:4 and not forloop.last %}
-    </div>
-    <div class="flex flex-wrap justify-center">
-        {% endif %}
         {% endfor %}
     </div>
 </div>
@@ -107,7 +97,7 @@
         document.getElementById('languages').style.display = 'none';
 
         // Show the selected div
-        document.getElementById(id).style.display = 'grid';
+        document.getElementById(id).style.display = 'flex';
 
         // Change the text of the dropdown button
         document.getElementById('dropdownButtonText').textContent = text;

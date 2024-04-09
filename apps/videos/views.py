@@ -591,9 +591,6 @@ def sanitize_filename(filename):
 
 
 def get_videos_by_topic(request, topic_type):
-    if not request.user.is_authenticated:
-        return redirect("/?login_required=true")
-
     topics = Topic.objects.filter(topic_type=topic_type)
     videos = []
     for topic in topics:
@@ -642,6 +639,80 @@ def get_videos_by_topic(request, topic_type):
 
     return render(
         request, "videos-topic.html", {"videos": videos, "topic_type": topic_type}
+    )
+
+
+def get_videos_by_sentiment(request, sentiment_type):
+    sentiments = Sentiment.objects.filter(sentiment_type=sentiment_type)
+    videos = []
+    for sentiment in sentiments:
+        if sentiment.video.published:
+            videos.append(sentiment.video)
+    SENTIMENT_CHOICES = [
+        ("enojo", "Enojo"),
+        ("frustracion", "Frustración"),
+        ("pasion", "Pasión"),
+        ("entusiasmo", "Entusiasmo"),
+        ("preocupacion", "Preocupación"),
+        ("confianza", "Confianza"),
+        ("desesperacion", "Desesperación"),
+        ("optimismo", "Optimismo"),
+        ("satisfaccion", "Satisfacción"),
+        ("escepticismo", "Escepticismo"),
+        ("desden", "Desdén"),
+        ("empatia", "Empatía"),
+    ]
+
+    for choice in SENTIMENT_CHOICES:
+        if choice[0] == sentiment_type:
+            sentiment_type = choice[1]
+
+    return render(
+        request,
+        "videos-sentiment.html",
+        {"videos": videos, "sentiment_type": sentiment_type},
+    )
+
+
+def get_videos_by_language(request, language_type):
+    language_type = language_type.split("_")[-1]
+    languages = Language.objects.filter(language_type=language_type)
+    videos = []
+    for language in languages:
+        if language.video.published:
+            videos.append(language.video)
+    LANGUAGE_CHOICES = [
+        ("formal", "Lenguaje formal"),
+        ("tecnico", "Lenguaje técnico"),
+        ("emocional", "Lenguaje emocional"),
+        ("persuasivo", "Lenguaje persuasivo"),
+        ("retorico", "Lenguaje retórico"),
+        ("bipartidista", "Lenguaje bipartidista"),
+        ("partidista", "Lenguaje partidista"),
+        ("populista", "Lenguaje populista"),
+        ("consenso", "Lenguaje de consenso"),
+        ("confrontacion", "Lenguaje de confrontación"),
+        ("compromiso", "Lenguaje de compromiso"),
+        ("promesas", "Lenguaje de promesas"),
+        ("critica", "Lenguaje de crítica"),
+        ("estadisticas", "Lenguaje de estadísticas"),
+        ("datos", "Lenguaje de datos"),
+        ("debate", "Lenguaje de debate"),
+        ("discurso_publico", "Lenguaje de discurso público"),
+        ("campana", "Lenguaje de campaña"),
+        ("legislacion", "Lenguaje de legislación"),
+        ("negociacion", "Lenguaje de negociación"),
+        ("patriótico", "Lenguaje patriótico"),
+    ]
+
+    for choice in LANGUAGE_CHOICES:
+        if choice[0] == language_type:
+            language_type = choice[1]
+
+    return render(
+        request,
+        "videos-language.html",
+        {"videos": videos, "language_type": language_type},
     )
 
 
