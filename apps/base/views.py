@@ -200,13 +200,6 @@ def load_general(request):
                 mapping_dict.get(key, key): value
                 for key, value in dict_general[party][category].items()
             }
-            dict_general[party][category] = dict(
-                sorted(
-                    dict_general[party][category].items(),
-                    key=lambda item: item[1],
-                    reverse=True,
-                )
-            )
 
     return render(
         request,

@@ -9,7 +9,7 @@
     <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">
       Portada
     </h1>
-    <div class="dropdown">
+    <div class="dropdown" id="dropdown-general">
       <div
         id="dropdownButton"
         tabindex="0"
@@ -214,14 +214,17 @@
     let viewToggle = document.getElementById('viewToggle');
     let graphContainer = document.getElementById('graphContainer');
     let tableContainer = document.getElementById('tableContainer');
+    let dropdownButton = document.getElementById('dropdownButton');
 
     viewToggle.addEventListener('change', function() {
       if (this.checked) {
         graphContainer.style.display = 'none';
         tableContainer.style.display = 'block';
+        dropdownButton.setAttribute('disabled', 'disabled')
       } else {
         graphContainer.style.display = 'grid';
         tableContainer.style.display = 'none';
+        dropdownButton.removeAttribute('disabled');
       }
     });
   });
