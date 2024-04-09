@@ -5,12 +5,24 @@ from django.shortcuts import redirect, render
 from django.views import View
 
 from apps.users.models import CustomUser
+from apps.videos.models import Video
 
 # Create your views here.
 
 
 def index(request):
-    return render(request, "profile.html")
+    if not request.user.is_authenticated:
+        return redirect("/?login_required=true")
+    user = request.user
+    videos = Video.objects.filter(user=user)
+    user.uploaded_videos = len(videos)
+    published = Video.objects.filter(user=user, published=True)
+    published_number = len(published)
+    return render(
+        request,
+        "profile.html",
+        {"user": user, "published_number": published_number, "videos": videos},
+    )
 
 
 class LoginView(View):
