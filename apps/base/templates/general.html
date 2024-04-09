@@ -141,10 +141,10 @@
     <div class="p-4">
       <div
         id="table"
-        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4 text-black dark:text-gray-300">
+        class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4 text-black">
         <table class="table">
           <thead>
-            <tr class="font-bold text-black dark:text-gray-300 text-lg">
+            <tr class="font-bold text-black text-lg">
               <th>Partido</th>
               <th>Temática</th>
               <th>Sentimiento</th>
@@ -153,54 +153,63 @@
           </thead>
           <tbody>
             {% for party, data in dict_general_table.items %}
-            <tr>
-              <td>
-                <div class="flex items-center gap-3">
-                  <div class="w-28 h-10">
-                    <img
-                      src="{% static 'images/'|add:party|lower|add:'.png' %}"
-                      alt="Logo del partido" class="w-full h-full" />
-                  </div>
-                </div>
-              </td>
-              {% for main, percentage in data.items %}
-              <td>
-                {% if main == 'topics' %}
-                {% for topic, percentage in percentage.items %}
-                <div class="flex items center gap-2">
-                  <span>{{ topic }}</span>
-                  <span>{{ percentage }}%</span>
-                </div>
-                {% endfor %}
-                {% elif main == 'sentiments' %}
-                {% for sentiment, percentage in percentage.items %}
-                <div class="flex items center gap-2">
-                  <span>{{ sentiment }}</span>
-                  <span>{{ percentage }}</span>
-                </div>
-                {% endfor %}
-                {% elif main == 'languages' %}
-                {% for language, percentage in percentage.items %}
-                <div class="flex items center gap-2">
-                  <span>{{ language }}</span>
-                  <span>{{ percentage }}</span>
-                </div>
-                {% endfor %}
-                {% endif %}
-              </td>
-              {% endfor %}
-            </tr>
-            {% endfor %}
-          </table>
+            {% if party == 'PP' %}
+            <tr class="bg-blue-200">
+              {% elif party == 'PSOE' %}
+              <tr class="bg-red-200">
+                {% elif party == 'VOX' %}
+                <tr class="bg-green-200">
+                  {% elif party == 'SUMAR' %}
+                  <tr class="bg-purple-300">
+                    {% endif %}
+                    <td>
+                      <div class="flex items-center gap-3">
+                        <div class="w-28 h-10">
+                          <img
+                            src="{% static 'images/'|add:party|lower|add:'.png' %}"
+                            alt="Logo del partido" class="w-full h-full" />
+                        </div>
+                      </div>
+                    </td>
+                    {% for main, percentage in data.items %}
+                    <td>
+                      {% if main == 'topics' %}
+                      {% for topic, percentage in percentage.items %}
+                      <div class="flex items center gap-2">
+                        <span>{{ topic }}:</span>
+                        <span>{{ percentage }}%</span>
+                      </div>
+                      {% endfor %}
+                      {% elif main == 'sentiments' %}
+                      {% for sentiment, percentage in percentage.items %}
+                      <div class="flex items center gap-2">
+                        <span>{{ sentiment }}:</span>
+                        <span>{{ percentage }}</span>
+                      </div>
+                      {% endfor %}
+                      {% elif main == 'languages' %}
+                      {% for language, percentage in percentage.items %}
+                      <div class="flex items center gap-2">
+                        <span>{{ language }}:</span>
+                        <span>{{ percentage }}</span>
+                      </div>
+                      {% endfor %}
+                      {% endif %}
+                    </td>
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-{% endblock %}
-{% block extrascript %}
-<script>
+    {% endblock %}
+    {% block extrascript %}
+    <script>
   document.addEventListener('DOMContentLoaded', (event) => {
     let viewToggle = document.getElementById('viewToggle');
     let graphContainer = document.getElementById('graphContainer');
@@ -704,4 +713,4 @@
 
   updateChart("topics");
 </script>
-{% endblock %}
+    {% endblock %}
