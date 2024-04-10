@@ -1,7 +1,13 @@
-from django.contrib.auth import authenticate, login, logout
+import os
+
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.contrib.auth.views import PasswordChangeView
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views import View
 
 from apps.users.models import CustomUser
@@ -21,8 +27,50 @@ def index(request):
     return render(
         request,
         "profile.html",
-        {"user": user, "published_number": published_number, "videos": videos},
+        {
+            "user": user,
+            "published_number": published_number,
+            "videos": videos,
+        },
     )
+
+
+class PasswordChangeFormView(View):
+    def post(self, request):
+        user = request.user
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if not user.check_password(old_password):
+            return JsonResponse(
+                {"success": False, "message": "La contraseña actual es incorrecta."}
+            )
+        else:
+            if new_password != confirm_password:
+                return JsonResponse(
+                    {"success": False, "message": "Las contraseñas no coinciden."}
+                )
+            else:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)
+                return JsonResponse({"success": True})
+
+
+class AvatarChangeView(View):
+    def post(self, request):
+        user = request.user
+        avatar = request.FILES.get("avatar")
+        if not avatar:
+            return JsonResponse({"success": False, "message": "No hay ninguna imagen"})
+        ext = os.path.splitext(avatar.name)[1]  # Get the file extension
+        valid_extensions = [".jpg", ".jpeg", ".png"]
+        if ext.lower() not in valid_extensions:
+            return JsonResponse({"success": False, "message": "Invalid file type."})
+        user.avatar = avatar
+        user.save()
+        return JsonResponse({"success": True})
 
 
 class LoginView(View):
