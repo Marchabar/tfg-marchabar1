@@ -14,12 +14,13 @@
 
 <div class="flex flex-col h-full">
     <div class="flex justify-center h-full">
-        <div class="w-full card flex bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400">
+        <div class="w-full card flex bg-white dark:bg-gray-700 shadow-xl text-gray-600 dark:text-gray-400">
             <div class="w-full h-96 flex justify-around">
                 <div class="w-1/2 h-full p-8">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allowfullscreen></iframe>
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0"
+                        allowfullscreen></iframe>
                 </div>
-                <div class = "flex flex-col w-1/2 h-full m-4 items-center justify-center">
+                <div class="flex flex-col w-1/2 h-full m-4 items-center justify-center">
                     <p class="text-gray-700 dark:text-gray-300 items-start px-4 font-bold text-lg">{{ video.title }}</p>
                     <p class="text-gray-700 dark:text-gray-400 items-start px-4 text-lg">{{ video.political_party }}</p>
                     <p class="text-gray-700 dark:text-gray-400 items-start px-4 text-lg">{{ video.date}}</p>
@@ -30,25 +31,29 @@
             </div>
             <div class="grid grid-cols-2 m-4 sm:h-full">
                 <div class="p-4">
-                    <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
+                    <div
+                        class="bg-white h-80 dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
                         <h2 class="text-lg font-semibold">Temática</h2>
                         <canvas id="partyChart"></canvas>
                     </div>
                 </div>
                 <div class="p-4">
-                    <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
+                    <div
+                        class="bg-white h-80 dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
                         <h2 class="text-lg font-semibold">Sentimiento</h2>
                         <canvas id="pieChart"></canvas>
                     </div>
                 </div>
                 <div class="p-4">
-                    <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
+                    <div
+                        class="bg-white h-80 dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
                         <h2 class="text-lg font-semibold">Lenguaje</h2>
                         <canvas id="polarChart"></canvas>
                     </div>
                 </div>
                 <div class="p-4">
-                    <div class="bg-white h-96 dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
+                    <div
+                        class="bg-white h-80 dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-between items-center p-4">
                         <h2 class="text-lg font-semibold">Palabras usadas</h2>
                         <div id="wordChart" class="w-full h-full">
                         </div>
@@ -63,6 +68,8 @@
 
 {% block extrascript %}
 <script>
+
+    const fontColor = 'rgb(0 0 0)';
     function getNextColor(index) {
         // Array of default Chart.js colors
         const defaultColors = [
@@ -86,9 +93,9 @@
         }
         // If no match found, return original string
         return str.replace(/_/g, ' ')
-                .replace(/\b\w/g, function(char) {
-                    return char.toUpperCase();
-                });
+            .replace(/\b\w/g, function (char) {
+                return char.toUpperCase();
+            });
     }
 
     let dict_topics = '{{ dict_topics|escapejs }}';
@@ -187,229 +194,232 @@
     let barLabels = Object.keys(jsonData);
     let barData = Object.values(jsonData);
 
-    var ctx = document.getElementById('partyChart').getContext('2d', {willReadFrequently: true});
-        barChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: barLabels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
-                datasets: [{
-                    label: 'Tematica',
-                    data: barData,
-                    backgroundColor: barLabels.map((_, i) => getNextColor(i)),
-                    borderColor: barLabels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
+    var ctx = document.getElementById('partyChart').getContext('2d', { willReadFrequently: true });
+    barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: barLabels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
+            datasets: [{
+                label: 'Tematica',
+                data: barData,
+                backgroundColor: barLabels.map((_, i) => getNextColor(i)),
+                borderColor: barLabels.map((_, i) => getNextColor(i)),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        fontColor: fontColor,
+                    },
+                    ticks: {
+                        display: true,
+                        maxRotation: 90,
+                        minRotation: 90,
+                        fontSize: 11,
+                        fontColor: fontColor,
+                        callback: function (value) {
+                            return value.length > 15 ? value.substr(0, 15) + '...' : value;
+                        },
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Porcentaje (%)',
+                        fontColor: fontColor
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                        fontColor: fontColor
+                    }
                 }]
             },
-            options: {
-                scales: {
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Temáticas',
-                            fontColor: 'rgb(167 174 188)'
-                        },
-                        ticks: {
-                            display: true,
-                            maxRotation: 90,
-                            minRotation: 90,
-                            fontSize: 11,
-                            fontColor: 'rgb(167 174 188)'
-                        }
-                    }],
-                    yAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Porcentaje (%)',
-                            fontColor: 'rgb(167 174 188)'
-                        },
-                        ticks: {
-                            beginAtZero: true,
-                            fontColor: 'rgb(167 174 188)'
-                        }
-                    }]
-                },
-                legend: {
-                    display: false
-                },
-                tooltips: {
-                    callbacks: {
-                        title: function(tooltipItem, data) {
-                            return data.labels[tooltipItem[0].index];
-                        },
-                        label: function(tooltipItem, data) {
-                            var label = data.labels[tooltipItem.index];
-                            var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                            var description = labelDescriptionsBar[label] || '';
-                            return value.toFixed(2) + " " + description ;
-                        }
-                    }
-                },
-                responsive: true,            }
-        });
-
-        var labelDescriptionsPie = {
-            "Enojo": "Emoción intensa de ira o irritación.",
-            "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
-            "Pasión": "Fuerte emoción o entusiasmo por algo.",
-            "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
-            "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
-            "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
-            "Desesperación": "Sentimiento de angustia o falta de esperanza.",
-            "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
-            "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
-            "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
-            "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
-            "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
-        };
-
-        SENTIMENT_CHOICES = [
-            ["enojo", "Enojo"],
-            ["frustracion", "Frustración"],
-            ["pasion", "Pasión"],
-            ["entusiasmo", "Entusiasmo"],
-            ["preocupacion", "Preocupación"],
-            ["confianza", "Confianza"],
-            ["desesperacion", "Desesperación"],
-            ["optimismo", "Optimismo"],
-            ["satisfaccion", "Satisfacción"],
-            ["escepticismo", "Escepticismo"],
-            ["desden", "Desdén"],
-            ["empatia", "Empatía"]
-        ]
-
-
-        let pieLabels = Object.keys(jsonDataSentiments);
-        let pieData = Object.values(jsonDataSentiments);
-        var pieCtx = document.getElementById('pieChart').getContext('2d', {willReadFrequently: true});
-        barChart = new Chart(pieCtx, {
-            type: 'pie',
-            data: {
-                labels: pieLabels.map(label => snakeToTitleCase(label, SENTIMENT_CHOICES)),
-                datasets: [{
-                    label: 'Sentimiento',
-                    data: pieData,
-                    backgroundColor: pieLabels.map((_, i) => getNextColor(i)),
-                    borderColor: pieLabels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
-                }]
+            legend: {
+                display: false
             },
-            options: {
-                legend: {
-                    display: true,
-                    position: 'right',
-                    align: 'center',
-                    labels: {
-                        fontColor: 'rgb(167 174 188)'
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data.labels[tooltipItem[0].index];
+                    },
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                        var description = labelDescriptionsBar[label] || '';
+                        return value.toFixed(2) + " " + description;
                     }
-                },
-                tooltips: {
-                    callbacks: {
-                        title: function(tooltipItem, data) {
-                            return data.labels[tooltipItem[0].index];
-                        },
-                        label: function(tooltipItem, data) {
-                            var label = data.labels[tooltipItem.index];
-                            return "1" + " " + labelDescriptionsPie[label] ;
-                        }
-                    }
-                },
-                responsive: true,
-            }
-        });
-
-        var labelDescriptionsPolar = {
-            "Formal": "Utilizado en contextos serios o profesionales.",
-            "Técnico": "Especializado en un área específica del conocimiento.",
-            "Emocional": "Dirigido a evocar sentimientos y emociones.",
-            "Persuasivo": "Diseñado para influir en las opiniones o acciones.",
-            "Retórico": "Se enfoca en la persuasión y la elocuencia.",
-            "Bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
-            "Partidista": "Centrado en los intereses y objetivos de un partido político específico.",
-            "Populista": "Dirigido a las preocupaciones y deseos del público general.",
-            "Consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
-            "Confrontación": "Utilizado para enfrentar directamente opiniones opuestas.",
-            "Compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
-            "Promesas": "Incluye compromisos o garantías de acciones futuras.",
-            "Crítica": "Se centra en señalar defectos o problemas en políticas o acciones.",
-            "Estadísticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
-            "Datos": "Enfocado en la presentación objetiva de información.",
-            "Debate": "Utilizado en discusiones estructuradas para argumentar.",
-            "Discurso Público": "Dirigido a un público amplio en eventos públicos.",
-            "Campaña": "Utilizado durante las campañas electorales para promover candidatos.",
-            "Legislación": "Relacionado con la redacción de leyes y regulaciones.",
-            "Negociación": "Utilizado en procesos de negociación para llegar a acuerdos."
-        };
-
-        LANGUAGE_CHOICES = [
-            ["formal", "Formal"],
-            ["tecnico", "Técnico"],
-            ["emocional", "Emocional"],
-            ["persuasivo", "Persuasivo"],
-            ["retorico", "Retórico"],
-            ["bipartidista", "Bipartidista"],
-            ["partidista", "Partidista"],
-            ["populista", "Populista"],
-            ["consenso", "Consenso"],
-            ["confrontacion", "Confrontación"],
-            ["compromiso", "Compromiso"],
-            ["promesas", "Promesas"],
-            ["critica", "Crítica"],
-            ["estadisticas", "Estadísticas"],
-            ["datos", "Datos"],
-            ["debate", "Debate"],
-            ["discurso_publico", "Discurso Público"],
-            ["campana", "Campaña"],
-            ["legislacion", "Legislación"],
-            ["negociacion", "Negociación"],
-            ["patriotico", "Patriótico"]
-        ]
-
-        let polarLabels = Object.keys(jsonDataLanguages);
-        let polarData = Object.values(jsonDataLanguages);
-        var polarCtx = document.getElementById('polarChart').getContext('2d', {willReadFrequently: true});
-        polarChart = new Chart(polarCtx, {
-            type: 'doughnut',
-            data: {
-                labels: polarLabels.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
-                datasets: [{
-                    label: 'Lenguaje',
-                    data: polarData,
-                    backgroundColor: polarLabels.map((_, i) => getNextColor(i)),
-                    borderColor: polarLabels.map((_, i) => getNextColor(i)),
-                    borderWidth: 1
-                }]
+                }
             },
-            options: {
-                legend: {
-                    display: true,
-                    position: 'right',
-                    align: 'center',
-                    labels: {
-                        fontColor: 'rgb(167 174 188)'
+            responsive: true,
+        }
+    });
+
+    var labelDescriptionsPie = {
+        "Enojo": "Emoción intensa de ira o irritación.",
+        "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
+        "Pasión": "Fuerte emoción o entusiasmo por algo.",
+        "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
+        "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
+        "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
+        "Desesperación": "Sentimiento de angustia o falta de esperanza.",
+        "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
+        "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
+        "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
+        "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
+        "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
+    };
+
+    SENTIMENT_CHOICES = [
+        ["enojo", "Enojo"],
+        ["frustracion", "Frustración"],
+        ["pasion", "Pasión"],
+        ["entusiasmo", "Entusiasmo"],
+        ["preocupacion", "Preocupación"],
+        ["confianza", "Confianza"],
+        ["desesperacion", "Desesperación"],
+        ["optimismo", "Optimismo"],
+        ["satisfaccion", "Satisfacción"],
+        ["escepticismo", "Escepticismo"],
+        ["desden", "Desdén"],
+        ["empatia", "Empatía"]
+    ]
+
+
+    let pieLabels = Object.keys(jsonDataSentiments);
+    let pieData = Object.values(jsonDataSentiments);
+    var pieCtx = document.getElementById('pieChart').getContext('2d', { willReadFrequently: true });
+    barChart = new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: pieLabels.map(label => snakeToTitleCase(label, SENTIMENT_CHOICES)),
+            datasets: [{
+                label: 'Sentimiento',
+                data: pieData,
+                backgroundColor: pieLabels.map((_, i) => getNextColor(i)),
+                borderColor: pieLabels.map((_, i) => getNextColor(i)),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            legend: {
+                display: true,
+                position: 'right',
+                align: 'center',
+                labels: {
+                    fontColor: fontColor
+                }
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data.labels[tooltipItem[0].index];
+                    },
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        return "1" + " " + labelDescriptionsPie[label];
                     }
-                },
-                tooltips: {
-                    callbacks: {
-                        title: function(tooltipItem, data) {
-                            return data.labels[tooltipItem[0].index];
-                        },
-                        label: function(tooltipItem, data) {
-                            var label = data.labels[tooltipItem.index];
-                            return "1" + " " + labelDescriptionsPolar[label] ;
-                        }
+                }
+            },
+            responsive: true,
+        }
+    });
+
+    var labelDescriptionsPolar = {
+        "Formal": "Utilizado en contextos serios o profesionales.",
+        "Técnico": "Especializado en un área específica del conocimiento.",
+        "Emocional": "Dirigido a evocar sentimientos y emociones.",
+        "Persuasivo": "Diseñado para influir en las opiniones o acciones.",
+        "Retórico": "Se enfoca en la persuasión y la elocuencia.",
+        "Bipartidista": "Relacionado con la cooperación entre dos partidos políticos.",
+        "Partidista": "Centrado en los intereses y objetivos de un partido político específico.",
+        "Populista": "Dirigido a las preocupaciones y deseos del público general.",
+        "Consenso": "Busca llegar a un acuerdo entre diferentes partes o grupos.",
+        "Confrontación": "Utilizado para enfrentar directamente opiniones opuestas.",
+        "Compromiso": "Orientado a alcanzar acuerdos intermedios entre diferentes posturas.",
+        "Promesas": "Incluye compromisos o garantías de acciones futuras.",
+        "Crítica": "Se centra en señalar defectos o problemas en políticas o acciones.",
+        "Estadísticas": "Utiliza datos numéricos y análisis estadístico para respaldar argumentos.",
+        "Datos": "Enfocado en la presentación objetiva de información.",
+        "Debate": "Utilizado en discusiones estructuradas para argumentar.",
+        "Discurso Público": "Dirigido a un público amplio en eventos públicos.",
+        "Campaña": "Utilizado durante las campañas electorales para promover candidatos.",
+        "Legislación": "Relacionado con la redacción de leyes y regulaciones.",
+        "Negociación": "Utilizado en procesos de negociación para llegar a acuerdos."
+    };
+
+    LANGUAGE_CHOICES = [
+        ["formal", "Formal"],
+        ["tecnico", "Técnico"],
+        ["emocional", "Emocional"],
+        ["persuasivo", "Persuasivo"],
+        ["retorico", "Retórico"],
+        ["bipartidista", "Bipartidista"],
+        ["partidista", "Partidista"],
+        ["populista", "Populista"],
+        ["consenso", "Consenso"],
+        ["confrontacion", "Confrontación"],
+        ["compromiso", "Compromiso"],
+        ["promesas", "Promesas"],
+        ["critica", "Crítica"],
+        ["estadisticas", "Estadísticas"],
+        ["datos", "Datos"],
+        ["debate", "Debate"],
+        ["discurso_publico", "Discurso Público"],
+        ["campana", "Campaña"],
+        ["legislacion", "Legislación"],
+        ["negociacion", "Negociación"],
+        ["patriotico", "Patriótico"]
+    ]
+
+    let polarLabels = Object.keys(jsonDataLanguages);
+    let polarData = Object.values(jsonDataLanguages);
+    var polarCtx = document.getElementById('polarChart').getContext('2d', { willReadFrequently: true });
+    polarChart = new Chart(polarCtx, {
+        type: 'doughnut',
+        data: {
+            labels: polarLabels.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
+            datasets: [{
+                label: 'Lenguaje',
+                data: polarData,
+                backgroundColor: polarLabels.map((_, i) => getNextColor(i)),
+                borderColor: polarLabels.map((_, i) => getNextColor(i)),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            legend: {
+                display: true,
+                position: 'right',
+                align: 'center',
+                labels: {
+                    fontColor: fontColor
+                }
+            },
+            tooltips: {
+                callbacks: {
+                    title: function (tooltipItem, data) {
+                        return data.labels[tooltipItem[0].index];
+                    },
+                    label: function (tooltipItem, data) {
+                        var label = data.labels[tooltipItem.index];
+                        return "1" + " " + labelDescriptionsPolar[label];
                     }
-                },
-                responsive: true,
-            }
-        });
+                }
+            },
+            responsive: true,
+        }
+    });
 
-        var wordChart = anychart.tagCloud(Object.entries(jsonDataWords));
-        wordChart.container('wordChart');
+    var wordChart = anychart.tagCloud(Object.entries(jsonDataWords));
+    wordChart.container('wordChart');
 
-        wordChart.background().enabled(true);
-        wordChart.background().fill("transparent");
+    wordChart.background().enabled(true);
+    wordChart.background().fill("transparent");
 
-        wordChart.draw();
+    wordChart.draw();
 
 </script>
 
