@@ -176,11 +176,19 @@
       if (this.checked) {
         graphContainer.style.display = 'none';
         tableContainer.style.display = 'block';
-        dropdownButton.setAttribute('disabled', 'disabled')
+        dropdownButton.classList.add('disabled');
+        dropdownButton.classList.add('bg-gray-400')
+        dropdownButton.classList.add('opacity-60')
+        dropdownButton.classList.add('dark:bg-gray-800')
+        dropdownButton.classList.add('pointer-events-none')
       } else {
         graphContainer.style.display = 'grid';
         tableContainer.style.display = 'none';
-        dropdownButton.removeAttribute('disabled');
+        dropdownButton.classList.remove('disabled');
+        dropdownButton.classList.remove('bg-gray-400')
+        dropdownButton.classList.remove('opacity-60')
+        dropdownButton.classList.remove('dark:bg-gray-800')
+        dropdownButton.classList.remove('pointer-events-none')
       }
     });
   });

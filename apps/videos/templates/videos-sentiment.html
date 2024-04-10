@@ -10,9 +10,9 @@
 
 {% block content %}
 
-<div class="flex flex-col h-screen">
+<div class="flex flex-col h-full">
     <div class="flex">
-        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Vídeos de {{ sentiment_type }}</h1>
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Vídeos sobre {{ sentiment_type }}</h1>
     </div>
     <div class="grid grid-cols-3 gap-2 p-4">
         {% for video in videos %}

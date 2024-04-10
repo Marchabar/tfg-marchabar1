@@ -16,10 +16,11 @@
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Analizar</h1>
     </div>
     <div class="flex flex-col items-center w-1/2 mx-auto my-6">
-        <form id="search-form" class="input input-bordered flex items-center gap-2 bg-gray-300 dark:bg-gray-600 w-full">
+        <form id="search-form"
+            class="input input-bordered flex items-center gap-2 bg-gray-300 dark:bg-gray-600 w-full text-gray-600 dark:text-gray-300">
             {% csrf_token %}
-            <input id="search-input" name="video-url" type="text" class="grow"
-                placeholder="Analizar un vídeo político" />
+            <input id="search-input" name="video-url" type="text"
+                class="grow placeholder-gray-500 dark:placeholder-gray-400" placeholder=" Analizar un vídeo político" />
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
                 <path fill-rule="evenodd"
                     d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
@@ -32,7 +33,7 @@
         <div id="loader" class="py-2 hidden">
             <span class="loading loading-spinner loading-lg"></span>
         </div>
-        <span class="text-center text-gray-500 dark:text-gray-400 my-6">Adjunte la url de Youtube del vídeo que desea
+        <span class="text-center text-gray-700 dark:text-gray-400 my-6">Adjunte la url de Youtube del vídeo que desea
             analizar, debe pertenecer a uno de los 4 canales oficiales de PP, PSOE, SUMAR o VOX. Una vez pulse
             ENTER, el sistema comenzará a analizarlo. Este proceso suele tardar unos 15-20
             segundos dependiendo de la longitud del vídeo.</span>
