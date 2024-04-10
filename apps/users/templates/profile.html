@@ -6,17 +6,236 @@
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 
 {% block content %}
-
-<div class="flex flex-col h-screen">
+<div class="flex flex-col h-full pb-10">
     <div class="flex">
-        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Mi perfil</h1>
-    </div>    
-    <div class="flex flex-wrap sm:h-full justify-center items-center">
-        <h2 class="text-lg font-semibold">Contenido para perfil</h2>
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4 pb-2">Mi perfil</h1>
+    </div>
+    <div class="flex justify-center mx-auto">
+        <div class="flex flex-col h-full rounded-lg flex flex-col justify-center items-center mx-4 px-24 pb-10">
+            {% if user.avatar %}
+            <div class="w-72 h-72 mt-6 mb-3"><img src="{{ user.avatar.url }}" alt="User Avatar" class="rounded-lg">
+            </div>
+            {% else %}
+            <div class="text-lg font-semibold"><img src="{% static 'images/user-icon.jpg' %}" alt="User Avatar"
+                    class="rounded-lg w-72 h-72"></div>
+            {% endif %}
+            <div class="text-2xl font-bold mb-2 text-gray-700 dark:text-gray-300">{{user.username}}</div>
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="text-lg font-semibold text-gray-500 dark:text-gray-500">Vídeos subidos</div>
+                <div class="text-lg font-semibold text-gray-500 dark:text-gray-500">Vídeos publicados</div>
+                <div class="text-lg font-semibold text-gray-500 dark:text-gray-500">{{user.uploaded_videos}}</div>
+                <div class="text-lg font-semibold text-gray-500 dark:text-gray-500">{{published_number}}</div>
+            </div>
+            <div class="flex items-center mt-4">
+                <button
+                    class="btn w-32 px-4 py-2 mx-2 font-medium text-center text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-500 border-none"
+                    onclick="my_modal.showModal()">Cambiar contraseña</button>
+                <button
+                    class="btn w-32 px-4 py-2 mx-2 font-medium text-center text-white bg-blue-600 rounded-lg shadow-lg hover:bg-blue-500 border-none"
+                    onclick="my_modal_2.showModal()">Cambiar foto de perfil</button>
+            </div>
+            <dialog id="my_modal" class="modal">
+                <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800">
+                    <div class="px-6 py-4">
+                        <h4 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Cambiar contraseña
+                        </h4>
+                        <button onclick="closeModal()" class="float-right btn btn-circle btn-ghost right-2 top-2">
+                            ✕
+                        </button>
+                        <form id="myForm" method="post" action="{% url 'password_change' %}">
+                            {% csrf_token %}
+                            <div class="w-full mt-4">
+                                <div class="flex justify-between">
+                                    <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
+                                        for="old_password">Antigua contraseña</label>
+                                </div>
+
+                                <input id="old_password" name="old_password" autocomplete="old-password"
+                                    class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
+                                    type="password" required />
+                            </div>
+
+                            <div class="w-full mt-4">
+                                <div class="flex justify-between">
+                                    <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
+                                        for="new_password1">Nueva contraseña</label>
+                                </div>
+
+                                <input id="new_password" name="new_password" autocomplete="new-password"
+                                    class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
+                                    type="password" required />
+                            </div>
+
+                            <div class="w-full mt-4">
+                                <div class="flex justify-between">
+                                    <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
+                                        for="confirm_password">Confirmar nueva contraseña</label>
+                                </div>
+
+                                <input id="confirm_password" name="confirm_password" autocomplete="new-password"
+                                    class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
+                                    type="password" required />
+                            </div>
+
+                            <div class="w-full mt-4">
+                                <input type="checkbox" id="show_password" />
+                                <label for="show_password">Mostrar contraseña</label>
+                            </div>
+
+                            <div class="flex items-center justify-between mt-4">
+                                <button type="submit"
+                                    class="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                                    Cambiar contraseña
+                                </button>
+                            </div>
+
+                        </form>
+                        <div id="errorMessage" class="text-red-500 text-center pt-2"></div>
+                    </div>
+                </div>
+            </dialog>
+            <dialog id="my_modal_2" class="modal">
+                <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800">
+                    <div class="px-6 py-4">
+                        <h4 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Cambiar foto de perfil
+                        </h4>
+                        <button onclick="closeModal2()" class="float-right btn btn-circle btn-ghost right-2 top-2">
+                            ✕
+                        </button>
+                        <form id="myForm2" method="post" action="{% url 'avatar_change' %}">
+                            {% csrf_token %}
+                            <div class="w-full mt-4">
+                                <label for="dropzone-file"
+                                    class="flex items-center px-3 py-3 mx-auto mt-6 text-center bg-white border-2 border-dashed rounded-lg cursor-pointer dark:border-gray-600 dark:bg-gray-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="w-6 h-6 text-gray-300 dark:text-gray-500" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                    </svg>
+
+                                    <h2 id="file-name" class="mx-3 text-gray-400">Foto de
+                                        perfil</h2>
+
+                                    <input name="avatar" id="dropzone-file" type="file" class="hidden"
+                                        onchange="updateFileName()" />
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between mt-4">
+                                <button id="submit-image" type="submit"
+                                    class="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                                    Cambiar
+                                </button>
+                            </div>
+                            <div id="errorMessageImage" class="text-red-500 text-center pt-2"></div>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
+        </div>
     </div>
 </div>
 
+{% endblock %}
+
+{% block extrascript %}
+<script>
+    document.getElementById('show_password').addEventListener('change', function () {
+        ['new_password', 'confirm_password'].forEach(function (id) {
+            var input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        });
+    });
+
+    window.onload = function () {
+        window.showModal = function (event) {
+            event.preventDefault();
+            var modal = document.getElementById("my_modal");
+            modal.showModal();
+        }
+
+        window.closeModal = function (event) {
+            var modal = document.getElementById("my_modal");
+            modal.close();
+        }
+
+        window.closeModal2 = function (event) {
+            var modal = document.getElementById("my_modal_2");
+            modal.close();
+        }
+    }
+
+
+
+    function updateFileName() {
+        var input = document.getElementById('dropzone-file');
+        var fileName = input.files[0].name;
+        document.getElementById('file-name').textContent = fileName;
+    }
+
+    function handleChangePasswordSubmission(event) {
+        event.preventDefault();
+        var form = document.getElementById("myForm");
+        var formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+        }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeModal();
+                } else {
+                    document.getElementById("errorMessage").innerHTML = data['message'];
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var myForm = document.getElementById('myForm');
+        if (myForm) {
+            myForm.addEventListener('submit', handleChangePasswordSubmission);
+        }
+    });
+
+    function handleImageFormSubmission(event) {
+        event.preventDefault();
+        var form = document.getElementById("myForm2");
+        var formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+        }).then(response => response.json())
+            .then(data => {
+                if (data['success']) {
+                    closeModal2();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Foto de perfil cambiada correctamente',
+                    }).then(() => {
+                        window.location.href = "/profile";
+                    })
+                } else {
+                    document.getElementById("errorMessageImage").innerHTML = data['message'];
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var myForm = document.getElementById('myForm2');
+        if (myForm) {
+            myForm.addEventListener('submit', handleImageFormSubmission);
+        }
+    });
+</script>
 {% endblock %}
