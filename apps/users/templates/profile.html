@@ -54,7 +54,7 @@
                                         for="old_password">Antigua contraseña</label>
                                 </div>
 
-                                <input id="old_password" name="old_password"
+                                <input id="old_password" name="old_password" autocomplete="old-password"
                                     class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
                                     type="password" required />
                             </div>
@@ -65,7 +65,7 @@
                                         for="new_password1">Nueva contraseña</label>
                                 </div>
 
-                                <input id="new_password" name="new_password"
+                                <input id="new_password" name="new_password" autocomplete="new-password"
                                     class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
                                     type="password" required />
                             </div>
@@ -76,7 +76,7 @@
                                         for="confirm_password">Confirmar nueva contraseña</label>
                                 </div>
 
-                                <input id="confirm_password" name="confirm_password"
+                                <input id="confirm_password" name="confirm_password" autocomplete="new-password"
                                     class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
                                     type="password" required />
                             </div>
@@ -156,6 +156,8 @@
         }
     }
 
+
+
     function updateFileName() {
         var input = document.getElementById('dropzone-file');
         var fileName = input.files[0].name;
@@ -171,15 +173,8 @@
             body: formData,
         }).then(response => response.json())
             .then(data => {
-                if (data['success']) {
+                if (data.success) {
                     closeModal();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Contraseña cambiada correctamente',
-                    }).then(() => {
-                        window.location.href = "/profile";
-                    })
                 } else {
                     document.getElementById("errorMessage").innerHTML = data['message'];
                 }

@@ -2,6 +2,7 @@
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'css/output.css' %}" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %} {% block content %}
 
 <div class="flex flex-col h-screen">
@@ -10,59 +11,35 @@
       Portada
     </h1>
     <div class="dropdown" id="dropdown-general">
-      <div
-        id="dropdownButton"
-        tabindex="0"
-        role="button"
+      <div id="dropdownButton" tabindex="0" role="button"
         class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
         Temática
       </div>
-      <ul
-        tabindex="0"
-        class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-32">
+      <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-32">
         <li>
-          <a
-            class="text-gray-700 dark:text-gray-100"
-            onclick="updateChart('topics')">Temática</a>
+          <a class="text-gray-700 dark:text-gray-100" onclick="updateChart('topics')">Temática</a>
         </li>
         <li>
-          <a
-            class="text-gray-700 dark:text-gray-100"
-            onclick="updateChart('sentiments')">Sentimiento</a>
+          <a class="text-gray-700 dark:text-gray-100" onclick="updateChart('sentiments')">Sentimiento</a>
         </li>
         <li>
-          <a
-            class="text-gray-700 dark:text-gray-100"
-            onclick="updateChart('languages')">Lenguage</a>
+          <a class="text-gray-700 dark:text-gray-100" onclick="updateChart('languages')">Lenguage</a>
         </li>
       </ul>
     </div>
     <div class="dropdown">
-      <div
-        tabindex="0"
-        role="button"
+      <div tabindex="0" role="button"
         class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center items-center border-none">
         <div class="flex items-center">
           <!-- Container to center the text and SVG -->
           <span class="mr-2 ml-2">General</span>
           <!-- Text -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 9l-7 7-7-7"></path>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </div>
       </div>
-      <ul
-        tabindex="0"
-        class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+      <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
         <li>
           <a href="/" class="text-gray-700 dark:text-gray-100">General</a>
         </li>
@@ -79,68 +56,48 @@
     <div class="flex justify-center items-center">
       <label class="flex cursor-pointer gap-2 ml-[170px]">
         <span class="label-text">Gráfico</span>
-        <input type="checkbox" id="viewToggle" value="synthwave"
-          class="toggle theme-controller" />
+        <input type="checkbox" id="viewToggle" value="synthwave" class="toggle theme-controller" />
         <span class="label-text">Tabla</span>
       </label>
     </div>
-    <button
-      onclick="location.href='/analysis'"
+    <button onclick="location.href='/analysis'"
       class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
       Nuevo vídeo
     </button>
   </div>
-  <div id="graphContainer" class="grid grid-cols-2 sm:h-screen"
-    style="display: grid;">
+  <div id="graphContainer" class="grid grid-cols-2 sm:h-screen" style="display: grid;">
     <div class="p-4">
-      <div
-        id="pp"
+      <div id="pp"
         class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-        <img
-          src="{% static 'images/pp.png' %}"
-          alt="PP"
-          class="w-24 h-20 inline-block object-contain" />
+        <img src="{% static 'images/pp.png' %}" alt="PP" class="w-24 h-20 inline-block object-contain" />
         <canvas id="ppChart"></canvas>
       </div>
     </div>
     <div class="p-4">
-      <div
-        id="psoe"
+      <div id="psoe"
         class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-        <img
-          src="{% static 'images/psoe.png' %}"
-          alt="PSOE"
-          class="w-20 h-16 inline-block object-contain" />
+        <img src="{% static 'images/psoe.png' %}" alt="PSOE" class="w-20 h-16 inline-block object-contain" />
         <canvas id="psoeChart"></canvas>
       </div>
     </div>
     <div class="p-4">
-      <div
-        id="vox"
+      <div id="vox"
         class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-        <img
-          src="{% static 'images/vox.png' %}"
-          alt="VOX"
-          class="w-16 h-14 inline-block object-contain" />
+        <img src="{% static 'images/vox.png' %}" alt="VOX" class="w-16 h-14 inline-block object-contain" />
         <canvas id="voxChart"></canvas>
       </div>
     </div>
     <div class="p-4">
-      <div
-        id="sumar"
+      <div id="sumar"
         class="bg-white h-full dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
-        <img
-          src="{% static 'images/sumar.png' %}"
-          alt="SUMAR"
-          class="w-20 h-16 inline-block object-contain" />
+        <img src="{% static 'images/sumar.png' %}" alt="SUMAR" class="w-20 h-16 inline-block object-contain" />
         <canvas id="sumarChart"></canvas>
       </div>
     </div>
   </div>
   <div id="tableContainer" style="display: none;">
     <div class="p-4">
-      <div
-        id="table"
+      <div id="table"
         class="bg-white h-full dark:bg-gray-400 rounded-lg shadow-md flex flex-col justify-center items-center p-4 text-black">
         <table class="table">
           <thead>
@@ -156,67 +113,66 @@
             {% if party == 'PP' %}
             <tr class="bg-blue-200">
               {% elif party == 'PSOE' %}
-              <tr class="bg-red-200">
-                {% elif party == 'VOX' %}
-                <tr class="bg-green-200">
-                  {% elif party == 'SUMAR' %}
-                  <tr class="bg-purple-300">
-                    {% endif %}
-                    <td>
-                      <div class="flex items-center gap-3">
-                        <div class="w-28 h-10">
-                          <img
-                            src="{% static 'images/'|add:party|lower|add:'.png' %}"
-                            alt="Logo del partido" class="w-full h-full" />
-                        </div>
-                      </div>
-                    </td>
-                    {% for main, percentage in data.items %}
-                    <td>
-                      {% if main == 'topics' %}
-                      {% for topic, percentage in percentage.items %}
-                      <div class="flex items center gap-2">
-                        <span class="font-bold">{{ topic }}:</span>
-                        <span>{{ percentage }}%</span>
-                      </div>
-                      {% endfor %}
-                      {% elif main == 'sentiments' %}
-                      {% for sentiment, percentage in percentage.items %}
-                      <div class="flex items center gap-2">
-                        <span class="font-bold">{{ sentiment }}:</span>
-                        <span>{{ percentage }}</span>
-                      </div>
-                      {% endfor %}
-                      {% elif main == 'languages' %}
-                      {% for language, percentage in percentage.items %}
-                      <div class="flex items center gap-2">
-                        <span class="font-bold">{{ language }}:</span>
-                        <span>{{ percentage }}</span>
-                      </div>
-                      {% endfor %}
-                      {% endif %}
-                    </td>
-                    {% endfor %}
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+            <tr class="bg-red-200">
+              {% elif party == 'VOX' %}
+            <tr class="bg-green-200">
+              {% elif party == 'SUMAR' %}
+            <tr class="bg-purple-300">
+              {% endif %}
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="w-28 h-10">
+                    <img src="{% static 'images/'|add:party|lower|add:'.png' %}" alt="Logo del partido"
+                      class="w-full h-full" />
+                  </div>
+                </div>
+              </td>
+              {% for main, percentage in data.items %}
+              <td>
+                {% if main == 'topics' %}
+                {% for topic, percentage in percentage.items %}
+                <div class="flex items center gap-2">
+                  <span class="font-bold">{{ topic }}:</span>
+                  <span>{{ percentage }}%</span>
+                </div>
+                {% endfor %}
+                {% elif main == 'sentiments' %}
+                {% for sentiment, percentage in percentage.items %}
+                <div class="flex items center gap-2">
+                  <span class="font-bold">{{ sentiment }}:</span>
+                  <span>{{ percentage }}</span>
+                </div>
+                {% endfor %}
+                {% elif main == 'languages' %}
+                {% for language, percentage in percentage.items %}
+                <div class="flex items center gap-2">
+                  <span class="font-bold">{{ language }}:</span>
+                  <span>{{ percentage }}</span>
+                </div>
+                {% endfor %}
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
+  </div>
+</div>
+</div>
 
-    {% endblock %}
-    {% block extrascript %}
-    <script>
+{% endblock %}
+{% block extrascript %}
+<script>
   document.addEventListener('DOMContentLoaded', (event) => {
     let viewToggle = document.getElementById('viewToggle');
     let graphContainer = document.getElementById('graphContainer');
     let tableContainer = document.getElementById('tableContainer');
     let dropdownButton = document.getElementById('dropdownButton');
 
-    viewToggle.addEventListener('change', function() {
+    viewToggle.addEventListener('change', function () {
       if (this.checked) {
         graphContainer.style.display = 'none';
         tableContainer.style.display = 'block';
@@ -245,10 +201,10 @@
       dropdownOption === "topics"
         ? "Temática"
         : dropdownOption === "sentiments"
-        ? "Sentimiento"
-        : dropdownOption === "languages"
-        ? "Lenguaje"
-        : "Dropdown";
+          ? "Sentimiento"
+          : dropdownOption === "languages"
+            ? "Lenguaje"
+            : "Dropdown";
     let dropdownContent =
       '<div class="flex items-center">' +
       '<span class="mr-2 ml-2">' +
@@ -259,7 +215,7 @@
     document.getElementById("dropdownButton").innerHTML = dropdownContent;
 
     chartInstances.forEach((chart) => chart.destroy());
-    chartInstances = []; 
+    chartInstances = [];
 
     var labelDescriptionsBar = {
       Economía: "Asuntos financieros y comerciales de un país",
@@ -484,11 +440,13 @@
       let canvas = document.getElementById(`${party.toLowerCase()}Chart`);
       let context = canvas.getContext("2d");
       labels = Object.keys(jsonData[party][dropdownOption]);
-      backgroundColors = labels.map((label) => { if (dropdownOption === 'sentiments') {
-        return getNextColorSentiment(label);
-      } else if (dropdownOption === 'languages') {
-        return getNextColorLanguage(label);
-      }});
+      backgroundColors = labels.map((label) => {
+        if (dropdownOption === 'sentiments') {
+          return getNextColorSentiment(label);
+        } else if (dropdownOption === 'languages') {
+          return getNextColorLanguage(label);
+        }
+      });
       let chartOptions = {
         type: type,
         data: {
@@ -526,7 +484,7 @@
                 var label = data.labels[tooltipItem.index];
                 var value =
                   data.datasets[tooltipItem.datasetIndex].data[
-                    tooltipItem.index
+                  tooltipItem.index
                   ];
                 var description =
                   dropdownOption === "sentiments"
@@ -608,43 +566,43 @@
   }
 
   const sentimentColorMapping = {
-      enojo: "#FF69B4", // HotPink
-      frustracion: "#1E90FF", // DodgerBlue
-      pasion: "#32CD32", // LimeGreen
-      entusiasmo: "#FFD700", // Gold
-      preocupacion: "#FF6347", // Tomato
-      confianza: "#BA55D3", // MediumOrchid
-      desesperacion: "#2E8B57", // SeaGreen
-      optimismo: "#FF8C00", // DarkOrange
-      satisfaccion: "#9932CC", // DarkOrchid
-      escepticismo: "#4682B4", // SteelBlue
-      desden: "#8B008B", // DarkMagenta
-      empatia: "#20B2AA", // LightSeaGreen
-    };
+    enojo: "#FF69B4", // HotPink
+    frustracion: "#1E90FF", // DodgerBlue
+    pasion: "#32CD32", // LimeGreen
+    entusiasmo: "#FFD700", // Gold
+    preocupacion: "#FF6347", // Tomato
+    confianza: "#BA55D3", // MediumOrchid
+    desesperacion: "#2E8B57", // SeaGreen
+    optimismo: "#FF8C00", // DarkOrange
+    satisfaccion: "#9932CC", // DarkOrchid
+    escepticismo: "#4682B4", // SteelBlue
+    desden: "#8B008B", // DarkMagenta
+    empatia: "#20B2AA", // LightSeaGreen
+  };
 
-    const languageColorMapping = {
-      formal: "#FF69B4", // HotPink
-      tecnico: "#1E90FF", // DodgerBlue
-      emocional: "#32CD32", // LimeGreen
-      persuasivo: "#FFD700", // Gold
-      retorico: "#FF6347", // Tomato
-      bipartidista: "#BA55D3", // MediumOrchid
-      partidista: "#2E8B57", // SeaGreen
-      populista: "#FF8C00", // DarkOrange
-      consenso: "#9932CC", // DarkOrchid
-      confrontacion: "#4682B4", // SteelBlue
-      compromiso: "#8B008B", // DarkMagenta
-      promesas: "#20B2AA", // LightSeaGreen
-      critica: "#FFA07A", // LightSalmon
-      estadisticas: "#778899", // LightSlateGray
-      datos: "#FF4500", // OrangeRed
-      debate: "#6A5ACD", // SlateBlue
-      discurso_publico: "#00CED1", // DarkTurquoise
-      campana: "#00BFFF", // DeepSkyBlue
-      legislacion: "#008080", // Teal
-      negociacion: "#D2691E", // Chocolate
-      patriotico: "#9932CC", // DarkOrchid (reuse color for now)
-    };
+  const languageColorMapping = {
+    formal: "#FF69B4", // HotPink
+    tecnico: "#1E90FF", // DodgerBlue
+    emocional: "#32CD32", // LimeGreen
+    persuasivo: "#FFD700", // Gold
+    retorico: "#FF6347", // Tomato
+    bipartidista: "#BA55D3", // MediumOrchid
+    partidista: "#2E8B57", // SeaGreen
+    populista: "#FF8C00", // DarkOrange
+    consenso: "#9932CC", // DarkOrchid
+    confrontacion: "#4682B4", // SteelBlue
+    compromiso: "#8B008B", // DarkMagenta
+    promesas: "#20B2AA", // LightSeaGreen
+    critica: "#FFA07A", // LightSalmon
+    estadisticas: "#778899", // LightSlateGray
+    datos: "#FF4500", // OrangeRed
+    debate: "#6A5ACD", // SlateBlue
+    discurso_publico: "#00CED1", // DarkTurquoise
+    campana: "#00BFFF", // DeepSkyBlue
+    legislacion: "#008080", // Teal
+    negociacion: "#D2691E", // Chocolate
+    patriotico: "#9932CC", // DarkOrchid (reuse color for now)
+  };
 
   const colorMapping = {
     economia: "#FF5733", // Tomato
@@ -686,21 +644,21 @@
 
   function getNextColorSentiment(sentiment) {
     var color = sentimentColorMapping[sentiment];
-    
+
     if (!color) {
       color = "#000000";
     }
-    
+
     return color;
   }
 
   function getNextColorLanguage(language) {
     var color = languageColorMapping[language];
-    
+
     if (!color) {
-      color = "#000000"; 
+      color = "#000000";
     }
-    
+
     return color;
   }
 
@@ -708,7 +666,7 @@
     var color = colorMapping[topic];
 
     if (!color) {
-      color = "#000000"; 
+      color = "#000000";
     }
 
     return color;
@@ -716,4 +674,4 @@
 
   updateChart("topics");
 </script>
-    {% endblock %}
+{% endblock %}
