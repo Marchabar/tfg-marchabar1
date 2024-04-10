@@ -166,6 +166,11 @@
                                             type="password" required />
                                     </div>
 
+                                    <div class="w-full mt-4">
+                                        <input type="checkbox" id="show_password" />
+                                        <label for="show_password">Mostrar contraseña</label>
+                                    </div>
+
                                     <div class="mt-6">
                                         <button type="submit"
                                             class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
@@ -242,7 +247,7 @@
                                     </svg>
                                 </span>
 
-                                <input type="password" name="password"
+                                <input type="password" name="password" id="new-password"
                                     class="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
                                     placeholder="Contraseña" required>
                             </div>
@@ -257,9 +262,14 @@
                                     </svg>
                                 </span>
 
-                                <input type="password" name="confirm_password"
+                                <input type="password" name="confirm_password" id="confirm-password"
                                     class="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
                                     placeholder="Confirm Password" required>
+                            </div>
+
+                            <div class="w-full mt-4">
+                                <input type="checkbox" id="show_password_signup" />
+                                <label for="show_password_signup">Mostrar contraseña</label>
                             </div>
 
                             <div class="mt-6">
@@ -293,6 +303,27 @@
     </div>
 
     <script>
+        document.body.addEventListener('change', function (event) {
+            if (event.target.id === 'show_password') {
+                ['password'].forEach(function (id) {
+                    var input = document.getElementById(id);
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                    } else {
+                        input.type = 'password';
+                    }
+                });
+            } else if (event.target.id === 'show_password_signup') {
+                ['new-password', 'confirm-password'].forEach(function (id) {
+                    var input = document.getElementById(id);
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                    } else {
+                        input.type = 'password';
+                    }
+                });
+            }
+        });
         // Function to handle form submission
         function handleFormSubmission(event) {
             event.preventDefault();

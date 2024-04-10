@@ -81,12 +81,18 @@
                                     type="password" required />
                             </div>
 
+                            <div class="w-full mt-4">
+                                <input type="checkbox" id="show_password" />
+                                <label for="show_password">Mostrar contraseña</label>
+                            </div>
+
                             <div class="flex items-center justify-between mt-4">
                                 <button type="submit"
                                     class="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
                                     Cambiar contraseña
                                 </button>
                             </div>
+
                         </form>
                         <div id="errorMessage" class="text-red-500 text-center pt-2"></div>
                     </div>
@@ -138,6 +144,17 @@
 
 {% block extrascript %}
 <script>
+    document.getElementById('show_password').addEventListener('change', function () {
+        ['new_password', 'confirm_password'].forEach(function (id) {
+            var input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        });
+    });
+
     window.onload = function () {
         window.showModal = function (event) {
             event.preventDefault();

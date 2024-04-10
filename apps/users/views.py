@@ -54,7 +54,6 @@ class PasswordChangeFormView(View):
             else:
                 user.set_password(new_password)
                 user.save()
-                update_session_auth_hash(request, user)
                 return JsonResponse({"success": True})
 
 
