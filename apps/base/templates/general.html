@@ -106,25 +106,25 @@
               <th>Top temas</th>
               <th>Top sentimientos</th>
               <th>Top lenguaje</th>
-              <th>Top keywords</th>
+              <th>Top palabras</th>
             </tr>
           </thead>
           <tbody>
             {% for party, data in dict_general_table.items %}
             {% if party == 'PP' %}
-            <tr class="bg-blue-200">
+            <tr class="bg-blue-100">
               {% elif party == 'PSOE' %}
-            <tr class="bg-red-200">
+            <tr class="bg-red-100">
               {% elif party == 'VOX' %}
-            <tr class="bg-green-200">
+            <tr class="bg-green-100">
               {% elif party == 'SUMAR' %}
-            <tr class="bg-purple-300">
+            <tr class="bg-purple-100">
               {% endif %}
               <td>
                 <div class="flex items-center gap-3">
-                  <div class="w-28 h-10">
+                  <div class="{% if party == 'VOX' %}w-14{% else %}w-20{% endif %}">
                     <img src="{% static 'images/'|add:party|lower|add:'.png' %}" alt="Logo del partido"
-                      class="w-full h-full" />
+                      class="w-full h-auto" />
                   </div>
                 </div>
               </td>
@@ -133,22 +133,25 @@
                 {% if main == 'topics' %}
                 {% for topic, percentage in percentage.items %}
                 <div class="flex items center gap-2">
-                  <span class="font-bold">{{ topic }}:</span>
-                  <span>{{ percentage }}%</span>
+                  <span class="font-semibold">{{ topic }}</span>
                 </div>
                 {% endfor %}
                 {% elif main == 'sentiments' %}
                 {% for sentiment, percentage in percentage.items %}
                 <div class="flex items center gap-2">
-                  <span class="font-bold">{{ sentiment }}:</span>
-                  <span>{{ percentage }}</span>
+                  <span class="font-semibold">{{ sentiment }}</span>
                 </div>
                 {% endfor %}
                 {% elif main == 'languages' %}
                 {% for language, percentage in percentage.items %}
                 <div class="flex items center gap-2">
-                  <span class="font-bold">{{ language }}:</span>
-                  <span>{{ percentage }}</span>
+                  <span class="font-semibold">{{ language }}</span>
+                </div>
+                {% endfor %}
+                {% elif main == 'words' %}
+                {% for word, percentage in percentage.items %}
+                <div class="flex items center gap-2">
+                  <span class="font-semibold">{{ word }}</span>
                 </div>
                 {% endfor %}
                 {% endif %}

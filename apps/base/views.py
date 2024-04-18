@@ -192,14 +192,36 @@ def load_general(request):
         "negociacion": "Negociación",
     }
 
+    PARTIES = ["PP", "PSOE", "VOX", "SUMAR"]
+
+    words = Word.objects.select_related("video").filter(
+        video__political_party__in=PARTIES
+    )
+
+    # Initialize the dictionary
+    dict_words = defaultdict(lambda: defaultdict(int))
+
+    # Count words per party
+    for word in words:
+        dict_words[word.video.political_party][word.word] += 1
+
+    dict_words = {k: dict(v) for k, v in dict_words.items()}
+
     dict_general = json.loads(dict_general_json)
 
     for party in dict_general:
         for category in ["topics", "sentiments", "languages"]:
-            dict_general[party][category] = {
-                mapping_dict.get(key, key): value
-                for key, value in dict_general[party][category].items()
+            items = {
+                mapping_dict.get(k, k): v
+                for k, v in dict_general[party][category].items()
+                if k != "Otros"
             }
+            sorted_items = sorted(items.items(), key=lambda x: (-x[1], x[0]))
+            dict_general[party][category] = dict(sorted_items[:5])
+
+        words_items = dict_words[party].items()
+        sorted_words_items = sorted(words_items, key=lambda x: (-x[1], x[0]))
+        dict_general[party]["words"] = dict(sorted_words_items[:5])
 
     return render(
         request,
