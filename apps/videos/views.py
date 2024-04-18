@@ -298,7 +298,7 @@ def top_topics(request):
     top_sentiments = (
         Sentiment.objects.values("sentiment_type")
         .annotate(video_count=Count("video"))
-        .order_by("-video_count")[:12]
+        .order_by("-video_count")[:8]
     )
     top_languages = (
         Language.objects.values("language_type")
@@ -361,27 +361,27 @@ def top_topics(request):
         ("empatia", "Empatía"),
     ]
     LANGUAGE_CHOICES = [
-        ("formal", "Lenguaje formal"),
-        ("tecnico", "Lenguaje técnico"),
-        ("emocional", "Lenguaje emocional"),
-        ("persuasivo", "Lenguaje persuasivo"),
-        ("retorico", "Lenguaje retórico"),
-        ("bipartidista", "Lenguaje bipartidista"),
-        ("partidista", "Lenguaje partidista"),
-        ("populista", "Lenguaje populista"),
-        ("consenso", "Lenguaje de consenso"),
-        ("confrontacion", "Lenguaje de confrontación"),
-        ("compromiso", "Lenguaje de compromiso"),
-        ("promesas", "Lenguaje de promesas"),
-        ("critica", "Lenguaje de crítica"),
-        ("estadisticas", "Lenguaje de estadísticas"),
-        ("datos", "Lenguaje de datos"),
-        ("debate", "Lenguaje de debate"),
-        ("discurso_publico", "Lenguaje de discurso público"),
-        ("campana", "Lenguaje de campaña"),
-        ("legislacion", "Lenguaje de legislación"),
-        ("negociacion", "Lenguaje de negociación"),
-        ("patriótico", "Lenguaje patriótico"),
+        ("formal", "Formal"),
+        ("tecnico", "Técnico"),
+        ("emocional", "Emocional"),
+        ("persuasivo", "Persuasivo"),
+        ("retorico", "Retórico"),
+        ("bipartidista", "Bipartidista"),
+        ("partidista", "Partidista"),
+        ("populista", "Populista"),
+        ("consenso", "Consenso"),
+        ("confrontacion", "Confrontación"),
+        ("compromiso", "Compromiso"),
+        ("promesas", "Promesas"),
+        ("critica", "Crítica"),
+        ("estadisticas", "Estadísticas"),
+        ("datos", "Datos"),
+        ("debate", "Debate"),
+        ("discurso_publico", "Discurso público"),
+        ("campana", "Campaña"),
+        ("legislacion", "Legislación"),
+        ("negociacion", "Negociación"),
+        ("patriótico", "Patriótico"),
     ]
     # I need to convert the topic_type to the name of the topic
     for topic in top_topics:
