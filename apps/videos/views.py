@@ -167,6 +167,9 @@ def analyze_video_user(request):
                 if video_details:
                     title = video_details.get("title")
                     title_with_underscores = title.lower().replace(" ", "_")
+                    title_with_underscores = re.sub(
+                        r'[\\/*?:"<>|]', "_", title_with_underscores
+                    )
                     filename = f"{title_with_underscores}.txt"
                     path = "transcriptions"
                     full_path = os.path.join(path, filename)
@@ -587,7 +590,7 @@ def num_tokens_from_string(string: str, encoding_name: str) -> int:
 
 def generate_response(
     prompt,
-    temperature=0.2,
+    temperature=0.1,
     max_tokens=1500,
 ):
     openai.api_key = env("OPENAI_API_KEY")
