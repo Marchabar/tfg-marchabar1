@@ -364,7 +364,7 @@ def load_politician(request):
         dict_languages[party] = str(values).replace("'", '"')
 
     politicians = Video.objects.values_list("politician_name", flat=True).distinct()
-    videos = Video.objects.all().order_by("-date")[:3]
+    videos = Video.objects.filter(published=True).order_by("-date")[:3]
     return render(
         request,
         "politician.html",
@@ -501,7 +501,7 @@ def load_charts(request):
 
         dict_languages[party] = str(values).replace("'", '"')
 
-    videos = Video.objects.all().order_by("-date")[:3]
+    videos = Video.objects.filter(published=True).order_by("-date")[:3]
     PARTIES = ["PP", "PSOE", "VOX", "SUMAR"]
 
     words = Word.objects.select_related("video").filter(
