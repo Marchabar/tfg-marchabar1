@@ -40,9 +40,10 @@
         <div class="grid grid-cols-2 gap-4">
             {% for party in parties %}
             <a href="{% if party == 'pp' %}https://www.youtube.com/@partidopopular{% elif party == 'psoe' %}https://www.youtube.com/@psoe{% elif party == 'sumar' %}https://www.youtube.com/@sumar_oficial{% else %}https://www.youtube.com/@VoxEspanaTV{% endif %}"
-                class="card bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400 flex flex-col items-center p-4">
-                <img src="{% static 'images/'|add:party|add:'.png' %}" alt="Logo de {{ party|title }}" class="h-14">
-                <p class="mt-4 text-center">Canal Oficial</p>
+                class="card bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400 flex flex-col items-center p-2">
+                <img src="{% static 'images/'|add:party|add:'.png' %}" alt="Logo de {{ party|title }}"
+                    class="{% if party == 'vox'%}h-14 w-16 inline-block object-contain{% else %}h-16 w-20 inline-block object-contain{% endif %}">
+                <p class="text-center">Canal Oficial</p>
             </a>
             {% endfor %}
         </div>
