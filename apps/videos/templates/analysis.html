@@ -29,11 +29,13 @@
         </form>
         {% if message %}
         <h2 id="error-msg" class="text-red-500 dark:text-red-400 text-center p-2">{{message}}</h2>
-        {% endif %}
+        {% else %}
         <div id="loader" class="py-2 hidden">
             <span class="loading loading-spinner loading-lg"></span>
         </div>
-        <span class="text-center text-gray-700 dark:text-gray-400 my-6">Adjunte la url de Youtube del vídeo que desea
+        {% endif %}
+        <span class="text-center text-gray-700 dark:text-gray-400 my-6">Adjunte la url de Youtube del vídeo que
+            desea
             analizar, debe pertenecer a uno de los 4 canales oficiales de PP, PSOE, SUMAR o VOX. Una vez pulse
             ENTER, el sistema comenzará a analizarlo. Este proceso suele tardar unos 15-20
             segundos dependiendo de la longitud del vídeo.</span>
