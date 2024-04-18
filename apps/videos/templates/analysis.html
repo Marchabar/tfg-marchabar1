@@ -37,6 +37,15 @@
             analizar, debe pertenecer a uno de los 4 canales oficiales de PP, PSOE, SUMAR o VOX. Una vez pulse
             ENTER, el sistema comenzará a analizarlo. Este proceso suele tardar unos 15-20
             segundos dependiendo de la longitud del vídeo.</span>
+        <div class="grid grid-cols-2 gap-4">
+            {% for party in parties %}
+            <a href="{% if party == 'pp' %}https://www.youtube.com/@partidopopular{% elif party == 'psoe' %}https://www.youtube.com/@psoe{% elif party == 'sumar' %}https://www.youtube.com/@sumar_oficial{% else %}https://www.youtube.com/@VoxEspanaTV{% endif %}"
+                class="card bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400 flex flex-col items-center p-4">
+                <img src="{% static 'images/'|add:party|add:'.png' %}" alt="Logo de {{ party|title }}" class="h-14">
+                <p class="mt-4 text-center">Canal Oficial</p>
+            </a>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

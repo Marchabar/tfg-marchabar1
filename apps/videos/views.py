@@ -286,7 +286,9 @@ def analyze_video_user(request):
                         "message": "La url no es de un canal permitido.",
                     },
                 )
-    return render(request, "analysis.html")
+    parties = ["pp", "psoe", "vox", "sumar"]
+
+    return render(request, "analysis.html", {"parties": parties})
 
 
 def top_topics(request):
