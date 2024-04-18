@@ -154,7 +154,7 @@ def analyze_video_user(request):
                 {transcription2}"""
                 prompt = general_statement(transcription)
                 number_tokens = num_tokens_from_string(prompt, "gpt-4")
-                if number_tokens > 2500:
+                if number_tokens > 12500:
                     return render(
                         request,
                         "analysis.html",
@@ -273,6 +273,9 @@ def analyze_video_user(request):
                             "w",
                             encoding="utf-8",
                         ) as file:
+                            response = response.strip("```json\n").strip("```")
+                            response = json.loads(response)
+
                             json.dump(response, file, ensure_ascii=False)
 
                         # After the file is successfully created, call the load_* functions
@@ -571,11 +574,13 @@ def general_statement(transcription):
     ]
 
     prompt = f"""Analiza las siguientes transcripciones de textos de políticos, y respóndeme a las preguntas que te propongo en formato json. Las claves del formato json son politician_name, political_party, date, length, summary, main_topics, sentiment, lenguaje y used_words. Para sus valores es muy importante que tengas en cuenta las siguientes condiciones : 
+    
+    Para la key politician_name (nombre del político) tienes que obtenerlo del título o descripción del video de youtube, o intenta obtenerlo de la información actual que tienes (sino sacas el politican_name pon "Político no reconocido")
     Para la key main_topics solo pueden ser valores que se encuentren en el siguiente array. Para esta key,necesito un diccionario que contenga el main_topic y el porcentaje del que se habla de el. {main_topics}
     Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
     Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
     Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. 
-    Para la key politician_name (nombre del político) tienes que sacarlo del title o description del video, o intenta obtenerlo de la información actual que tienes (sino sacas el politican_name pon "Político no reconocido")
+    
     La transcripción es la siguiente, y ya contiene el partido al que pertenece, la url, la fecha, y la duracion. Esto tambien tienes que incluirlo en el json que me das como respuesta. Además tienes que incluir un resumen corto en un párrafo de la transcripcion para la key summary. Recuerda tener en cuenta las limitaciones y solo coger valores de los arrays para las keys que lo necesitan: {transcription}
     """
     return prompt
@@ -594,14 +599,19 @@ def generate_response(
     max_tokens=1500,
 ):
     openai.api_key = env("OPENAI_API_KEY")
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo-instruct",
-        prompt=prompt,
+    sys_message = "Eres un asistentes de OpenAI, por favor, ayúdame a responder a las siguientes preguntas sobre mítines políticos en España."
+    user_message = prompt
+    response = openai.ChatCompletion.create(
+        model="gpt-4-turbo",
+        messages=[
+            {"role": "system", "content": sys_message},
+            {"role": "user", "content": user_message},
+        ],
         temperature=temperature,
         max_tokens=max_tokens,
     )
 
-    return response.choices[0].text.strip()
+    return str(response.choices[0].message.content)
 
 
 def sanitize_filename(filename):

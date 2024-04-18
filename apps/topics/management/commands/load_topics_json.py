@@ -37,6 +37,8 @@ class Command(BaseCommand):
                         ).exists():
                             continue
                         else:
+                            if isinstance(percentage, str) and "%" in percentage:
+                                percentage = int(percentage.strip("%"))
                             topics_dict[topic] = percentage
                             total_percentage += percentage
                 elif isinstance(main_topics, list) and all(
@@ -51,6 +53,8 @@ class Command(BaseCommand):
                         ).exists():
                             continue
                         else:
+                            if isinstance(percentage, str) and "%" in percentage:
+                                percentage = int(percentage.strip("%"))
                             topics_dict[topic] = percentage
                             total_percentage += percentage
                 elif isinstance(main_topics, list) and all(
@@ -68,6 +72,8 @@ class Command(BaseCommand):
                             ).exists():
                                 continue
                             else:
+                                if isinstance(percentage, str) and "%" in percentage:
+                                    percentage = int(percentage.strip("%"))
                                 topics_dict[topic] = percentage
                                 total_percentage += percentage
                 else:
