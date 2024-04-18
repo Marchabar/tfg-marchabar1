@@ -138,7 +138,7 @@ def analyze_video_user(request):
                 transcript = YouTubeTranscriptApi.get_transcript(
                     video_id, languages=["es"]
                 )
-                transcription = " ".join(item["text"] for item in transcript)
+                transcription2 = " ".join(item["text"] for item in transcript)
                 length = video_details.get("length")
                 length = convert_duration(length)
                 date = video_details.get("date")
@@ -151,7 +151,7 @@ def analyze_video_user(request):
                 date = {date},
                 length = {length},
                 description = {description},
-                {transcription}"""
+                {transcription2}"""
                 prompt = general_statement(transcription)
                 number_tokens = num_tokens_from_string(prompt, "gpt-4")
                 if number_tokens > 2500:
@@ -171,7 +171,7 @@ def analyze_video_user(request):
                     path = "transcriptions"
                     full_path = os.path.join(path, filename)
                     with open(full_path, "w", encoding="utf-8") as file:
-                        file.write(transcription)
+                        file.write(transcription2)
                     response = generate_response(prompt)
                     # response = {
                     #     "politician_name": "Pedro Sánchez",
@@ -599,6 +599,7 @@ def generate_response(
     )
 
     return response.choices[0].text.strip()
+
 
 def sanitize_filename(filename):
     filename = unidecode(filename)  # Remove accents
