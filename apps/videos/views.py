@@ -575,7 +575,7 @@ def general_statement(transcription):
 
     prompt = f"""Analiza las siguientes transcripciones de textos de políticos, y respóndeme a las preguntas que te propongo en formato json. Las claves del formato json son politician_name, political_party, date, length, summary, main_topics, sentiment, lenguaje y used_words. Para sus valores es muy importante que tengas en cuenta las siguientes condiciones : 
     
-    Para la key politician_name (nombre del político) tienes que obtenerlo del título o descripción del video de youtube, o intenta obtenerlo de la información actual que tienes (sino sacas el politican_name pon "Político no reconocido")
+    Para la key politician_name (nombre del político) tienes que obtenerlo del título o descripción del video de youtube, o intenta obtenerlo de la información actual que tienes. Si no erez capaz de obtenerlo, pon "Político no reconocido".
     Para la key main_topics solo pueden ser valores que se encuentren en el siguiente array. Para esta key,necesito un diccionario que contenga el main_topic y el porcentaje del que se habla de el. {main_topics}
     Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
     Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
