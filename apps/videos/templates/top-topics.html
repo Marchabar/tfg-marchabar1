@@ -138,8 +138,13 @@
         // if the the div is all-videos I want it to be grid, the rest I wna them to be flex
         if (id === 'all-videos') {
             document.getElementById(id).style.display = 'grid';
+            document.getElementById('search-form').style.display = 'flex';
+            document.getElementById('search-form').style.visibility = 'visible';
+
+
         } else {
             document.getElementById(id).style.display = 'flex';
+            document.getElementById('search-form').style.visibility = 'hidden';
         }
 
         // Change the text of the dropdown button
