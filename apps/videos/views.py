@@ -420,6 +420,8 @@ def top_topics(request):
             if choice[0] == language["language_type"]:
                 language["language_type"] = choice[1]
 
+    videos = Video.objects.filter(published=True)
+
     return render(
         request,
         "top-topics.html",
@@ -427,6 +429,7 @@ def top_topics(request):
             "top_topics": top_topics,
             "top_sentiments": top_sentiments,
             "top_languages": top_languages,
+            "videos": videos,
         },
     )
 
