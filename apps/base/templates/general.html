@@ -53,17 +53,19 @@
         </li>
       </ul>
     </div>
-    <div class="flex justify-center items-center">
-      <label class="flex cursor-pointer gap-2 ml-[170px]">
-        <span class="label-text text-gray-600 dark:text-gray-200">Gráfico</span>
-        <input type="checkbox" id="viewToggle" value="synthwave" class="toggle theme-controller" />
-        <span class="label-text text-gray-600 dark:text-gray-200">Tabla</span>
-      </label>
+    <div class="grid grid-cols-2 items-center justify-center w-full">
+      <div class="flex justify-center items-center">
+        <label class="flex cursor-pointer gap-2 ml-[170px]">
+          <span class="label-text text-gray-600 dark:text-gray-200">Gráfico</span>
+          <input type="checkbox" id="viewToggle" value="synthwave" class="toggle theme-controller" />
+          <span class="label-text text-gray-600 dark:text-gray-200">Tabla</span>
+        </label>
+      </div>
+      <button onclick="location.href='/analysis'"
+        class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+        Nuevo vídeo
+      </button>
     </div>
-    <button onclick="location.href='/analysis'"
-      class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
-      Nuevo vídeo
-    </button>
   </div>
   <div id="graphContainer" class="grid grid-cols-2 sm:h-screen" style="display: grid;">
     <div class="p-4">
