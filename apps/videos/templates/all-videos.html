@@ -62,8 +62,11 @@
                     <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                         onclick="closePublishModal()">✕</button>
                     <h3 class="font-bold text-lg">¿Quieres publicar este vídeo?</h3>
-                    <div class="flex justify-end py-2">
-                        <button type="submit" class="btn btn-primary">Publicar</button>
+                    <div class="flex justify-end py-2 gap-2">
+                        <a id="view-video-btn" href="#"
+                            class="btn btn-primary bg-gray-300 hover:bg-gray-400 pr-4 border-none">Ver vídeo</a>
+                        <button type="submit"
+                            class="btn btn-primary bg-blue-600 hover:bg-blue-500 shadow-lg border-none">Publicar</button>
                     </div>
                 </form>
             </div>
@@ -127,6 +130,10 @@
 
     function showPublishModal(videoId) {
         const modal = document.getElementById('publish_modal');
+        const viewVideoBtn = document.getElementById('view-video-btn');
+
+        viewVideoBtn.href = `/videos/${videoId}`;
+
         modal.showModal();
         modal.dataset.videoId = videoId;
     }
