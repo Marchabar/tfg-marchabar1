@@ -69,6 +69,7 @@
             </button>
         </div>
     </div>
+    <div id="no-results-message"></div>
     <div id="all-videos" class="grid grid-cols-3 gap-2 p-4">
         {% for video in videos %}
         <a id="videos" href="{% url 'video' video.id %}" data-title="{{ video.title }}"
@@ -133,6 +134,7 @@
         document.getElementById('topics').style.display = 'none';
         document.getElementById('sentiments').style.display = 'none';
         document.getElementById('languages').style.display = 'none';
+        container = document.getElementById('all-videos')
 
         // Show the selected div
         // if the the div is all-videos I want it to be grid, the rest I wna them to be flex
@@ -154,6 +156,7 @@
     document.getElementById('search-input').addEventListener('input', function (e) {
         var searchValue = e.target.value.toLowerCase();
         var videos = document.querySelectorAll('#all-videos a');
+        var anyDisplay = false;
 
         for (var i = 0; i < videos.length; i++) {
             var title = videos[i].getAttribute('data-title').toLowerCase();
@@ -161,10 +164,27 @@
 
             if (title.includes(searchValue) || party.includes(searchValue)) {
                 videos[i].style.display = 'block';
+                anyDisplay = true;
             } else {
                 videos[i].style.display = 'none';
             }
         }
+
+        var container = document.getElementById('all-videos')
+        var oldMessage = document.getElementById('no-results-message');
+        if (oldMessage) {
+            oldMessage.parentNode.removeChild(oldMessage);
+        }
+
+        // If no videos are displayed, show a message
+        if (!anyDisplay) {
+            var message = document.createElement('h2');
+            message.id = 'no-results-message';
+            message.textContent = 'No se han encontrado resultados';
+            message.classList.add('col-span-1', 'text-center', 'w-full', 'col-start-2');
+            container.appendChild(message);
+        }
+
     });
 
     window.addEventListener('load', function () {
