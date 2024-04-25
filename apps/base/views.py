@@ -209,18 +209,24 @@ def load_general(request):
 
     dict_general = json.loads(dict_general_json)
 
+    excluded_languages = ["formal", "debate"]
+    excluded_words = ["Gobierno"]
+
     for party in dict_general:
         for category in ["topics", "sentiments", "languages"]:
             items = {
                 mapping_dict.get(k, k): v
                 for k, v in dict_general[party][category].items()
                 if k != "Otros"
+                and (category != "languages" or k not in excluded_languages)
             }
             sorted_items = sorted(items.items(), key=lambda x: (-x[1], x[0]))
             dict_general[party][category] = dict(sorted_items[:5])
 
-        words_items = dict_words[party].items()
-        sorted_words_items = sorted(words_items, key=lambda x: (-x[1], x[0]))
+        words_items = {
+            k: v for k, v in dict_words[party].items() if k not in excluded_words
+        }
+        sorted_words_items = sorted(words_items.items(), key=lambda x: (-x[1], x[0]))
         dict_general[party]["words"] = dict(sorted_words_items[:5])
 
     return render(
