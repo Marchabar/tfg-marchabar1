@@ -11,4 +11,5 @@ urlpatterns = [
         views.load_politician,
         name="politician",
     ),
+    path("falacies/<int:falacy_id>", views.falacy_info, name="falacy_info"),
 ]

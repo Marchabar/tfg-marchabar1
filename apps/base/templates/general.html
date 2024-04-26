@@ -99,6 +99,25 @@
   </div>
   <div id="tableContainer" style="display: none;">
     <div class="p-4">
+      <div class="flex flex-col items-center w-full">
+        <div class="carousel w-3/4 h-full pb-4">
+          {% for falacy in falacies %}
+          <div id="slide{{ forloop.counter }}"
+            class="carousel-item relative w-full h-full {% if forloop.first %}active{% endif %}">
+            <a href="{% url 'falacy_info' falacy.id %}"
+              class="w-full bg-gray-200 dark:bg-gray-400 p-5 flex flex-col items-center rounded-lg">
+              <h2 class="text-l font-bold text-black">Falacia</h2>
+              <p class="text-xl font-bold pb-4 text-black text-center">{{falacy.politician}}: "{{falacy.title}}"</p>
+              <img src="{{falacy.image}}" alt="Falacia de Feijóo" class="w-3/4 h-auto" />
+            </a>
+            <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+              <button data-dir="-1" class="btn btn-circle carousel-button">❮</button>
+              <button data-dir="1" class="btn btn-circle carousel-button">❯</button>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
       <div id="table"
         class="bg-white h-full dark:bg-gray-400 rounded-lg shadow-md flex flex-col justify-center items-center p-4 text-black">
         <table class="table">
@@ -172,6 +191,29 @@
 {% endblock %}
 {% block extrascript %}
 <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var slides = Array.from(document.querySelectorAll('.carousel-item'));
+    var buttons = Array.from(document.querySelectorAll('.carousel-button'));
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        var currentSlide = slides.find(slide => !slide.classList.contains('hidden'));
+        if (!currentSlide) return;
+
+        var currentIndex = slides.indexOf(currentSlide);
+        var nextIndex = currentIndex + parseInt(e.target.dataset.dir);
+
+        if (nextIndex < 0) nextIndex = slides.length - 1;
+        if (nextIndex >= slides.length) nextIndex = 0;
+
+        currentSlide.classList.add('hidden');
+        slides[nextIndex].classList.remove('hidden');
+      });
+    });
+  });
+
   document.addEventListener('DOMContentLoaded', (event) => {
     let viewToggle = document.getElementById('viewToggle');
     let graphContainer = document.getElementById('graphContainer');

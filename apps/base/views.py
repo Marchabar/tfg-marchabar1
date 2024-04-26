@@ -4,12 +4,18 @@ from collections import defaultdict
 
 from django.shortcuts import render
 
+from ..falacies.models import Falacy
 from ..languages.models import Language
 from ..ratings.models import Rating
 from ..sentiments.models import Sentiment
 from ..topics.models import Topic
 from ..videos.models import Video
 from ..words.models import Word
+
+
+def falacy_info(request, falacy_id):
+    falacy = Falacy.objects.get(id=falacy_id)
+    return render(request, "falacy-info.html", {"falacy": falacy})
 
 
 def load_general(request):
@@ -229,10 +235,15 @@ def load_general(request):
         sorted_words_items = sorted(words_items.items(), key=lambda x: (-x[1], x[0]))
         dict_general[party]["words"] = dict(sorted_words_items[:5])
 
+    falacies = Falacy.objects.all()
     return render(
         request,
         "general.html",
-        {"dict_general": dict_general_json, "dict_general_table": dict_general},
+        {
+            "dict_general": dict_general_json,
+            "dict_general_table": dict_general,
+            "falacies": falacies,
+        },
     )
 
 

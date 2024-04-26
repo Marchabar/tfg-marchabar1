@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "apps.topics",
     "apps.words",
     "apps.users",
+    "apps.falacies",
 ]
 
 MIDDLEWARE = [
