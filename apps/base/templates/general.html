@@ -220,8 +220,8 @@
     let tableContainer = document.getElementById('tableContainer');
     let dropdownButton = document.getElementById('dropdownButton');
 
-    viewToggle.addEventListener('change', function () {
-      if (this.checked) {
+    function updateView() {
+      if (viewToggle.checked) {
         graphContainer.style.display = 'none';
         tableContainer.style.display = 'block';
         dropdownButton.classList.add('disabled');
@@ -238,6 +238,18 @@
         dropdownButton.classList.remove('dark:bg-gray-800')
         dropdownButton.classList.remove('pointer-events-none')
       }
+    }
+
+    let savedState = sessionStorage.getItem('viewToggleState');
+    if (savedState !== null) {
+      viewToggle.checked = savedState === 'true';
+      updateView();
+    }
+
+    viewToggle.addEventListener('change', function () {
+      updateView();
+
+      sessionStorage.setItem('viewToggleState', viewToggle.checked);
     });
   });
 
