@@ -106,7 +106,7 @@
             class="carousel-item relative w-full h-full {% if forloop.first %}active{% endif %}">
             <a href="{% url 'falacy_info' falacy.id %}"
               class="w-full bg-gray-200 dark:bg-gray-400 p-5 flex flex-col items-center rounded-lg">
-              <h2 class="text-l font-bold text-black">Falacia</h2>
+              <h2 class="text-lg font-bold text-red-500 uppercase">Falacia</h2>
               <p class="text-xl font-bold pb-4 text-black text-center">{{falacy.politician}}: "{{falacy.title}}"</p>
               <img src="{{falacy.image}}" alt="Falacia de Feijóo" class="w-3/4 h-auto" />
             </a>
