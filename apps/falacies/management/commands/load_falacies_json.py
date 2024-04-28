@@ -16,10 +16,11 @@ class Command(BaseCommand):
                     file.seek(0)  # Reset file position to the beginning
                     data = json.load(file)
                     if data:
-                        Falacy.objects.create(
-                            title=data["title"],
-                            politician=data["politician"],
-                            political_party=data["political_party"],
-                            argument=data["argument"],
-                            image=data["image"],
-                        )
+                        if not Falacy.objects.filter(title=data["title"]).exists():
+                            Falacy.objects.create(
+                                title=data["title"],
+                                politician=data["politician"],
+                                political_party=data["political_party"],
+                                argument=data["argument"],
+                                image=data["image"],
+                            )

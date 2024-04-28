@@ -14,7 +14,9 @@ class Falacy(models.Model):
     ]
     political_party = models.TextField(choices=PARTIES_CHOICES)
     argument = models.TextField()
-    image = models.ImageField(upload_to="falacies/", null=True, blank=True)
+    image = models.ImageField(
+        upload_to="falacies/", null=True, blank=True, max_length=500
+    )
 
     def __str__(self):
         return self.title
