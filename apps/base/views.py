@@ -4,12 +4,18 @@ from collections import defaultdict
 
 from django.shortcuts import render
 
+from ..falacies.models import Falacy
 from ..languages.models import Language
 from ..ratings.models import Rating
 from ..sentiments.models import Sentiment
 from ..topics.models import Topic
 from ..videos.models import Video
 from ..words.models import Word
+
+
+def falacy_info(request, falacy_id):
+    falacy = Falacy.objects.get(id=falacy_id)
+    return render(request, "falacy-info.html", {"falacy": falacy})
 
 
 def load_general(request):
@@ -124,7 +130,121 @@ def load_general(request):
     # Convert to JSON
     dict_general_json = json.dumps(dict_general)
 
-    return render(request, "general.html", {"dict_general": dict_general_json})
+    mapping_dict = {
+        "economia": "Economía",
+        "salud": "Salud",
+        "educacion": "Educación",
+        "medio_ambiente": "Medio ambiente",
+        "derechos_civiles": "Derechos civiles",
+        "inmigracion": "Inmigración",
+        "seguridad_nacional": "Seguridad nacional",
+        "politica_exterior": "Política exterior",
+        "empleo": "Empleo",
+        "criminalidad": "Criminalidad",
+        "impuestos": "Impuestos",
+        "bienestar_social": "Bienestar social",
+        "tecnologia": "Tecnología",
+        "energia": "Energía",
+        "vivienda": "Vivienda",
+        "corrupcion": "Corrupción",
+        "libertad_de_prensa": "Libertad de prensa",
+        "igualdad_de_genero": "Igualdad de género",
+        "diversidad_y_discriminacion": "Diversidad y discriminación",
+        "pobreza": "Pobreza",
+        "infraestructura": "Infraestructura",
+        "religion": "Religión",
+        "derechos_de_las_minorias": "Derechos de las minorías",
+        "paz_y_conflicto": "Paz y conflicto",
+        "defensa": "Defensa",
+        "legislacion": "Legislación",
+        "presupuesto": "Presupuesto",
+        "justicia": "Justicia",
+        "eta": "ETA",
+        "historia_reciente_de_espana": "Historia reciente de España",
+        "terrorismo": "Terrorismo",
+        "acusaciones_politicas": "Acusaciones políticas",
+        "campana_electoral": "Campaña electoral",
+        "enojo": "Enojo",
+        "frustracion": "Frustración",
+        "pasion": "Pasión",
+        "entusiasmo": "Entusiasmo",
+        "preocupacion": "Preocupación",
+        "confianza": "Confianza",
+        "desesperacion": "Desesperación",
+        "optimismo": "Optimismo",
+        "satisfaccion": "Satisfacción",
+        "escepticismo": "Escepticismo",
+        "desden": "Desdén",
+        "empatia": "Empatía",
+        "formal": "Formal",
+        "tecnico": "Técnico",
+        "emocional": "Emocional",
+        "persuasivo": "Persuasivo",
+        "retorico": "Retórico",
+        "bipartidista": "Bipartidista",
+        "partidista": "Partidista",
+        "populista": "Populista",
+        "confrontacion": "Confrontación",
+        "consenso": "Consenso",
+        "compromiso": "Compromiso",
+        "promesas": "Promesas",
+        "critica": "Crítica",
+        "estadisticas": "Estadísticas",
+        "datos": "Datos",
+        "debate": "Debate",
+        "discurso_publico": "Discurso público",
+        "campana": "Campaña",
+        "legislacion": "Legislación",
+        "negociacion": "Negociación",
+    }
+
+    PARTIES = ["PP", "PSOE", "VOX", "SUMAR"]
+
+    words = Word.objects.select_related("video").filter(
+        video__political_party__in=PARTIES
+    )
+
+    # Initialize the dictionary
+    dict_words = defaultdict(lambda: defaultdict(int))
+
+    # Count words per party
+    for word in words:
+        dict_words[word.video.political_party][word.word] += 1
+
+    dict_words = {k: dict(v) for k, v in dict_words.items()}
+
+    dict_general = json.loads(dict_general_json)
+
+    excluded_languages = ["formal", "debate"]
+    excluded_words = ["Gobierno"]
+
+    for party in dict_general:
+        for category in ["topics", "sentiments", "languages"]:
+            items = {
+                mapping_dict.get(k, k): v
+                for k, v in dict_general[party][category].items()
+                if k != "Otros"
+                and (category != "languages" or k not in excluded_languages)
+            }
+            sorted_items = sorted(items.items(), key=lambda x: (-x[1], x[0]))
+            dict_general[party][category] = dict(sorted_items[:5])
+
+        words_items = {
+            k: v for k, v in dict_words[party].items() if k not in excluded_words
+        }
+        sorted_words_items = sorted(words_items.items(), key=lambda x: (-x[1], x[0]))
+        dict_general[party]["words"] = dict(sorted_words_items[:5])
+
+    falacies = Falacy.objects.all()
+    return render(
+        request,
+        "general.html",
+        {
+            "dict_general": dict_general_json,
+            "dict_general_table": dict_general,
+            "falacies": falacies,
+        },
+    )
 
 
 def load_politician(request):
@@ -261,7 +381,7 @@ def load_politician(request):
         dict_languages[party] = str(values).replace("'", '"')
 
     politicians = Video.objects.values_list("politician_name", flat=True).distinct()
-    videos = Video.objects.all().order_by("-date")[:3]
+    videos = Video.objects.filter(published=True).order_by("-date")[:3]
     return render(
         request,
         "politician.html",
@@ -398,7 +518,7 @@ def load_charts(request):
 
         dict_languages[party] = str(values).replace("'", '"')
 
-    videos = Video.objects.all().order_by("-date")[:3]
+    videos = Video.objects.filter(published=True).order_by("-date")[:3]
     PARTIES = ["PP", "PSOE", "VOX", "SUMAR"]
 
     words = Word.objects.select_related("video").filter(

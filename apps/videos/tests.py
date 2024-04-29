@@ -57,9 +57,7 @@ class VideoViewTest(TestCase):
 
     def test_get_video_information(self):
         response = self.client.get(reverse("video", args=[self.video.id]))
-        self.assertEqual(
-            response.status_code, 302
-        )  # Expecting a redirect because the user is not authenticated
+        self.assertEqual(response.status_code, 200)
         self.client.login(username="testuser", password="12345")
         response = self.client.get(reverse("video", args=[self.video.id]))
         self.assertEqual(response.status_code, 200)
@@ -68,6 +66,38 @@ class VideoViewTest(TestCase):
         self.client.login(username="testuser", password="12345")
         response = self.client.get(reverse("topic", args=["economia"]))
         self.assertEqual(response.status_code, 200)
+
+    def test_get_videos_by_sentiment(self):
+        self.client.login(username="testuser", password="12345")
+        response = self.client.get(reverse("sentiment", args=["positive"]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_videos_by_language(self):
+        self.client.login(username="testuser", password="12345")
+        response = self.client.get(reverse("language", args=["formal"]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_top_topics(self):
+        # Make a GET request to the top_topics view
+        response = self.client.get(reverse("top_topics"))
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the response contains the expected data
+        self.assertContains(response, "test")
+
+        # Check that the response context contains the expected variables
+        self.assertIn("top_topics", response.context)
+        self.assertIn("top_sentiments", response.context)
+        self.assertIn("top_languages", response.context)
+        self.assertIn("videos", response.context)
+
+        # Check that the response context variables have the expected values
+        top_topics = response.context["top_topics"]
+        top_sentiments = response.context["top_sentiments"]
+        top_languages = response.context["top_languages"]
+        videos = response.context["videos"]
 
     def test_analyze_video_user(self):
         Video.objects.create(

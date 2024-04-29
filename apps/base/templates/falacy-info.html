@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Falacia {{ falacy.id }}{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'css/output.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.12.0/js/anychart-tag-cloud.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col h-full">
+    <div class="flex justify-center h-full">
+        <div class="w-full card flex bg-white dark:bg-gray-700 shadow-xl text-gray-600 dark:text-gray-400">
+            <div class="w-full h-full flex">
+                <div class="w-1/2 h-full p-8">
+                    <img class="w-96 h-auto" src="{{falacy.image}}" frameborder="0" allowfullscreen></img>
+                </div>
+                <div class="flex flex-col w-1/2 h-full m-4 items-center justify-center">
+                    <p class="text-gray-700 dark:text-gray-300 items-start px-4 font-bold text-lg text-center">
+                        "{{falacy.title }}"
+                    </p>
+                    <p class="text-gray-700 dark:text-gray-400 items-start px-4 text-lg">{{ falacy.political_party }}
+                    </p>
+                    <p class="text-gray-700 dark:text-gray-400 items-start px-4 text-lg">{{ falacy.politician}}</p>
+                </div>
+            </div>
+            <div class="m-4">
+                <p class="text-gray-700 dark:text-gray-300 items-start p-4">{{ falacy.argument }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -11,36 +11,44 @@
 
 {% block content %}
 
-<div class="flex flex-col h-screen">
+<div class="flex flex-col h-full">
     <div class="flex">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Analizar</h1>
     </div>
-    <div class="flex flex-col items-center w-1/2 mx-auto">
-        <form id="search-form" class="input input-bordered flex items-center gap-2 bg-gray-300 dark:bg-gray-600 w-full">
+    <div class="flex flex-col items-center w-1/2 mx-auto my-6">
+        <form id="search-form"
+            class="input input-bordered flex items-center gap-2 bg-gray-300 dark:bg-gray-600 w-full text-gray-600 dark:text-gray-300">
             {% csrf_token %}
-            <input id="search-input" name="video-url" type="text" class="grow" placeholder="Analizar un vídeo político"/>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" /></svg>
+            <input id="search-input" name="video-url" type="text"
+                class="grow placeholder-gray-500 dark:placeholder-gray-400" placeholder=" Analizar un vídeo político" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70">
+                <path fill-rule="evenodd"
+                    d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                    clip-rule="evenodd" />
+            </svg>
         </form>
-        {% if message %} 
-            <h2 id="error-msg" class="text-red-500 dark:text-red-400 text-center p-2">{{message}}</h2>
-        {% endif %}
+        {% if message %}
+        <h2 id="error-msg" class="text-red-500 dark:text-red-400 text-center p-2">{{message}}</h2>
+        {% else %}
         <div id="loader" class="py-2 hidden">
             <span class="loading loading-spinner loading-lg"></span>
         </div>
-    </div>
-    <div class="flex flex-wrap justify-center">
-        {% for topic in top_topics %}
-            <div class="w-1/4 p-4">
-                <a href="{% url 'topic' topic.topic_type|slugify_topic %}">
-                    <div class="flex items-center justify-center bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-md rounded-lg p-4 h-40">
-                        <h2 class="font-semibold dark:text-gray-300">{{ topic.topic_type }}</h2>
-                    </div>
-                </a>
-            </div>
-            {% if forloop.counter|divisibleby:4 and not forloop.last %}
-                </div><div class="flex flex-wrap justify-center">
-            {% endif %}
-        {% endfor %}
+        {% endif %}
+        <span class="text-center text-gray-700 dark:text-gray-400 my-6">Adjunte la url de Youtube del vídeo que
+            desea
+            analizar, debe pertenecer a uno de los 4 canales oficiales de PP, PSOE, SUMAR o VOX. Una vez pulse
+            ENTER, el sistema comenzará a analizarlo. Este proceso suele tardar unos 40-45
+            segundos dependiendo de la longitud del vídeo.</span>
+        <div class="grid grid-cols-2 gap-4">
+            {% for party in parties %}
+            <a href="{% if party == 'pp' %}https://www.youtube.com/@partidopopular{% elif party == 'psoe' %}https://www.youtube.com/@psoe{% elif party == 'sumar' %}https://www.youtube.com/@sumar_oficial{% else %}https://www.youtube.com/@VoxEspanaTV{% endif %}"
+                class="card bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-xl text-gray-600 dark:text-gray-400 flex flex-col items-center justify-between p-2 px-4">
+                <img src="{% static 'images/'|add:party|add:'.png' %}" alt="Logo de {{ party|title }}"
+                    class="{% if party == 'vox'%}h-14 w-16 inline-block object-contain{% else %}h-16 w-20 inline-block object-contain{% endif %}">
+                <p class="text-center">Canal Oficial</p>
+            </a>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -52,11 +60,11 @@
         const form = document.getElementById('search-form');
         const loader = document.getElementById('loader');
 
-        form.addEventListener('submit', function() {
+        form.addEventListener('submit', function () {
             loader.style.display = 'block';
         });
 
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             loader.style.display = 'none';
         });
     });

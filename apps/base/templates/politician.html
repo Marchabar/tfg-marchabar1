@@ -14,49 +14,64 @@
     <div class="flex pr-4">
         <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Portada</h1>
         <div class="dropdown">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-44 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">Alberto Nuñez Feijóo</div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-44">
+            <div tabindex="0" role="button"
+                class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-48 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
+                Alberto
+                Nuñez Feijóo</div>
+            <ul tabindex="0"
+                class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-44">
                 {% for politician in dict_politicians %}
-                    <li><a class="text-gray-700 dark:text-gray-100" data-politician="{{politician}}">{{politician}}</a></li>
+                <li><a class="text-gray-700 dark:text-gray-100" data-politician="{{politician}}">{{politician}}</a></li>
                 {% endfor %}
             </ul>
         </div>
         <div class="dropdown">
-            <div tabindex="0" role="button" class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-28 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
-                <div class="flex items-center"> <!-- Container to center the text and SVG -->
+            <div tabindex="0" role="button"
+                class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-36 m-1 shadow-md hover:bg-gray-300 dark:hover:bg-gray-800 border-none">
+                <div class="flex items-center">
+                    <!-- Container to center the text and SVG -->
                     <span class="mr-2 ml-2">Por político</span> <!-- Text -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </div>
             </div>
-            <ul tabindex="0" class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
+            <ul tabindex="0"
+                class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-26">
                 <li><a href="/" class="text-gray-700 dark:text-gray-100">General</a></li>
-                <li><a href="/by-party" class="text-gray-700 dark:text-gray-100">Por partido</a></li>
-                <li><a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por político</a></li>
+                <li><a href="/by-party" class="text-gray-700 dark:text-gray-100">Por
+                        partido</a></li>
+                <li><a href="/by-politician" class="text-gray-700 dark:text-gray-100">Por
+                        político</a></li>
             </ul>
         </div>
-        <button onclick="location.href='/analysis'" class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+        <button onclick="location.href='/analysis'"
+            class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
             Nuevo vídeo
         </button>
-    </div>    
+    </div>
     <div class="grid grid-cols-2 sm:h-full">
         <div class="p-4 h-full">
-            <div class="h-96 bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div
+                class="h-96 bg-white dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Temática</h2>
                 <canvas id="partyChart"></canvas>
                 <div id="barContainer"></div>
             </div>
         </div>
         <div class="p-4 h-full">
-            <div class="h-96 bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div
+                class="h-96 bg-white dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Vídeos recientes</h2>
                 <div class="flex flex-col gap-1 w-full justify-center items-center p-2">
                     {% for video in videos %}
-                    <a href="/videos/{{video.id}}" class="flex w-4/5 bg-white dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
+                    <a href="/videos/{{video.id}}"
+                        class="flex w-4/5 bg-white dark:bg-gray-500 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-s rounded-lg p-2">
                         <div>
                             <figure>
-                                <img src="{{video.thumbnail}}" alt="{{video.title}}" class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg"/>
+                                <img src="{{video.thumbnail}}" alt="{{video.title}}"
+                                    class="min-h-20 min-w-20 max-w-20 max-h-20 rounded-lg" />
                             </figure>
                         </div>
                         <div class="flex flex-col justify-center ml-4 text-gray-700 dark:text-gray-200">
@@ -69,16 +84,16 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>                                                    
+        </div>
         <div class="p-4">
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="bg-white dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Sentimiento</h2>
                 <canvas id="pieChart"></canvas>
                 <div id="pieContainer"></div>
             </div>
         </div>
         <div class="p-4">
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
+            <div class="bg-white dark:bg-gray-500 rounded-lg shadow-md flex flex-col justify-center items-center p-4">
                 <h2 class="text-lg font-semibold">Tipo de lenguaje</h2>
                 <canvas id="polarChart"></canvas>
                 <div id="polarContainer"></div>
@@ -97,6 +112,8 @@
     let validJson = dict_topics.replace(/'/g, '"');
     validJson = validJson.replace(/"{/g, '{').replace(/}"/g, '}');
 
+    let fontColor = '#000';
+
     let jsonData = JSON.parse(validJson);
 
     let dict_sentiments = '{{ dict_sentiments|escapejs }}';
@@ -109,8 +126,8 @@
     validJsonLanguages = validJsonLanguages.replace(/"{/g, '{').replace(/}"/g, '}')
     jsonDataLanguages = JSON.parse(validJsonLanguages);
 
-    var barChart; 
-    var pieChart; 
+    var barChart;
+    var pieChart;
     var polarChart;
 
 
@@ -122,7 +139,7 @@
             return;
         }
 
-        
+
         function getNextColor(index) {
             // Array of default Chart.js colors
             const defaultColors = [
@@ -141,13 +158,13 @@
 
 
         let arrowSVG = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
-               '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
+            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>';
 
         // Update dropdown button text with SVG and politician's name
         let dropdownContent = '<div class="flex items-center">' +
-                                '<span class="mr-2">' + politician + '</span>' +
-                                arrowSVG +
-                            '</div>';
+            '<span class="mr-2">' + politician + '</span>' +
+            arrowSVG +
+            '</div>';
         document.querySelector('.dropdown .btn').innerHTML = dropdownContent;
 
         // Disable the currently selected option
@@ -243,9 +260,9 @@
             }
             // If no match found, return original string
             return str.replace(/_/g, ' ')
-                    .replace(/\b\w/g, function(char) {
-                        return char.toUpperCase();
-                    });
+                .replace(/\b\w/g, function (char) {
+                    return char.toUpperCase();
+                });
         }
 
 
@@ -260,15 +277,28 @@
                 barChart.destroy();
             }
 
+            var filteredLabelsBar = [];
+            var filteredValuesBar = [];
+
+            for (var i = 0; i < labels.length; i++) {
+                // Skip the 'Otros' label when its value is 0
+                if (labels[i] === 'Otros' && values[i] === 0) {
+                    continue;
+                }
+
+                filteredLabelsBar.push(labels[i]);
+                filteredValuesBar.push(values[i]);
+            }
+
             // Update bar chart
             var ctx = document.getElementById('partyChart').getContext('2d');
             barChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
+                    labels: filteredLabelsBar.map(label => snakeToTitleCase(label, TOPIC_CHOICES)),
                     datasets: [{
                         label: 'Tematica ' + politician,
-                        data: values,
+                        data: filteredValuesBar,
                         backgroundColor: labels.map((_, i) => getNextColor(i)),
                         borderColor: labels.map((_, i) => getNextColor(i)),
                         borderWidth: 1
@@ -280,25 +310,25 @@
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Temáticas',
-                                fontColor: 'rgb(167 174 188)'
+                                fontColor: fontColor
                             },
                             ticks: {
                                 display: true,
                                 maxRotation: 90,
                                 minRotation: 90,
                                 fontSize: 11,
-                                fontColor: 'rgb(167 174 188)'
+                                fontColor: fontColor
                             }
                         }],
                         yAxes: [{
                             scaleLabel: {
                                 display: true,
                                 labelString: 'Porcentaje (%)',
-                                fontColor: 'rgb(167 174 188)'
+                                fontColor: fontColor
                             },
                             ticks: {
                                 beginAtZero: true,
-                                fontColor: 'rgb(167 174 188)'
+                                fontColor: fontColor
                             }
                         }]
                     },
@@ -307,14 +337,14 @@
                     },
                     tooltips: {
                         callbacks: {
-                            title: function(tooltipItem, data) {
+                            title: function (tooltipItem, data) {
                                 return data.labels[tooltipItem[0].index];
                             },
-                            label: function(tooltipItem, data) {
+                            label: function (tooltipItem, data) {
                                 var label = data.labels[tooltipItem.index];
                                 var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
                                 var description = labelDescriptionsBar[label] || '';
-                                return value + " " + description ;
+                                return value + " " + description;
                             }
                         }
                     },
@@ -327,43 +357,43 @@
         var labelsPie = Object.keys(jsonDataSentiments[politician]);
         var valuesPie = Object.values(jsonDataSentiments[politician]);
         var labelDescriptionsPie = {
-                "Enojo": "Emoción intensa de ira o irritación.",
-                "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
-                "Pasión": "Fuerte emoción o entusiasmo por algo.",
-                "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
-                "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
-                "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
-                "Desesperación": "Sentimiento de angustia o falta de esperanza.",
-                "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
-                "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
-                "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
-                "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
-                "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
-            };
+            "Enojo": "Emoción intensa de ira o irritación.",
+            "Frustración": "Sentimiento de decepción o impotencia debido a obstáculos o dificultades.",
+            "Pasión": "Fuerte emoción o entusiasmo por algo.",
+            "Entusiasmo": "Gran interés o emoción por algo que se espera o desea.",
+            "Preocupación": "Estado de ansiedad o inquietud por algo que se percibe como un problema.",
+            "Confianza": "Sentimiento de seguridad o fe en uno mismo o en los demás.",
+            "Desesperación": "Sentimiento de angustia o falta de esperanza.",
+            "Optimismo": "Actitud positiva o expectativa favorable hacia el futuro.",
+            "Satisfacción": "Sentimiento de contento o gratificación por algo que se considera bueno o adecuado.",
+            "Escepticismo": "Actitud de duda o incredulidad hacia algo.",
+            "Desdén": "Sentimiento de menosprecio o desprecio hacia algo o alguien.",
+            "Empatía": "Capacidad de comprender y compartir los sentimientos de otra persona.",
+        };
 
-            SENTIMENT_CHOICES = [
-                ["enojo", "Enojo"],
-                ["frustracion", "Frustración"],
-                ["pasion", "Pasión"],
-                ["entusiasmo", "Entusiasmo"],
-                ["preocupacion", "Preocupación"],
-                ["confianza", "Confianza"],
-                ["desesperacion", "Desesperación"],
-                ["optimismo", "Optimismo"],
-                ["satisfaccion", "Satisfacción"],
-                ["escepticismo", "Escepticismo"],
-                ["desden", "Desdén"],
-                ["empatia", "Empatía"]
-            ]
+        SENTIMENT_CHOICES = [
+            ["enojo", "Enojo"],
+            ["frustracion", "Frustración"],
+            ["pasion", "Pasión"],
+            ["entusiasmo", "Entusiasmo"],
+            ["preocupacion", "Preocupación"],
+            ["confianza", "Confianza"],
+            ["desesperacion", "Desesperación"],
+            ["optimismo", "Optimismo"],
+            ["satisfaccion", "Satisfacción"],
+            ["escepticismo", "Escepticismo"],
+            ["desden", "Desdén"],
+            ["empatia", "Empatía"]
+        ]
 
         if (valuesPie.length === 0) {
             document.getElementById('pieChart').style.display = 'none';
-            if (!document.getElementById('noDataDivPie')){
+            if (!document.getElementById('noDataDivPie')) {
                 var noDataDiv = document.createElement('div');
                 noDataDiv.textContent = 'No se han encontrado sentimientos';
                 document.getElementById('pieContainer').appendChild(noDataDiv);
             }
-            
+
         } else {
             document.getElementById('pieChart').style.display = 'block';
             if (document.getElementById('noDataDivPie')) {
@@ -373,15 +403,28 @@
                 pieChart.destroy();
             }
 
+            var filteredLabelsPie = [];
+            var filteredValuesPie = [];
+
+            for (var i = 0; i < labelsPie.length; i++) {
+                // Skip the 'Otros' label when its value is 0
+                if (labelsPie[i] === 'Otros' && valuesPie[i] === 0) {
+                    continue;
+                }
+
+                filteredLabelsPie.push(labelsPie[i]);
+                filteredValuesPie.push(valuesPie[i]);
+            }
+
             // Update pie chart
             var ctxPie = document.getElementById('pieChart').getContext('2d');
             pieChart = new Chart(ctxPie, {
                 type: 'pie',
                 data: {
-                    labels: labelsPie.map(label => snakeToTitleCase(label, SENTIMENT_CHOICES)),
+                    labels: filteredLabelsPie.map(label => snakeToTitleCase(label, SENTIMENT_CHOICES)),
                     datasets: [{
                         label: 'Sentiments of ' + politician,
-                        data: valuesPie,
+                        data: filteredValuesPie,
                         backgroundColor: labels.map((_, i) => getNextColor(i)),
                         borderColor: labels.map((_, i) => getNextColor(i)),
                         borderWidth: 1
@@ -393,19 +436,19 @@
                         position: 'right',
                         align: 'center',
                         labels: {
-                            fontColor: 'rgb(167 174 188)'
+                            fontColor: fontColor
                         }
                     },
                     tooltips: {
                         callbacks: {
-                            title: function(tooltipItem, data) {
+                            title: function (tooltipItem, data) {
                                 return data.labels[tooltipItem[0].index];
                             },
-                            label: function(tooltipItem, data) {
+                            label: function (tooltipItem, data) {
                                 var label = data.labels[tooltipItem.index];
                                 var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
                                 var description = labelDescriptionsPie[label] || '';
-                                return value + " " + description ;
+                                return value + " " + description;
                             }
                         }
                     },
@@ -482,15 +525,28 @@
                 polarChart.destroy();
             }
 
+            var filteredLabelsPolar = [];
+            var filteredValuesPolar = [];
+
+            for (var i = 0; i < labelsPolar.length; i++) {
+                // Skip the 'Otros' label when its value is 0
+                if (labelsPolar[i] === 'Otros' && valuesPolar[i] === 0) {
+                    continue;
+                }
+
+                filteredLabelsPolar.push(labelsPolar[i]);
+                filteredValuesPolar.push(valuesPolar[i]);
+            }
+
             // Update doughnut chart
             var ctxDoughnut = document.getElementById('polarChart').getContext('2d');
             polarChart = new Chart(ctxDoughnut, {
                 type: 'doughnut',
                 data: {
-                    labels: labelsPolar.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
+                    labels: filteredLabelsPolar.map(label => snakeToTitleCase(label, LANGUAGE_CHOICES)),
                     datasets: [{
                         label: 'Language of ' + politician,
-                        data: valuesPolar,
+                        data: filteredValuesPolar,
                         backgroundColor: labels.map((_, i) => getNextColor(i)),
                         borderColor: labels.map((_, i) => getNextColor(i)),
                         borderWidth: 1
@@ -502,19 +558,19 @@
                         position: 'right',
                         align: 'center',
                         labels: {
-                            fontColor: 'rgb(167 174 188)'
+                            fontColor: fontColor
                         }
                     },
                     tooltips: {
                         callbacks: {
-                            title: function(tooltipItem, data) {
+                            title: function (tooltipItem, data) {
                                 return data.labels[tooltipItem[0].index];
                             },
-                            label: function(tooltipItem, data) {
+                            label: function (tooltipItem, data) {
                                 var label = data.labels[tooltipItem.index];
                                 var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
                                 var description = labelDescriptionsPolar[label] || '';
-                                return value + " " + description ;
+                                return value + " " + description;
                             }
                         }
                     },
@@ -523,7 +579,7 @@
                 }
             });
         }
-        
+
     }
     // Initial chart with PP values
     updateChart('Alberto Núñez Feijóo');

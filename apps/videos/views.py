@@ -54,9 +54,6 @@ def all_videos(request):
 
 
 def get_video_information(request, video_id):
-    if not request.user.is_authenticated:
-        return redirect("/?login_required=true")
-
     video = get_object_or_404(Video, id=video_id)
     dict_topics = {}
     topics = Topic.objects.filter(video=video)
@@ -94,55 +91,10 @@ def get_video_information(request, video_id):
 def analyze_video_user(request):
     if not request.user.is_authenticated:
         return redirect("/?login_required=true")
-    top_topics = (
-        Topic.objects.values("topic_type")
-        .annotate(video_count=Count("video"))
-        .order_by("-video_count")[:12]
-    )
-    top_topics = list(top_topics)
-    TOPIC_CHOICES = [
-        ("economia", "Economía"),
-        ("salud", "Salud"),
-        ("educacion", "Educación"),
-        ("medio_ambiente", "Medio ambiente"),
-        ("derechos_civiles", "Derechos civiles"),
-        ("inmigracion", "Inmigración"),
-        ("seguridad_nacional", "Seguridad nacional"),
-        ("politica_exterior", "Política exterior"),
-        ("empleo", "Empleo"),
-        ("criminalidad", "Criminalidad"),
-        ("impuestos", "Impuestos"),
-        ("bienestar_social", "Bienestar social"),
-        ("tecnologia", "Tecnología"),
-        ("energia", "Energía"),
-        ("vivienda", "Vivienda"),
-        ("corrupcion", "Corrupción"),
-        ("libertad_de_prensa", "Libertad de prensa"),
-        ("igualdad_de_genero", "Igualdad de género"),
-        ("diversidad_y_discriminacion", "Diversidad y discriminación"),
-        ("pobreza", "Pobreza"),
-        ("infraestructura", "Infraestructura"),
-        ("religion", "Religión"),
-        ("derechos_de_las_minorias", "Derechos de las minorías"),
-        ("paz_y_conflicto", "Paz y conflicto"),
-        ("defensa", "Defensa"),
-        ("legislacion", "Legislación"),
-        ("presupuesto", "Presupuesto"),
-        ("justicia", "Justicia"),
-        ("ETA", "ETA"),
-        ("historia_reciente_espana", "Historia reciente de España"),
-        ("terrorismo", "Terrorismo"),
-        ("acusaciones_políticas", "Acusaciones políticas"),
-        ("campana_electoral", "Campaña electoral"),
-        ("patriotismo", "Patriotismo"),
-    ]
-    # I need to convert the topic_type to the name of the topic
-    for topic in top_topics:
-        for choice in TOPIC_CHOICES:
-            if choice[0] == topic["topic_type"]:
-                topic["topic_type"] = choice[1]
 
     search = request.GET.get("video-url")
+
+    parties = ["pp", "psoe", "vox", "sumar"]
 
     allowed_channels_ids = {
         "UCPECDsPyGRW5b5E4ibCGhww": "PP",
@@ -157,7 +109,11 @@ def analyze_video_user(request):
             return render(
                 request,
                 "analysis.html",
-                {"top_topics": top_topics, "message": "La url no es válida."},
+                {
+                    "top_topics": top_topics,
+                    "message": "La url no es válida.",
+                    "parties": parties,
+                },
             )
         else:
             for video in videos:
@@ -168,6 +124,7 @@ def analyze_video_user(request):
                         {
                             "top_topics": top_topics,
                             "message": "Este vídeo ya ha sido analizado.",
+                            "parties": parties,
                         },
                     )
             video_id = extract_video_id(search)
@@ -178,7 +135,7 @@ def analyze_video_user(request):
                 transcript = YouTubeTranscriptApi.get_transcript(
                     video_id, languages=["es"]
                 )
-                transcription = " ".join(item["text"] for item in transcript)
+                transcription2 = " ".join(item["text"] for item in transcript)
                 length = video_details.get("length")
                 length = convert_duration(length)
                 date = video_details.get("date")
@@ -191,19 +148,30 @@ def analyze_video_user(request):
                 date = {date},
                 length = {length},
                 description = {description},
-                {transcription}"""
+                {transcription2}"""
                 prompt = general_statement(transcription)
                 number_tokens = num_tokens_from_string(prompt, "gpt-4")
-                if number_tokens > 2500:
+                if number_tokens > 12500:
                     return render(
                         request,
                         "analysis.html",
                         {
                             "top_topics": top_topics,
-                            "message": "La transcripción es demasiado larga.",
+                            "message": "El vídeo es demasiado largo.",
+                            "parties": parties,
                         },
                     )
                 if video_details:
+                    title = video_details.get("title")
+                    title_with_underscores = title.lower().replace(" ", "_")
+                    title_with_underscores = re.sub(
+                        r'[\\/*?:"<>|]', "_", title_with_underscores
+                    )
+                    filename = f"{title_with_underscores}.txt"
+                    path = "transcriptions"
+                    full_path = os.path.join(path, filename)
+                    with open(full_path, "w", encoding="utf-8") as file:
+                        file.write(transcription2)
                     response = generate_response(prompt)
                     # response = {
                     #     "politician_name": "Pedro Sánchez",
@@ -302,6 +270,9 @@ def analyze_video_user(request):
                             "w",
                             encoding="utf-8",
                         ) as file:
+                            response = response.strip("```json\n").strip("```")
+                            response = json.loads(response)
+
                             json.dump(response, file, ensure_ascii=False)
 
                         # After the file is successfully created, call the load_* functions
@@ -323,18 +294,141 @@ def analyze_video_user(request):
                     return render(
                         request,
                         "analysis.html",
-                        {"top_topics": top_topics, "message": "La url no es válida."},
+                        {"message": "La url no es válida.", "parties": parties},
                     )
             else:
                 return render(
                     request,
                     "analysis.html",
                     {
-                        "top_topics": top_topics,
                         "message": "La url no es de un canal permitido.",
+                        "parties": parties,
                     },
                 )
-    return render(request, "analysis.html", {"top_topics": top_topics})
+
+    return render(request, "analysis.html", {"parties": parties})
+
+
+def top_topics(request):
+    top_topics = (
+        Topic.objects.values("topic_type")
+        .annotate(video_count=Count("video"))
+        .order_by("-video_count")[:12]
+    )
+    top_sentiments = (
+        Sentiment.objects.values("sentiment_type")
+        .annotate(video_count=Count("video"))
+        .order_by("-video_count")[:8]
+    )
+    top_languages = (
+        Language.objects.values("language_type")
+        .annotate(video_count=Count("video"))
+        .order_by("-video_count")[:12]
+    )
+
+    top_topics = list(top_topics)
+    top_sentiments = list(top_sentiments)
+    top_languages = list(top_languages)
+
+    TOPIC_CHOICES = [
+        ("economia", "Economía"),
+        ("salud", "Salud"),
+        ("educacion", "Educación"),
+        ("medio_ambiente", "Medio ambiente"),
+        ("derechos_civiles", "Derechos civiles"),
+        ("inmigracion", "Inmigración"),
+        ("seguridad_nacional", "Seguridad nacional"),
+        ("politica_exterior", "Política exterior"),
+        ("empleo", "Empleo"),
+        ("criminalidad", "Criminalidad"),
+        ("impuestos", "Impuestos"),
+        ("bienestar_social", "Bienestar social"),
+        ("tecnologia", "Tecnología"),
+        ("energia", "Energía"),
+        ("vivienda", "Vivienda"),
+        ("corrupcion", "Corrupción"),
+        ("libertad_de_prensa", "Libertad de prensa"),
+        ("igualdad_de_genero", "Igualdad de género"),
+        ("diversidad_y_discriminacion", "Diversidad y discriminación"),
+        ("pobreza", "Pobreza"),
+        ("infraestructura", "Infraestructura"),
+        ("religion", "Religión"),
+        ("derechos_de_las_minorias", "Derechos de las minorías"),
+        ("paz_y_conflicto", "Paz y conflicto"),
+        ("defensa", "Defensa"),
+        ("legislacion", "Legislación"),
+        ("presupuesto", "Presupuesto"),
+        ("justicia", "Justicia"),
+        ("ETA", "ETA"),
+        ("historia_reciente_espana", "Historia reciente de España"),
+        ("terrorismo", "Terrorismo"),
+        ("acusaciones_políticas", "Acusaciones políticas"),
+        ("campana_electoral", "Campaña electoral"),
+        ("patriotismo", "Patriotismo"),
+    ]
+    SENTIMENT_CHOICES = [
+        ("enojo", "Enojo"),
+        ("frustracion", "Frustración"),
+        ("pasion", "Pasión"),
+        ("entusiasmo", "Entusiasmo"),
+        ("preocupacion", "Preocupación"),
+        ("confianza", "Confianza"),
+        ("desesperacion", "Desesperación"),
+        ("optimismo", "Optimismo"),
+        ("satisfaccion", "Satisfacción"),
+        ("escepticismo", "Escepticismo"),
+        ("desden", "Desdén"),
+        ("empatia", "Empatía"),
+    ]
+    LANGUAGE_CHOICES = [
+        ("formal", "Formal"),
+        ("tecnico", "Técnico"),
+        ("emocional", "Emocional"),
+        ("persuasivo", "Persuasivo"),
+        ("retorico", "Retórico"),
+        ("bipartidista", "Bipartidista"),
+        ("partidista", "Partidista"),
+        ("populista", "Populista"),
+        ("consenso", "Consenso"),
+        ("confrontacion", "Confrontación"),
+        ("compromiso", "Compromiso"),
+        ("promesas", "Promesas"),
+        ("critica", "Crítica"),
+        ("estadisticas", "Estadísticas"),
+        ("datos", "Datos"),
+        ("debate", "Debate"),
+        ("discurso_publico", "Discurso público"),
+        ("campana", "Campaña"),
+        ("legislacion", "Legislación"),
+        ("negociacion", "Negociación"),
+        ("patriótico", "Patriótico"),
+    ]
+    # I need to convert the topic_type to the name of the topic
+    for topic in top_topics:
+        for choice in TOPIC_CHOICES:
+            if choice[0] == topic["topic_type"]:
+                topic["topic_type"] = choice[1]
+    for sentiment in top_sentiments:
+        for choice in SENTIMENT_CHOICES:
+            if choice[0] == sentiment["sentiment_type"]:
+                sentiment["sentiment_type"] = choice[1]
+    for language in top_languages:
+        for choice in LANGUAGE_CHOICES:
+            if choice[0] == language["language_type"]:
+                language["language_type"] = choice[1]
+
+    videos = Video.objects.filter(published=True)
+
+    return render(
+        request,
+        "top-topics.html",
+        {
+            "top_topics": top_topics,
+            "top_sentiments": top_sentiments,
+            "top_languages": top_languages,
+            "videos": videos,
+        },
+    )
 
 
 def extract_video_id(video_url):
@@ -480,11 +574,12 @@ def general_statement(transcription):
     ]
 
     prompt = f"""Analiza las siguientes transcripciones de textos de políticos, y respóndeme a las preguntas que te propongo en formato json. Las claves del formato json son politician_name, political_party, date, length, summary, main_topics, sentiment, lenguaje y used_words. Para sus valores es muy importante que tengas en cuenta las siguientes condiciones : 
+    
+    Para la key politician_name (nombre del político) tienes que obtenerlo del título o descripción del video de youtube, o intenta obtenerlo de la información actual que tienes. Si no erez capaz de obtenerlo, pon "Político no reconocido".
     Para la key main_topics solo pueden ser valores que se encuentren en el siguiente array. Para esta key,necesito un diccionario que contenga el main_topic y el porcentaje del que se habla de el. {main_topics}
     Para la key sentiment solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros sentiments, solo debes coger los que esten en este array: {sentiment}. 
     Para la key lenguaje solo puede ser uno o varios de los siguientes array. Esto significa que aunque encuentres otros lenguajes, solo debes coger los que esten en este array:  {lenguaje}. 
     Para la key used_words coge las palabras politicas que mas se usen durante la transcripción. 
-    Para la key politician_name (nombre del político) tienes que sacarlo del title o description del video (sino sacas el politican_name pon Político no reconocido)
     La transcripción es la siguiente, y ya contiene el partido al que pertenece, la url, la fecha, y la duracion. Esto tambien tienes que incluirlo en el json que me das como respuesta. Además tienes que incluir un resumen corto en un párrafo de la transcripcion para la key summary. Recuerda tener en cuenta las limitaciones y solo coger valores de los arrays para las keys que lo necesitan: {transcription}
     """
     return prompt
@@ -499,17 +594,23 @@ def num_tokens_from_string(string: str, encoding_name: str) -> int:
 
 def generate_response(
     prompt,
-    temperature=0.2,
+    temperature=0.1,
     max_tokens=1500,
 ):
     openai.api_key = env("OPENAI_API_KEY")
-    response = openai.Completion.create(
-        engine="gpt-3.5-turbo-instruct",
-        prompt=prompt,
+    sys_message = "Eres un asistentes de OpenAI, por favor, ayúdame a responder a las siguientes preguntas sobre mítines políticos en España."
+    user_message = prompt
+    response = openai.ChatCompletion.create(
+        model="gpt-4-turbo",
+        messages=[
+            {"role": "system", "content": sys_message},
+            {"role": "user", "content": user_message},
+        ],
         temperature=temperature,
         max_tokens=max_tokens,
     )
-    return response.choices[0].text.strip()
+
+    return str(response.choices[0].message.content)
 
 
 def sanitize_filename(filename):
@@ -520,9 +621,6 @@ def sanitize_filename(filename):
 
 
 def get_videos_by_topic(request, topic_type):
-    if not request.user.is_authenticated:
-        return redirect("/?login_required=true")
-
     topics = Topic.objects.filter(topic_type=topic_type)
     videos = []
     for topic in topics:
@@ -571,6 +669,80 @@ def get_videos_by_topic(request, topic_type):
 
     return render(
         request, "videos-topic.html", {"videos": videos, "topic_type": topic_type}
+    )
+
+
+def get_videos_by_sentiment(request, sentiment_type):
+    sentiments = Sentiment.objects.filter(sentiment_type=sentiment_type)
+    videos = []
+    for sentiment in sentiments:
+        if sentiment.video.published:
+            videos.append(sentiment.video)
+    SENTIMENT_CHOICES = [
+        ("enojo", "Enojo"),
+        ("frustracion", "Frustración"),
+        ("pasion", "Pasión"),
+        ("entusiasmo", "Entusiasmo"),
+        ("preocupacion", "Preocupación"),
+        ("confianza", "Confianza"),
+        ("desesperacion", "Desesperación"),
+        ("optimismo", "Optimismo"),
+        ("satisfaccion", "Satisfacción"),
+        ("escepticismo", "Escepticismo"),
+        ("desden", "Desdén"),
+        ("empatia", "Empatía"),
+    ]
+
+    for choice in SENTIMENT_CHOICES:
+        if choice[0] == sentiment_type:
+            sentiment_type = choice[1]
+
+    return render(
+        request,
+        "videos-sentiment.html",
+        {"videos": videos, "sentiment_type": sentiment_type},
+    )
+
+
+def get_videos_by_language(request, language_type):
+    language_type = language_type.split("_")[-1]
+    languages = Language.objects.filter(language_type=language_type)
+    videos = []
+    for language in languages:
+        if language.video.published:
+            videos.append(language.video)
+    LANGUAGE_CHOICES = [
+        ("formal", "Lenguaje formal"),
+        ("tecnico", "Lenguaje técnico"),
+        ("emocional", "Lenguaje emocional"),
+        ("persuasivo", "Lenguaje persuasivo"),
+        ("retorico", "Lenguaje retórico"),
+        ("bipartidista", "Lenguaje bipartidista"),
+        ("partidista", "Lenguaje partidista"),
+        ("populista", "Lenguaje populista"),
+        ("consenso", "Lenguaje de consenso"),
+        ("confrontacion", "Lenguaje de confrontación"),
+        ("compromiso", "Lenguaje de compromiso"),
+        ("promesas", "Lenguaje de promesas"),
+        ("critica", "Lenguaje de crítica"),
+        ("estadisticas", "Lenguaje de estadísticas"),
+        ("datos", "Lenguaje de datos"),
+        ("debate", "Lenguaje de debate"),
+        ("discurso_publico", "Lenguaje de discurso público"),
+        ("campana", "Lenguaje de campaña"),
+        ("legislacion", "Lenguaje de legislación"),
+        ("negociacion", "Lenguaje de negociación"),
+        ("patriótico", "Lenguaje patriótico"),
+    ]
+
+    for choice in LANGUAGE_CHOICES:
+        if choice[0] == language_type:
+            language_type = choice[1]
+
+    return render(
+        request,
+        "videos-language.html",
+        {"videos": videos, "language_type": language_type},
     )
 
 
