@@ -15,38 +15,76 @@
 
 <div class="flex flex-col h-full">
     <div class="flex pr-4">
-        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Todos los vídeos</h1>
-        <div class="dropdown" id="dropdown-general">
-            <div tabindex="0" role="button"
-                class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-32 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center items-center border-none">
-                <div class="flex items-center">
-                    <!-- Container to center the text and SVG -->
-                    <span class="mr-2 ml-2" id="dropdownButtonText">Temática</span>
-                    <!-- Text -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
+        <h1 class="text-4xl text-blue-900 dark:text-gray-200 items-start px-4">Vídeos</h1>
+        <div class="grid grid-cols-3 items-center w-full">
+            <div class="dropdown" id="dropdown-general">
+                <div tabindex="0" role="button"
+                    class="btn text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-700 dark:text-gray-200 w-44 m-1 shadow-lg hover:bg-gray-300 dark:hover:bg-gray-800 flex justify-center items-center border-none">
+                    <div class="flex items-center">
+                        <!-- Container to center the text and SVG -->
+                        <span class="mr-2 ml-2" id="dropdownButtonText">Todos</span>
+                        <!-- Text -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </div>
                 </div>
+                <ul tabindex="0"
+                    class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-44">
+                    <li>
+                        <a class="text-gray-700 dark:text-gray-100" onclick="showDiv('all-videos', 'Todos')">Todos</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-700 dark:text-gray-100" onclick="showDiv('topics', 'Por temática')">Por
+                            temática</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-700 dark:text-gray-100"
+                            onclick="showDiv('sentiments', 'Por sentimiento')">Por
+                            sentimiento</a>
+                    </li>
+                    <li>
+                        <a class="text-gray-700 dark:text-gray-100" onclick="showDiv('languages', 'Por lenguage')">Por
+                            lenguage</a>
+                    </li>
+                </ul>
             </div>
-            <ul tabindex="0"
-                class="bg-gray-100 dark:bg-gray-700 dropdown-content z-[1] menu p-2 shadow rounded-box w-32">
-                <li>
-                    <a class="text-gray-700 dark:text-gray-100" onclick="showDiv('topics', 'Temática')">Temática</a>
-                </li>
-                <li>
-                    <a class="text-gray-700 dark:text-gray-100"
-                        onclick="showDiv('sentiments', 'Sentimiento')">Sentimiento</a>
-                </li>
-                <li>
-                    <a class="text-gray-700 dark:text-gray-100" onclick="showDiv('languages', 'Lenguage')">Lenguage</a>
-                </li>
-            </ul>
+            <form id="search-form"
+                class="input input-bordered flex items-center gap-2 bg-gray-300 dark:bg-gray-600 w-60 text-gray-600 dark:text-gray-300">
+                {% csrf_token %}
+                <input id="search-input" name="video-url" type="text"
+                    class="grow placeholder-gray-500 dark:placeholder-gray-400" placeholder="Buscar vídeo" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
+                    class="w-4 h-4 opacity-70">
+                    <path fill-rule="evenodd"
+                        d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                        clip-rule="evenodd" />
+                </svg>
+            </form>
+            <button onclick="location.href='/analysis'"
+                class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+                Nuevo vídeo
+            </button>
         </div>
-        <button onclick="location.href='/analysis'"
-            class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
-            Nuevo vídeo
-        </button>
+    </div>
+    <div id="no-results-message"></div>
+    <div id="all-videos" class="grid grid-cols-3 gap-2 p-4">
+        {% for video in videos %}
+        <a id="videos" href="{% url 'video' video.id %}" data-title="{{ video.title }}"
+            data-political-party="{{ video.political_party }}"
+            class="card bg-white dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-700 shadow-xl text-gray-600 dark:text-gray-400">
+            <figure class="px-10 pt-10">
+                <img src="{{ video.thumbnail }}" alt="{{ video.title }}" class="rounded-lg" />
+            </figure>
+            <div class="card-body items-center text-center">
+                <h2 class="card-title">{{video.political_party}}</h2>
+                <p>{{video.title}}</p>
+                <p class="text-green-400"><strong>Published</strong></p>
+            </div>
+        </a>
+        {% endfor %}
     </div>
     <div id="topics" class="flex flex-wrap justify-center">
         {% for topic in top_topics %}
@@ -92,15 +130,67 @@
 
     function showDiv(id, text) {
         // Get all divs with the class 'content-div'
+        document.getElementById('all-videos').style.display = 'none';
         document.getElementById('topics').style.display = 'none';
         document.getElementById('sentiments').style.display = 'none';
         document.getElementById('languages').style.display = 'none';
+        container = document.getElementById('all-videos')
 
         // Show the selected div
-        document.getElementById(id).style.display = 'flex';
+        // if the the div is all-videos I want it to be grid, the rest I wna them to be flex
+        if (id === 'all-videos') {
+            document.getElementById(id).style.display = 'grid';
+            document.getElementById('search-form').style.display = 'flex';
+            document.getElementById('search-form').style.visibility = 'visible';
+
+
+        } else {
+            document.getElementById(id).style.display = 'flex';
+            document.getElementById('search-form').style.visibility = 'hidden';
+        }
 
         // Change the text of the dropdown button
         document.getElementById('dropdownButtonText').textContent = text;
     }
+
+    document.getElementById('search-input').addEventListener('input', function (e) {
+        var searchValue = e.target.value.toLowerCase();
+        var videos = document.querySelectorAll('#all-videos a');
+        var anyDisplay = false;
+
+        for (var i = 0; i < videos.length; i++) {
+            var title = videos[i].getAttribute('data-title').toLowerCase();
+            var party = videos[i].getAttribute('data-political-party').toLowerCase();
+
+            if (title.includes(searchValue) || party.includes(searchValue)) {
+                videos[i].style.display = 'block';
+                anyDisplay = true;
+            } else {
+                videos[i].style.display = 'none';
+            }
+        }
+
+        var container = document.getElementById('all-videos')
+        var oldMessage = document.getElementById('no-results-message');
+        if (oldMessage) {
+            oldMessage.parentNode.removeChild(oldMessage);
+        }
+
+        // If no videos are displayed, show a message
+        if (!anyDisplay) {
+            var message = document.createElement('h2');
+            message.id = 'no-results-message';
+            message.textContent = 'No se han encontrado resultados';
+            message.classList.add('col-span-1', 'text-center', 'w-full', 'col-start-2');
+            container.appendChild(message);
+        }
+
+    });
+
+    window.addEventListener('load', function () {
+        document.getElementById('topics').style.display = 'none';
+        document.getElementById('sentiments').style.display = 'none';
+        document.getElementById('languages').style.display = 'none';
+    });
 </script>
 {% endblock %}

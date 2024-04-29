@@ -60,8 +60,7 @@
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
 
-                        <span class="mx-4 font-medium">Todos los
-                            vídeos</span>
+                        <span class="mx-4 font-medium">Vídeos</span>
                     </a>
 
                     {% if user.is_superuser %}
@@ -76,7 +75,7 @@
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
 
-                        <span class="mx-4 font-medium">Vídeos</span>
+                        <span class="mx-4 font-medium">Todos</span>
                     </a>
                     {% else %}
                     <a class="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
@@ -134,6 +133,11 @@
                         <form id="myForm" method="post" action="{% url 'login' %}">
                             {% csrf_token %}
 
+                            <div class="sr-only">
+                                <label for="username">Username</label>
+                                <input type="text" id="username1" name="username" autocomplete="username">
+                            </div>
+
                             <div
                                 class="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
                                 <div class="hidden bg-cover lg:block lg:w-1/2"
@@ -149,7 +153,7 @@
                                         <label class="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200"
                                             for="username">Nombre de
                                             usuario</label>
-                                        <input id="username" name="username"
+                                        <input id="username" name="username" autocomplete="username"
                                             class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
                                             type="username" required />
                                     </div>
@@ -161,7 +165,7 @@
                                                 for="password">Contraseña</label>
                                         </div>
 
-                                        <input id="password" name="password"
+                                        <input id="password" name="password" autocomplete="new-password"
                                             class="block w-full px-4 py-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
                                             type="password" required />
                                     </div>
@@ -217,7 +221,7 @@
                                     </svg>
                                 </span>
 
-                                <input type="text" name="username"
+                                <input type="text" name="username" autocomplete="username"
                                     class="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
                                     placeholder="Nombre de usuario" required>
                             </div>
@@ -247,7 +251,7 @@
                                     </svg>
                                 </span>
 
-                                <input type="password" name="password" id="new-password"
+                                <input type="password" name="password" id="new-password" autocomplete="new-password"
                                     class="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
                                     placeholder="Contraseña" required>
                             </div>
@@ -263,6 +267,7 @@
                                 </span>
 
                                 <input type="password" name="confirm_password" id="confirm-password"
+                                    autocomplete="new-password"
                                     class="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
                                     placeholder="Confirm Password" required>
                             </div>

@@ -25,7 +25,7 @@ class LoadGeneralTestCase(TestCase):
             summary="This is a summary for video 1",
             date=date.today(),
             politician_name="Politician 1",
-            political_party="Party1",
+            political_party="PP",
             published=True,
         )
         self.video2 = Video.objects.create(
@@ -35,7 +35,7 @@ class LoadGeneralTestCase(TestCase):
             summary="This is a summary for video 2",
             date=date.today(),
             politician_name="Politician 2",
-            political_party="Party2",
+            political_party="PSOE",
             published=True,
         )
         self.topic1 = Topic.objects.create(
@@ -65,6 +65,9 @@ class LoadGeneralTestCase(TestCase):
         self.language3 = Language.objects.create(
             video=self.video2, language_type="Language1"
         )
+        self.word1 = Word.objects.create(video=self.video1, word="Word1")
+        self.word2 = Word.objects.create(video=self.video1, word="Word2")
+        self.word3 = Word.objects.create(video=self.video2, word="Word3")
 
     def test_load_general(self):
         url = reverse("homepage")
@@ -76,10 +79,10 @@ class LoadGeneralTestCase(TestCase):
 
         # Check if the dict_general has the expected structure and values
         self.assertEqual(len(dict_general), 2)
-        self.assertIn("Party1", dict_general)
-        self.assertIn("Party2", dict_general)
+        self.assertIn("PP", dict_general)
+        self.assertIn("PSOE", dict_general)
 
-        party1_values = dict_general["Party1"]
+        party1_values = dict_general["PP"]
         self.assertIn("topics", party1_values)
         self.assertIn("sentiments", party1_values)
         self.assertIn("languages", party1_values)
@@ -102,7 +105,7 @@ class LoadGeneralTestCase(TestCase):
         self.assertEqual(languages["Language1"], 1)
         self.assertEqual(languages["Language2"], 1)
 
-        party2_values = dict_general["Party2"]
+        party2_values = dict_general["PSOE"]
         self.assertIn("topics", party2_values)
         self.assertIn("sentiments", party2_values)
         self.assertIn("languages", party2_values)

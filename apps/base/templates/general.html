@@ -53,17 +53,19 @@
         </li>
       </ul>
     </div>
-    <div class="flex justify-center items-center">
-      <label class="flex cursor-pointer gap-2 ml-[170px]">
-        <span class="label-text">Gráfico</span>
-        <input type="checkbox" id="viewToggle" value="synthwave" class="toggle theme-controller" />
-        <span class="label-text">Tabla</span>
-      </label>
+    <div class="grid grid-cols-2 items-center justify-center w-full">
+      <div class="flex justify-center items-center">
+        <label class="flex cursor-pointer gap-2 ml-[170px]">
+          <span class="label-text text-gray-600 dark:text-gray-200">Gráfico</span>
+          <input type="checkbox" id="viewToggle" value="synthwave" class="toggle theme-controller" />
+          <span class="label-text text-gray-600 dark:text-gray-200">Tabla</span>
+        </label>
+      </div>
+      <button onclick="location.href='/analysis'"
+        class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
+        Nuevo vídeo
+      </button>
     </div>
-    <button onclick="location.href='/analysis'"
-      class="btn bg-red-500 text-white rounded-lg w-32 m-1 shadow-md hover:bg-red-600 ml-auto border-none">
-      Nuevo vídeo
-    </button>
   </div>
   <div id="graphContainer" class="grid grid-cols-2 sm:h-screen" style="display: grid;">
     <div class="p-4">
@@ -97,33 +99,53 @@
   </div>
   <div id="tableContainer" style="display: none;">
     <div class="p-4">
+      <div class="flex flex-col items-center w-full">
+        <div class="carousel w-3/4 h-auto pb-4">
+          {% for falacy in falacies %}
+          <div id="slide{{ forloop.counter }}"
+            class="carousel-item relative w-full h-auto overflow-hidden {% if forloop.first %}active{% endif %}">
+            <a href="{% url 'falacy_info' falacy.id %}"
+              class="w-full h-96 bg-gray-200 dark:bg-gray-400 p-5 flex flex-col items-center rounded-lg">
+              <h2 class="text-lg font-bold text-red-500 uppercase">FALSO</h2>
+              <p class="text-xl font-bold pb-4 text-black text-center">{{falacy.politician}}: "{{falacy.title}}"</p>
+              <img src="{{falacy.image}}" alt="Falacia" class="w-3/4 h-3/4 object-contain" />
+            </a>
+            <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+              <button data-dir="-1" class="btn btn-circle carousel-button">❮</button>
+              <button data-dir="1" class="btn btn-circle carousel-button">❯</button>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
       <div id="table"
         class="bg-white h-full dark:bg-gray-400 rounded-lg shadow-md flex flex-col justify-center items-center p-4 text-black">
         <table class="table">
           <thead>
             <tr class="font-bold text-black text-lg">
               <th>Partido</th>
-              <th>Temática</th>
-              <th>Sentimiento</th>
-              <th>Lenguaje</th>
+              <th>Top temas</th>
+              <th>Top sentimientos</th>
+              <th>Top lenguaje</th>
+              <th>Top palabras</th>
             </tr>
           </thead>
           <tbody>
             {% for party, data in dict_general_table.items %}
             {% if party == 'PP' %}
-            <tr class="bg-blue-200">
+            <tr class="bg-blue-100">
               {% elif party == 'PSOE' %}
-            <tr class="bg-red-200">
+            <tr class="bg-red-100">
               {% elif party == 'VOX' %}
-            <tr class="bg-green-200">
+            <tr class="bg-green-100">
               {% elif party == 'SUMAR' %}
-            <tr class="bg-purple-300">
+            <tr class="bg-purple-100">
               {% endif %}
               <td>
                 <div class="flex items-center gap-3">
-                  <div class="w-28 h-10">
+                  <div class="{% if party == 'VOX' %}w-14{% else %}w-20{% endif %}">
                     <img src="{% static 'images/'|add:party|lower|add:'.png' %}" alt="Logo del partido"
-                      class="w-full h-full" />
+                      class="w-full h-auto" />
                   </div>
                 </div>
               </td>
@@ -132,22 +154,25 @@
                 {% if main == 'topics' %}
                 {% for topic, percentage in percentage.items %}
                 <div class="flex items center gap-2">
-                  <span class="font-bold">{{ topic }}:</span>
-                  <span>{{ percentage }}%</span>
+                  <span class="font-semibold">{{ topic }}</span>
                 </div>
                 {% endfor %}
                 {% elif main == 'sentiments' %}
                 {% for sentiment, percentage in percentage.items %}
                 <div class="flex items center gap-2">
-                  <span class="font-bold">{{ sentiment }}:</span>
-                  <span>{{ percentage }}</span>
+                  <span class="font-semibold">{{ sentiment }}</span>
                 </div>
                 {% endfor %}
                 {% elif main == 'languages' %}
                 {% for language, percentage in percentage.items %}
                 <div class="flex items center gap-2">
-                  <span class="font-bold">{{ language }}:</span>
-                  <span>{{ percentage }}</span>
+                  <span class="font-semibold">{{ language }}</span>
+                </div>
+                {% endfor %}
+                {% elif main == 'words' %}
+                {% for word, percentage in percentage.items %}
+                <div class="flex items center gap-2">
+                  <span class="font-semibold">{{ word }}</span>
                 </div>
                 {% endfor %}
                 {% endif %}
@@ -166,22 +191,65 @@
 {% endblock %}
 {% block extrascript %}
 <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var slides = Array.from(document.querySelectorAll('.carousel-item'));
+    var buttons = Array.from(document.querySelectorAll('.carousel-button'));
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        var currentSlide = slides.find(slide => !slide.classList.contains('hidden'));
+        if (!currentSlide) return;
+
+        var currentIndex = slides.indexOf(currentSlide);
+        var nextIndex = currentIndex + parseInt(e.target.dataset.dir);
+
+        if (nextIndex < 0) nextIndex = slides.length - 1;
+        if (nextIndex >= slides.length) nextIndex = 0;
+
+        currentSlide.classList.add('hidden');
+        slides[nextIndex].classList.remove('hidden');
+      });
+    });
+  });
+
   document.addEventListener('DOMContentLoaded', (event) => {
     let viewToggle = document.getElementById('viewToggle');
     let graphContainer = document.getElementById('graphContainer');
     let tableContainer = document.getElementById('tableContainer');
     let dropdownButton = document.getElementById('dropdownButton');
 
-    viewToggle.addEventListener('change', function () {
-      if (this.checked) {
+    function updateView() {
+      if (viewToggle.checked) {
         graphContainer.style.display = 'none';
         tableContainer.style.display = 'block';
-        dropdownButton.setAttribute('disabled', 'disabled')
+        dropdownButton.classList.add('disabled');
+        dropdownButton.classList.add('bg-gray-400')
+        dropdownButton.classList.add('opacity-60')
+        dropdownButton.classList.add('dark:bg-gray-800')
+        dropdownButton.classList.add('pointer-events-none')
       } else {
         graphContainer.style.display = 'grid';
         tableContainer.style.display = 'none';
-        dropdownButton.removeAttribute('disabled');
+        dropdownButton.classList.remove('disabled');
+        dropdownButton.classList.remove('bg-gray-400')
+        dropdownButton.classList.remove('opacity-60')
+        dropdownButton.classList.remove('dark:bg-gray-800')
+        dropdownButton.classList.remove('pointer-events-none')
       }
+    }
+
+    let savedState = sessionStorage.getItem('viewToggleState');
+    if (savedState !== null) {
+      viewToggle.checked = savedState === 'true';
+      updateView();
+    }
+
+    viewToggle.addEventListener('change', function () {
+      updateView();
+
+      sessionStorage.setItem('viewToggleState', viewToggle.checked);
     });
   });
 

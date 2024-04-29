@@ -1,4 +1,5 @@
 import os
+import re
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -45,6 +46,15 @@ class PasswordChangeFormView(View):
         if not user.check_password(old_password):
             return JsonResponse(
                 {"success": False, "message": "La contraseña actual es incorrecta."}
+            )
+        elif not re.match(
+            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", new_password
+        ):
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "La contraseña debe contener al menos una letra minúscula, una mayúscula, un número y al menos tener 8 caracteres.",
+                }
             )
         else:
             if new_password != confirm_password:
@@ -111,6 +121,14 @@ class SignUpView(View):
         # avatar is the attribute for the profile picture of the user
         avatar = request.FILES.get("avatar")
         password = request.POST.get("password")
+
+        if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", password):
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "La contraseña debe contener al menos una letra minúscula, una mayúscula, un número y al menos tener 8 caracteres.",
+                }
+            )
 
         # Check if the username already exists
         if CustomUser.objects.filter(username=username).exists():

@@ -17,11 +17,11 @@
     <div class="flex justify-center mx-auto">
         <div class="flex flex-col h-full rounded-lg flex flex-col justify-center items-center mx-4 px-24 pb-10">
             {% if user.avatar %}
-            <div class="w-72 h-72 mt-6 mb-3"><img src="{{ user.avatar.url }}" alt="User Avatar" class="rounded-lg">
+            <div class="w-72 h-72 mt-6 mb-3"><img src="{{ user.avatar.url }}" alt="User Avatar" class="rounded-full">
             </div>
             {% else %}
             <div class="text-lg font-semibold"><img src="{% static 'images/user-icon.jpg' %}" alt="User Avatar"
-                    class="rounded-lg w-72 h-72"></div>
+                    class="rounded-full w-72 h-72"></div>
             {% endif %}
             <div class="text-2xl font-bold mb-2 text-gray-700 dark:text-gray-300">{{user.username}}</div>
             <div class="grid grid-cols-2 gap-4 text-center">
@@ -219,7 +219,6 @@
                     closeModal2();
                     Swal.fire({
                         icon: 'success',
-                        title: 'Success',
                         text: 'Foto de perfil cambiada correctamente',
                     }).then(() => {
                         window.location.href = "/profile";
