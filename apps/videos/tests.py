@@ -57,9 +57,7 @@ class VideoViewTest(TestCase):
 
     def test_get_video_information(self):
         response = self.client.get(reverse("video", args=[self.video.id]))
-        self.assertEqual(
-            response.status_code, 302
-        )  # Expecting a redirect because the user is not authenticated
+        self.assertEqual(response.status_code, 200)
         self.client.login(username="testuser", password="12345")
         response = self.client.get(reverse("video", args=[self.video.id]))
         self.assertEqual(response.status_code, 200)

@@ -68,7 +68,7 @@ class SignUpViewTest(TestCase):
         self.client = Client()
         self.signup_url = reverse("signup")
         self.username = "testuser"
-        self.password = "testpassword"
+        self.password = "Testpassword2024"
 
     def test_valid_signup(self):
         # Create a sample image file for avatar
