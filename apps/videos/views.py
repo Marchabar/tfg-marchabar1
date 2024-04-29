@@ -54,9 +54,6 @@ def all_videos(request):
 
 
 def get_video_information(request, video_id):
-    if not request.user.is_authenticated:
-        return redirect("/?login_required=true")
-
     video = get_object_or_404(Video, id=video_id)
     dict_topics = {}
     topics = Topic.objects.filter(video=video)
