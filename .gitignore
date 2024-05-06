@@ -17,6 +17,7 @@ __pycache__/
 
 migrations/
 
+staticfiles/
 # node
 node_modules/
 
