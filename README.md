@@ -5,22 +5,6 @@ AIVigilant es una aplicación web que permite mostrar estadísticas, gráficos, 
 ![Página de inicio](/static/images/landing-page.png)
 
 # Manual de Instalación
-
-Los pasos necesarios para instalar las herramientas y componentes necesarios para el desarrollo del proyecto son:
-
-## Requisitos de hardware
-
-Los requisitos de hardware necesarios para la instalación del proyecto son los siguientes:
-
-| Requisitos de hardware      | Mínimos                           | Recomendados                   |
-|------------------------------|-----------------------------------|--------------------------------|
-| Procesador                   | 2 núcleos a 1GHz o más           | AMD Ryzen 7 3700 o Intel i7 10700 |
-| RAM                          | 1Gb de RAM                       | 16GB de RAM                    |
-| Almacenamiento               | 250GB de HHD                     | 512GB de SSD                   |
-| Sistema Operativo            | Windows 7                        | Windows 11                     |
-
-## Requisitos de software
-
 Para poder instalar y hacer uso del sistema correctamente es necesario tener instalado en su máquina local lo siguiente:
 
 - **Python**: en este caso para el desarrollo del proyecto se ha hecho uso de Python 3.11.2. Puede instalarlo desde [aquí](https://www.python.org/downloads/release/python-3112/).
