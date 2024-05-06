@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env("DEBUG", default=False)
 
 ALLOWED_HOSTS = ["*"]
 
@@ -92,9 +92,7 @@ WSGI_APPLICATION = "graphpol.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-if not DEBUG:
-    DATABASES = {"default": dj_database_url.parse(env("DATABASE_URL"))}
-else:
+if DEBUG:
     DB_NAME = env("DB_NAME")
     DB_USER = env("DB_USER")
     DB_PASSWORD = env("DB_PASSWORD")
@@ -108,6 +106,9 @@ else:
             "HOST": DB_HOST,
         }
     }
+else:
+    DATABASES = {"default": dj_database_url.parse(env("DATABASE_URL"))}
+
 
 AUTH_USER_MODEL = "users.CustomUser"
 
