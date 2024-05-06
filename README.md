@@ -17,15 +17,13 @@ Una vez que tenga todo instalado, ya puede proceder con la instalación del proy
 
 Debido a que el proyecto se ha desarrollado con VSCode, este proceso de instalación va a realizarse en este IDE. Igualmente, en el resto de IDEs debería seguirse un proceso muy similar. Los pasos a seguir son:
 
-1. **Clonar el repositorio**: el repositorio de GitHub está accesible [aquí](https://github.com/Marchabar/tfg-marchabar1). Para clonarlo, copie y pegue el siguiente comando en la terminal de su IDE:
+1. **Clonar el repositorio**: el repositorio de GitHub está accesible [aquí](https://github.com/Marchabar/tfg-marchabar1). Cree una carpeta en su máquina local donde desea guardar el proyecto. En esta carpeta guardaremos el propio repositorio y el entorno  virtual. Para clonarlo, copie y pegue el siguiente comando en la terminal de esta carpeta que ha creado, para que el repositorio se clone dentro::
 
     ```bash
     git clone https://github.com/Marchabar/tfg-marchabar1.git
     ```
 
-    Guarde el repositorio donde desee en su máquina local y continúe con el siguiente paso.
-
-2. **Crear un entorno virtual**: en el directorio raíz de su proyecto, cree un entorno virtual para instalar las dependencias del proyecto de forma aislada. Para ello diríjase a la ubicación del repositorio desde la terminal y una vez allí ejecute:
+2. **Crear un entorno virtual**: en la terminal de la carpeta que hemos creado previamente, cree un entorno virtual para instalar las dependencias del proyecto de forma aislada. Para ello diríjase a la ubicación desde la terminal y una vez allí ejecute:
 
     ```bash
     python3 -m venv env
@@ -45,7 +43,7 @@ Debido a que el proyecto se ha desarrollado con VSCode, este proceso de instalac
         source env/bin/activate
         ```
 
-4. **Instalar dependencias del proyecto**: una vez que el entorno virtual está activado, instale las dependencias del proyecto desde el archivo `requirements.txt`. Para ello ejecute:
+4. **Instalar dependencias del proyecto**:  una vez que el entorno virtual está activado, diríjase con la terminal a la ubicación de su repositorio e instale las dependencias del proyecto desde el archivo `requirements.txt`. Para ello ejecute:
 
     ```bash
     pip install -r requirements.txt
@@ -61,7 +59,7 @@ Debido a que el proyecto se ha desarrollado con VSCode, este proceso de instalac
 
     Una vez conectado, haga click con el botón derecho en el servidor que acaba de agregar y selecciona `Create` > `Database`. Asigne un nombre a su base de datos y confirme la creación.
 
-6. **Obtener las variables de entorno**: en su IDE, dentro de la carpeta `Graphpol` cree un archivo llamado `.env`. Este archivo contendrá las variables de entorno necesarias para el correcto funcionamiento del sistema.
+6. **Obtener las variables de entorno**: en su IDE, dentro de la carpeta `graphpol` cree un archivo llamado `.env`. Este archivo contendrá las variables de entorno necesarias para el correcto funcionamiento del sistema.
 
     Las variables de entorno a definir son las siguientes:
 
@@ -79,12 +77,20 @@ Debido a que el proyecto se ha desarrollado con VSCode, este proceso de instalac
 7. **Popular base de datos**: de nuevo en la terminal con el entorno virtual activado, ejecute los siguiente comandos para popular la base de datos:
 
     ```bash
+    python manage.py makemigrations base falacies languages ratings sentiments topics users videos words
+
     python manage.py migrate
+
     python manage.py load_video_json
+
     python manage.py load_sentiment_json
+
     python manage.py load_language_json
+
     python manage.py load_words_json
+
     python manage.py load_topics_json
+
     python manage.py load_falacies_json
     ```
 
