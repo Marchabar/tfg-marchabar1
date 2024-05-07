@@ -20,7 +20,6 @@ migrations/
 # node
 node_modules/
 
-# css
-output.css
+staticfiles/
 
 tasks.md
